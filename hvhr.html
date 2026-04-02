@@ -1,41 +1,197 @@
-  <h1>High Value / High Risk Cargo (HVHR)</h1>
-  <p>This page provides internal guidance for identifying and handling shipments that carry elevated theft, compliance, or operational risk.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HVHR Cargo Guide</title>
 
-  <div class="section">
-    <h2>Common HVHR Cargo</h2>
-    <ul>
-      <li>Metals (copper, aluminum, scrap)</li>
-      <li>ATVs / UTVs / recreational vehicles</li>
-      <li>Electronics (TVs, computers, components)</li>
-      <li>Pharmaceuticals / medical goods</li>
-      <li>Retail goods with high resale value</li>
-      <li>Any easily transferable or offloaded freight</li>
-    </ul>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --atg-teal: #0069A6;
+    --atg-teal-dark: #004F7C;
+    --atg-teal-light: #E6F2F9;
+    --atg-navy: #1A2E44;
+    --bg: #D9E4ED;
+    --surface: #FFFFFF;
+    --border: #C8D8E4;
+    --text: #1A2E44;
+    --text-2: #4A6478;
+    --radius: 6px;
+    --radius-lg: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER (MATCHES MAIN TOOL) */
+  .header {
+    background: var(--atg-navy);
+    border-bottom: 3px solid var(--atg-teal);
+    padding: 14px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  /* NAV LINKS */
+  .nav-links {
+    display: flex;
+    gap: 6px;
+  }
+
+  .nav-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: #1A2E44;
+    background: #ffffff;
+    border: 2px solid #ffffff;
+    transition: all 0.15s;
+  }
+
+  .nav-link:hover {
+    background: var(--atg-teal);
+    color: #ffffff;
+    border-color: var(--atg-teal);
+  }
+
+  .nav-link.active {
+    background: var(--atg-teal);
+    color: #ffffff;
+    border-color: var(--atg-teal);
+  }
+
+  /* PAGE */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 28px 24px 60px;
+  }
+
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    padding: 28px 32px;
+    box-shadow: 0 2px 12px rgba(26,46,68,0.07);
+  }
+
+  h1 {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+
+  h2 {
+    font-size: 16px;
+    margin-top: 24px;
+    margin-bottom: 8px;
+  }
+
+  p, li {
+    color: var(--text-2);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  ul {
+    padding-left: 18px;
+    margin-top: 6px;
+  }
+
+  .note {
+    margin-top: 18px;
+    padding: 12px 16px;
+    background: var(--atg-teal-light);
+    border-left: 4px solid var(--atg-teal);
+    border-radius: var(--radius);
+    color: var(--atg-teal-dark);
+    font-size: 13px;
+  }
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+
+  <div class="header-brand">
+    <div style="line-height:1.25;">
+      <div style="font-size:18px;font-weight:700;letter-spacing:2px;color:#fff;text-transform:uppercase;">Armstrong</div>
+      <div style="font-size:8px;letter-spacing:4px;color:rgba(255,255,255,0.6);text-transform:uppercase;">Transport Group</div>
+    </div>
+
+    <div style="width:1px;height:30px;background:rgba(255,255,255,0.2);"></div>
+
+    <div style="font-size:15px;font-weight:600;color:#fff;">
+      HVHR Guide
+    </div>
   </div>
 
-  <div class="section">
-    <h2>Risk Factors to Evaluate</h2>
-    <ul>
-      <li>Declared cargo value</li>
-      <li>Theft attractiveness</li>
-      <li>Ease of unloading or resale</li>
-      <li>Load visibility (blind shipments vs labeled)</li>
-      <li>Carrier tracking capability (ELD, GPS)</li>
-    </ul>
-  </div>
-
-  <div class="section">
-    <h2>Operational Guidance</h2>
-    <ul>
-      <li>Require active ELD or tracking when applicable</li>
-      <li>Verify carrier history and equipment</li>
-      <li>Escalate uncertain or borderline shipments</li>
-      <li>Avoid assumptions on exemption eligibility</li>
-    </ul>
-  </div>
-
-  <div class="note">
-    ⚠️ If cargo classification is unclear or appears high-risk, escalate for review instead of proceeding with standard approval.
+  <!-- NAVIGATION -->
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">Main Tool</a>
+    <a href="hvhr.html" class="nav-link active">HVHR</a>
   </div>
 
 </div>
+
+<!-- CONTENT -->
+<div class="container">
+  <div class="card">
+
+    <h1>High Value / High Risk Cargo (HVHR)</h1>
+    <p>This page provides internal guidance for identifying and handling shipments that carry elevated theft, compliance, or operational risk.</p>
+
+    <h2>Common HVHR Cargo</h2>
+    <ul>
+      <li>Metals (copper, aluminum, scrap)</li>
+      <li>ATVs / UTVs</li>
+      <li>Electronics</li>
+      <li>Pharmaceuticals</li>
+      <li>Retail / resale goods</li>
+    </ul>
+
+    <h2>Risk Factors</h2>
+    <ul>
+      <li>High declared value</li>
+      <li>Ease of theft or resale</li>
+      <li>Unsecured or untracked freight</li>
+      <li>No ELD / tracking visibility</li>
+    </ul>
+
+    <h2>Guidance</h2>
+    <ul>
+      <li>Require tracking when possible</li>
+      <li>Verify carrier history</li>
+      <li>Escalate unclear cases</li>
+    </ul>
+
+    <div class="note">
+      ⚠️ If unsure, escalate — do not assume eligibility.
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>
