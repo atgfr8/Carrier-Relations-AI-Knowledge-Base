@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ELD Exemption Guide</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carrier Ruleset & Vetting Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -15,9 +15,9 @@
     --atg-navy: #1A2E44;
     --atg-navy-light: #EBF0F5;
 
-    --bg: #F2F6F9;
+    --bg: #D9E4ED;
     --surface: #FFFFFF;
-    --surface-2: #EBF0F5;
+    --surface-2: #DDEAF3;
     --border: #C8D8E4;
     --border-strong: #8AAFC5;
     --text: #1A2E44;
@@ -34,6 +34,16 @@
     --escalate-text: #7A5200;
     --escalate-dot: #C98F00;
 
+    --coi-bg: #E6F2F9;
+    --coi-border: #8AAFC5;
+    --coi-text: #004F7C;
+    --coi-dot: #0069A6;
+
+    --refer-bg: #EBF0F5;
+    --refer-border: #8AAFC5;
+    --refer-text: #1A2E44;
+    --refer-dot: #0069A6;
+
     --eld-bg: #EDFAF4;
     --eld-border: #8ED4B0;
     --eld-text: #0E5C38;
@@ -43,6 +53,10 @@
     --conditional-border: #E8C87A;
     --conditional-text: #7A5200;
     --conditional-dot: #C98F00;
+
+    --soft-bg: #E6F2F9;
+    --soft-border: #8AAFC5;
+    --soft-text: #004F7C;
 
     --radius: 6px;
     --radius-lg: 10px;
@@ -80,54 +94,27 @@
     color: #fff;
   }
   .header-brand span { color: #8DD4A8; }
-  .header-version {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: rgba(255,255,255,0.5);
-    letter-spacing: 0.06em;
-  }
-
-  /* NEW: header right/nav */
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .header-nav {
-    display: flex;
-    gap: 6px;
-    align-items: center;
-  }
-  .header-nav a {
+  .header-nav { display: flex; gap: 4px; }
+  #nav-checker, #nav-alerts {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
     font-weight: 500;
-    padding: 6px 12px;
+    padding: 6px 14px;
     border-radius: var(--radius);
-    border: 1.5px solid rgba(255,255,255,0.18);
-    background: rgba(255,255,255,0.08);
-    color: #ffffff;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    transition: all 0.15s;
-    white-space: nowrap;
-  }
-  .header-nav a:hover {
-    background: rgba(255,255,255,0.18);
-    border-color: rgba(255,255,255,0.28);
-  }
-  .header-nav a.active {
-    background: #ffffff;
-    color: var(--atg-navy);
-    border-color: #ffffff;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
   }
 
   /* Layout */
-  .container { max-width: 680px; margin: 0 auto; padding: 28px 24px 60px; }
+  .container { max-width: 860px; margin: 0 auto; padding: 28px 24px 60px; }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
 
   /* Caveat */
   .caveat {
+    font-family: 'IBM Plex Sans', sans-serif;
     font-size: 12px;
     font-weight: 500;
     color: #7A5200;
@@ -142,586 +129,839 @@
     margin-bottom: 24px;
   }
 
-  /* Progress */
-  .progress { display: flex; gap: 4px; margin-bottom: 24px; }
-  .progress-item { flex: 1; text-align: center; }
-  .progress-bar { height: 3px; border-radius: 3px; margin-bottom: 5px; transition: all 0.3s; }
-  .progress-item span { font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+  /* Page headings */
+  .page-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--atg-navy);
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+    border-bottom: 2px solid var(--atg-teal);
+    display: inline-block;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+  }
+  .page-sub {
+    font-size: 13px;
+    color: var(--text-2);
+    margin-bottom: 20px;
+  }
 
-  /* Crumb */
-  .crumb { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 20px; align-items: center; }
-  .crumb-item { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-3); }
-  .crumb-sep { font-size: 11px; color: var(--border); }
+  /* Legend */
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    background: var(--atg-teal-light);
+    border: 1px solid var(--atg-teal-mid);
+    border-left: 3px solid var(--atg-teal);
+    border-radius: var(--radius);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .leg { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-2); font-family: 'IBM Plex Mono', monospace; }
+  .leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 
-  /* Card */
-  .card {
+  /* Tile grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(158px, 1fr));
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .tile {
     background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 12px 13px;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.1s, background 0.1s;
+    user-select: none;
+  }
+  .tile:hover { border-color: var(--border-strong); }
+  .tile-name { font-size: 12px; font-weight: 500; color: var(--text); line-height: 1.4; margin-bottom: 4px; }
+  .tile-tier { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-3); }
+  .check-mark {
+    position: absolute; top: 8px; right: 8px;
+    width: 15px; height: 15px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; font-weight: 700; color: #fff;
+  }
+
+  .tile.on-hard { background: var(--hard-bg); border-color: var(--hard-dot); }
+  .tile.on-hard .tile-name { color: var(--hard-text); }
+  .tile.on-hard .tile-tier { color: var(--hard-dot); }
+  .tile.on-hard .check-mark { background: var(--hard-dot); }
+
+  .tile.on-escalate { background: var(--escalate-bg); border-color: var(--escalate-dot); }
+  .tile.on-escalate .tile-name { color: var(--escalate-text); }
+  .tile.on-escalate .tile-tier { color: var(--escalate-dot); }
+  .tile.on-escalate .check-mark { background: var(--escalate-dot); }
+
+  .tile.on-coi { background: var(--coi-bg); border-color: var(--coi-dot); }
+  .tile.on-coi .tile-name { color: var(--coi-text); }
+  .tile.on-coi .tile-tier { color: var(--coi-dot); }
+  .tile.on-coi .check-mark { background: var(--coi-dot); }
+
+  .tile.on-refer { background: var(--refer-bg); border-color: var(--refer-dot); }
+  .tile.on-refer .tile-name { color: var(--refer-text); }
+  .tile.on-refer .tile-tier { color: var(--refer-dot); }
+  .tile.on-refer .check-mark { background: var(--refer-dot); }
+
+  .tile.on-eld { background: var(--eld-bg); border-color: var(--eld-dot); }
+  .tile.on-eld .tile-name { color: var(--eld-text); }
+  .tile.on-eld .tile-tier { color: var(--eld-dot); }
+  .tile.on-eld .check-mark { background: var(--eld-dot); }
+
+  .tile.on-approval { background: var(--hard-bg); border-color: var(--hard-dot); }
+  .tile.on-approval .tile-name { color: var(--hard-text); }
+  .tile.on-approval .tile-tier { color: var(--hard-dot); }
+  .tile.on-approval .check-mark { background: var(--hard-dot); }
+
+  .tile.on-conditional { background: var(--conditional-bg); border-color: var(--conditional-dot); }
+  .tile.on-inactive { background: var(--surface-2); border-color: var(--border); }
+  .tile.on-inactive .tile-name { color: var(--text-3); }
+  .tile.on-inactive .tile-tier { color: var(--text-3); }
+  .tile.on-inactive .check-mark { background: var(--text-3); }
+  .tile.on-conditional .tile-name { color: var(--conditional-text); }
+  .tile.on-conditional .tile-tier { color: var(--conditional-dot); }
+  .tile.on-conditional .check-mark { background: var(--conditional-dot); }
+
+  /* Results */
+  .results-area { border-top: 1px solid var(--border); padding-top: 24px; }
+
+  .summary-bar {
+    border-radius: var(--radius-lg);
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+  .summary-bar.clear { background: var(--atg-teal-light); border: 1px solid var(--atg-teal-mid); border-left: 4px solid var(--atg-teal); border-radius: var(--radius); border-top-left-radius: 0; border-bottom-left-radius: 0; color: var(--atg-teal-dark); }
+  .summary-bar.hard { background: var(--hard-bg); border: 1px solid var(--hard-border); color: var(--hard-text); }
+  .summary-bar.action { background: var(--escalate-bg); border: 1px solid var(--escalate-border); color: var(--escalate-text); }
+  .summary-sub { font-size: 12px; font-weight: 400; margin-top: 3px; opacity: 0.85; }
+
+  /* Flag cards */
+  .flag-card {
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);
-    padding: 28px 32px;
-    box-shadow: 0 2px 12px rgba(26,46,68,0.07);
+    overflow: hidden;
+    margin-bottom: 8px;
+    background: var(--surface);
   }
+  .flag-card.fc-hard, .flag-card.fc-approval { border-color: var(--hard-border); background: var(--hard-bg); }
+  .flag-card.fc-escalate { border-color: var(--escalate-border); background: var(--escalate-bg); }
+  .flag-card.fc-coi { border-color: var(--coi-border); background: var(--coi-bg); }
+  .flag-card.fc-refer { border-color: var(--refer-border); background: var(--refer-bg); }
+  .flag-card.fc-eld { border-color: var(--eld-border); background: var(--eld-bg); }
+  .flag-card.fc-conditional { border-color: var(--conditional-border); background: var(--conditional-bg); }
+  .flag-card.fc-setting { border-color: var(--border); background: var(--surface-2); }
+  .flag-card.fc-inactive { border-color: var(--border); background: var(--surface-2); }
 
-  /* Question */
-  .q-text {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text);
-    line-height: 1.5;
-    margin-bottom: 12px;
+  .flag-header {
+    padding: 11px 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
-  .tip {
-    display: flex; gap: 9px; align-items: flex-start;
-    background: var(--atg-teal-light);
-    border: 1px solid var(--atg-teal-mid);
-    border-left: 3px solid var(--atg-teal);
-    border-top-left-radius: 0; border-bottom-left-radius: 0;
-    border-radius: var(--radius);
-    padding: 10px 13px; margin-bottom: 20px;
-  }
-  .tip-icon { font-size: 13px; margin-top: 1px; flex-shrink: 0; }
-  .tip-text { font-size: 12px; color: var(--atg-teal-dark); line-height: 1.6; }
+  .flag-header:hover { filter: brightness(0.97); }
+  .flag-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .flag-title { font-size: 13px; font-weight: 500; flex: 1; }
+  .flag-tier { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-3); margin-right: 6px; }
+  .flag-chevron { font-size: 10px; color: var(--text-3); transition: transform 0.15s; }
+  .flag-chevron.open { transform: rotate(90deg); }
 
-  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 20px; }
+  .flag-title.t-hard, .flag-title.t-approval { color: var(--hard-text); }
+  .flag-title.t-escalate, .flag-title.t-conditional { color: var(--escalate-text); }
+  .flag-title.t-coi { color: var(--coi-text); }
+  .flag-title.t-refer { color: var(--refer-text); }
+  .flag-title.t-eld { color: var(--eld-text); }
 
-  button { cursor: pointer; transition: all 0.15s; font-family: 'IBM Plex Sans', sans-serif; }
-  button:hover { filter: brightness(0.95); }
+  .flag-body { display: none; padding: 0 14px 14px; flex-direction: column; gap: 10px; }
+  .flag-body.open { display: flex; }
 
-  .btn-primary {
-    padding: 9px 22px; border-radius: var(--radius);
-    background: var(--atg-navy); color: #fff;
-    border: 1.5px solid var(--atg-navy);
-    font-size: 13px; font-weight: 500;
+  .flag-rule {
+    font-size: 12px; line-height: 1.6;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0,0,0,0.07);
   }
-  .btn-secondary {
-    padding: 9px 22px; border-radius: var(--radius);
-    background: var(--surface); color: var(--text);
-    border: 1.5px solid var(--border);
-    font-size: 13px; font-weight: 500;
-  }
-  .btn-ghost {
-    padding: 7px 16px; border-radius: var(--radius);
-    background: var(--surface-2); color: var(--text-2);
-    border: 1.5px solid var(--border);
-    font-size: 12px; font-weight: 500;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-  .btn-amber {
-    padding: 9px 22px; border-radius: var(--radius);
-    background: #C98F00; color: #fff;
-    border: 1.5px solid #C98F00;
-    font-size: 13px; font-weight: 500;
-  }
-  .btn-list {
-    padding: 11px 16px; border-radius: var(--radius);
-    background: var(--surface); color: var(--text);
-    border: 1.5px solid var(--border);
-    font-size: 13px; font-weight: 500;
-    text-align: left; width: 100%; display: block;
-  }
-  .btn-list:hover { border-color: var(--border-strong); background: var(--atg-teal-light); }
-  .btn-ml { margin-left: auto; }
-  .exc-list { display: flex; flex-direction: column; gap: 8px; }
-  .exc-nav { display: flex; gap: 8px; margin-top: 4px; }
+  .flag-rule.r-hard { color: var(--hard-text); }
+  .flag-rule.r-escalate, .flag-rule.r-conditional { color: var(--escalate-text); }
+  .flag-rule.r-coi { color: var(--coi-text); }
+  .flag-rule.r-refer { color: var(--refer-text); }
+  .flag-rule.r-eld { color: var(--eld-text); }
 
-  /* Badges */
-  .badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 3px 10px; border-radius: 20px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 500; letter-spacing: 0.02em; border: 1px solid;
-  }
-  .badge-exempt { background: var(--eld-bg); color: var(--eld-text); border-color: var(--eld-border); }
-  .badge-conditional { background: var(--conditional-bg); color: var(--conditional-text); border-color: var(--conditional-border); }
-  .badge-notexempt { background: var(--hard-bg); color: var(--hard-text); border-color: var(--hard-border); }
-
-  /* Result boxes */
-  .result-box { border-radius: var(--radius-lg); padding: 22px 26px; margin-bottom: 16px; border: 1px solid; }
-  .result-box.res-exempt { background: var(--eld-bg); border-color: var(--eld-border); }
-  .result-box.res-conditional { background: var(--conditional-bg); border-color: var(--conditional-border); }
-  .result-box.res-notexempt { background: var(--hard-bg); border-color: var(--hard-border); }
-
-  .result-title {
-    font-size: 18px; font-weight: 600; color: var(--text);
-    margin: 10px 0 6px; line-height: 1.3;
-  }
-  .result-detail { font-size: 13px; line-height: 1.65; color: var(--text-2); }
-  .override-pill {
-    margin-top: 12px; padding: 7px 13px;
-    background: rgba(255,255,255,0.6); border-radius: var(--radius);
-    display: inline-flex; align-items: center; gap: 8px;
-    border: 1px solid rgba(0,0,0,0.08);
-  }
-  .override-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-3); }
-  .override-val { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; }
-  .override-val.col-exempt { color: var(--eld-text); }
-  .override-val.col-conditional { color: var(--conditional-text); }
-  .override-val.col-notexempt { color: var(--hard-text); }
-
-  /* Note box */
-  .note-box {
-    border-radius: var(--radius); padding: 12px 16px;
-    background: var(--atg-teal-light);
-    border: 1px solid var(--atg-teal-mid);
-    border-left: 3px solid var(--atg-teal);
-    border-top-left-radius: 0; border-bottom-left-radius: 0;
-    margin-bottom: 16px;
-  }
   .slabel {
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; font-weight: 500;
-    text-transform: uppercase; letter-spacing: 0.06em;
-    color: var(--atg-teal); margin-bottom: 5px;
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--atg-teal);
+    margin-bottom: 5px;
   }
-  .note-text { font-size: 12px; color: var(--atg-teal-dark); line-height: 1.6; }
 
-  /* Response box */
-  .response-box {
-    border-radius: var(--radius); padding: 12px 16px;
+  .guidance-text { font-size: 12px; line-height: 1.7; color: var(--text); }
+
+  .co-note {
+    font-size: 11px;
+    background: rgba(0,0,0,0.04);
+    border-radius: var(--radius);
+    padding: 8px 11px;
+    line-height: 1.6;
+    color: var(--escalate-text);
+    border-left: 2px solid var(--escalate-dot);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .script-box {
     background: rgba(255,255,255,0.6);
-    border-left: 3px solid rgba(0,0,0,0.15);
-    border-top-left-radius: 0; border-bottom-left-radius: 0;
-    border-top: 1px solid rgba(0,0,0,0.07);
-    border-right: 1px solid rgba(0,0,0,0.07);
-    border-bottom: 1px solid rgba(0,0,0,0.07);
-    margin-bottom: 16px;
+    border-radius: var(--radius);
+    padding: 10px 13px;
+    border-left: 2px solid rgba(0,0,0,0.15);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.7;
+    font-style: italic;
   }
-  .response-text { font-size: 12px; color: var(--text); line-height: 1.7; font-style: italic; }
 
-  /* Hard stop */
-  .hard-stop-box {
-    border-radius: var(--radius-lg); padding: 22px 26px;
-    background: var(--hard-bg); border: 1px solid var(--hard-border);
-    margin-bottom: 16px;
-  }
-  .hard-stop-box .result-title { color: var(--hard-text); }
-  .hard-stop-box .result-detail { color: var(--hard-text); opacity: 0.8; }
-
-  /* Exception / amber prompt */
-  .exception-box {
-    border-radius: var(--radius); padding: 14px 16px;
-    background: var(--escalate-bg);
-    border: 1px solid var(--escalate-border);
-    border-left: 3px solid var(--escalate-dot);
-    border-top-left-radius: 0; border-bottom-left-radius: 0;
-    margin-bottom: 16px;
-  }
-  .exception-label {
+  .step-list { display: flex; flex-direction: column; gap: 7px; }
+  .step-row { display: flex; gap: 9px; align-items: flex-start; }
+  .step-dot {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--atg-teal-light);
+    border: 1px solid var(--atg-teal-mid);
+    display: flex; align-items: center; justify-content: center;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; font-weight: 500;
-    text-transform: uppercase; letter-spacing: 0.06em;
-    color: var(--escalate-dot); margin-bottom: 6px;
+    font-size: 10px; font-weight: 500; color: var(--atg-teal-dark);
+    flex-shrink: 0; margin-top: 1px;
   }
-  .exception-text { font-size: 12px; color: var(--escalate-text); line-height: 1.6; margin-bottom: 12px; }
+  .step-text { font-size: 12px; color: var(--text); line-height: 1.6; }
 
-  .result-nav { display: flex; gap: 8px; margin-top: 4px; }
+  .outcome {
+    border-radius: var(--radius);
+    padding: 11px 13px;
+    margin-bottom: 8px;
+  }
+  .outcome-hard { background: var(--hard-bg); border: 1px solid var(--hard-border); }
+  .outcome-review { background: var(--escalate-bg); border: 1px solid var(--escalate-border); }
+  .outcome-soft { background: var(--soft-bg); border: 1px solid var(--soft-border); }
+  .outcome-title { font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+  .ot-hard { color: var(--hard-text); }
+  .ot-review { color: var(--escalate-text); }
+  .ot-soft { color: var(--soft-text); }
+  .outcome-body { font-size: 12px; line-height: 1.6; }
+  .ob-hard { color: var(--hard-text); }
+  .ob-review { color: var(--escalate-text); }
+  .ob-soft { color: var(--soft-text); }
 
-  /* Footer */
-  .footer {
-    margin-top: 24px;
-    font-size: 11px; color: var(--text-3);
-    text-align: center; line-height: 1.7;
-    border-top: 1px solid var(--border);
-    padding-top: 16px;
+  .q-text { font-size: 13px; font-weight: 500; color: var(--text); margin-bottom: 10px; line-height: 1.5; }
+  .q-opts { display: flex; flex-direction: column; gap: 6px; }
+  .q-btn {
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 9px 13px;
+    font-size: 12px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    color: var(--text);
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.1s;
+  }
+  .q-btn:hover { background: #fff; border-color: var(--border-strong); }
+
+  .reset-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 5px 11px;
+    border: 1px solid var(--atg-teal);
+    border-radius: var(--radius);
+    background: rgba(255,255,255,0.5);
+    color: var(--atg-teal);
+    cursor: pointer;
+    align-self: flex-start;
+    margin-top: 2px;
+  }
+  .reset-btn:hover { background: var(--atg-teal); color: #fff; }
+
+  .btn-link {
+    font-size: 12px; font-weight: 500;
+    background: none; border: none; cursor: pointer; padding: 0;
+    color: var(--atg-teal);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-family: 'IBM Plex Sans', sans-serif;
   }
 
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-  .fade { animation: fadeIn 0.2s ease; }
+  .clear-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 6px 14px;
+    border: 1px solid var(--atg-teal);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--atg-teal);
+    cursor: pointer;
+    margin-top: 14px;
+  }
+  .clear-btn:hover { background: var(--atg-teal); color: #fff; }
 
-  @media (max-width: 760px) {
-    .header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
-    }
-    .header-right {
-      width: 100%;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 8px;
-    }
-    .header-nav {
-      flex-wrap: wrap;
-    }
+  .results-caveat {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: #7A5200;
+    background: #FDF5E8;
+    border: 1.5px solid #E8C87A;
+    border-left: 4px solid #C98F00;
+    border-radius: var(--radius);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding: 12px 16px;
+    margin-top: 16px;
+    line-height: 1.7;
+  }
+
+  /* Alert guide */
+  .alert-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .alert-tile {
+    border-radius: var(--radius-lg);
+    padding: 12px 13px;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    transition: opacity 0.1s, border-color 0.1s;
+  }
+  .alert-tile:hover { opacity: 0.88; }
+  .alert-tile.at-hard { background: var(--hard-bg); border-color: var(--hard-border); }
+  .alert-tile.at-review { background: var(--escalate-bg); border-color: var(--escalate-border); }
+  .alert-tile.at-soft { background: var(--soft-bg); border-color: var(--soft-border); }
+  .alert-tile.at-conditional { background: var(--conditional-bg); border-color: var(--conditional-border); }
+  .alert-tile.at-info { background: var(--coi-bg); border-color: var(--coi-border); }
+  .at-info .alert-tile-name { color: var(--coi-text); }
+  .at-info .alert-tile-tier { color: var(--coi-dot); }
+  .alert-tile-name { font-size: 12px; font-weight: 500; line-height: 1.4; margin-bottom: 4px; }
+  .at-hard .alert-tile-name { color: var(--hard-text); }
+  .at-review .alert-tile-name { color: var(--escalate-text); }
+  .at-soft .alert-tile-name { color: var(--soft-text); }
+  .at-conditional .alert-tile-name { color: var(--conditional-text); }
+  .alert-tile-tier { font-family: 'IBM Plex Mono', monospace; font-size: 10px; }
+  .at-hard .alert-tile-tier { color: var(--hard-dot); }
+  .at-review .alert-tile-tier { color: var(--escalate-dot); }
+  .at-soft .alert-tile-tier { color: var(--eld-dot); }
+  .at-conditional .alert-tile-tier { color: var(--conditional-dot); }
+
+  .back-btn {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--atg-teal);
+    background: var(--atg-teal-light);
+    border: 1.5px solid var(--atg-teal-mid);
+    border-radius: var(--radius);
+    cursor: pointer;
+    padding: 7px 14px;
+    margin-bottom: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.01em;
+    transition: all 0.15s;
+  }
+  .back-btn:hover { background: var(--atg-teal); color: #fff; border-color: var(--atg-teal); }
+
+  .badge {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: 99px;
+    margin-bottom: 10px;
+    letter-spacing: 0.03em;
+  }
+  .badge-hard { background: var(--hard-bg); color: var(--hard-text); border: 1px solid var(--hard-border); }
+  .badge-review { background: var(--escalate-bg); color: var(--escalate-text); border: 1px solid var(--escalate-border); }
+  .badge-soft { background: var(--atg-teal-light); color: var(--atg-teal-dark); border: 1px solid var(--atg-teal-mid); }
+  .badge-conditional { background: var(--conditional-bg); color: var(--conditional-text); border: 1px solid var(--conditional-border); }
+  .badge-info { background: var(--coi-bg); color: var(--coi-text); border: 1px solid var(--coi-border); }
+
+  .alert-desc { font-size: 13px; color: var(--text-2); line-height: 1.7; margin-bottom: 16px; }
+  .alert-title { font-size: 18px; font-weight: 600; color: var(--atg-navy); margin-bottom: 6px; letter-spacing: -0.01em; }
+
+  .detail-script {
+    background: var(--surface-2);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    border-left: 2px solid var(--border-strong);
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: var(--text);
+    line-height: 1.7;
+    font-style: italic;
+  }
+  .detail-script.hard { border-left-color: var(--hard-dot); }
+  .detail-script.review { border-left-color: var(--escalate-dot); }
+  .detail-script.soft { border-left-color: var(--eld-dot); }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+  @media (max-width: 600px) {
+    .header { flex-direction: column; gap: 12px; align-items: flex-start; }
+    .grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
   }
 </style>
 </head>
 <body>
 
 <div class="header">
-
-  <div style="display:flex; align-items:center; gap:16px;">
-
-    <!-- ARMSTRONG BRAND -->
-    <div style="color:white;">
-      <div style="font-size:18px; font-weight:700; letter-spacing:2px;">
-        ARMSTRONG
-      </div>
-      <div style="font-size:9px; letter-spacing:4px; opacity:.7;">
-        TRANSPORT GROUP
-      </div>
+  <div class="header-brand">
+    <div style="line-height:1.25;">
+      <div style="font-family:'IBM Plex Sans',sans-serif;font-size:18px;font-weight:700;letter-spacing:2.5px;color:#ffffff;text-transform:uppercase;">Armstrong</div>
+      <div style="font-family:'IBM Plex Sans',sans-serif;font-size:8px;font-weight:400;letter-spacing:4.5px;color:rgba(255,255,255,0.6);text-transform:uppercase;">Transport Group</div>
     </div>
-
-    <!-- DIVIDER -->
-    <div style="width:1px; height:30px; background:rgba(255,255,255,.2);"></div>
-
-    <!-- PAGE TITLE -->
-    <div style="color:white; font-size:15px; font-weight:600;">
-      Carrier Ruleset & Vetting Guide
-    </div>
-
+    <div style="width:1px;height:30px;background:rgba(255,255,255,0.2);flex-shrink:0;"></div>
+    <div style="font-family:'IBM Plex Sans',sans-serif;font-size:15px;font-weight:600;color:#ffffff;letter-spacing:0.5px;">Carrier Ruleset & Vetting Guide</div>
   </div>
-
-  <!-- RIGHT SIDE -->
-  <div class="header-right">
-
-    <div class="header-version">
-      Updated <span id="mod-date"></span>
-    </div>
-
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div id="last-modified" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.04em;text-align:right;line-height:1.4;">UPDATED<br><span id="mod-date"></span></div>
     <nav class="header-nav">
-      <a href="#" class="active" onclick="reset(); return false;">Main</a>
-      <a href="hvhr.html">HVHR</a>
+      <button id="nav-checker" onclick="switchMode('checker')">Vetting checker</button>
+      <button id="nav-alerts" onclick="switchMode('alerts')">Identity alert guide</button>
     </nav>
-
   </div>
-
-</div>
 </div>
 
 <div class="container">
 
-  <div class="caveat"><strong>This tool is intended as a guide to help evaluate ELD exemption eligibility based on current policy. Results may not account for every situation, and may contain errors. All results must be reviewed and confirmed by a qualified team member. No override should be granted or denied without human review.</strong></div>
-
-  <div class="progress" id="progress"></div>
-
-  <div class="card">
-    <div id="crumb" class="crumb"></div>
-    <div id="content"></div>
+  <!-- CHECKER SCREEN -->
+  <div class="screen active" id="screen-checker">
+    <div class="page-title">Carrier vetting checker</div>
+    <div class="page-sub">Select any rules that are <strong>failing</strong> for this carrier. Guidance will appear below.</div>
+    <div class="caveat">&#9432;&nbsp; This tool is intended as a guide to help evaluate eligibility based on current policy. Results may not account for every situation, and may contain errors. All results must be reviewed and confirmed by a qualified team member. No override should be granted or denied without human review.</div>
+    <div class="legend">
+      <div class="leg"><div class="leg-dot" style="background:var(--hard-dot)"></div>Hard no</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--escalate-dot)"></div>Escalate / Conditional</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--coi-dot)"></div>COI required</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--refer-dot)"></div>Refer to alert guide</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--eld-dot)"></div>Refer to ELD guide</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--text-3)"></div>Use setting</div>
+    </div>
+    <div style="margin-bottom:12px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--atg-teal);margin-bottom:2px;">Interstate Carrier</div>
+      <div style="font-size:20px;font-weight:600;color:var(--atg-navy);letter-spacing:-0.01em;font-family:'IBM Plex Sans',sans-serif;">Classification Rules</div>
+      <div style="height:2px;width:40px;background:var(--atg-teal);margin-top:6px;border-radius:99px;"></div>
+    </div>
+    <div class="grid" id="tile-grid"></div>
+    <div style="margin-top:28px;margin-bottom:12px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--atg-teal);margin-bottom:2px;">Refrigerated Freight</div>
+      <div style="font-size:20px;font-weight:600;color:var(--atg-navy);letter-spacing:-0.01em;font-family:'IBM Plex Sans',sans-serif;">Classification Rules</div>
+      <div style="height:2px;width:40px;background:var(--atg-teal);margin-top:6px;border-radius:99px;"></div>
+    </div>
+    <div class="grid" id="reefer-grid" style="margin-bottom:20px;"></div>
+    <div style="margin-top:28px;margin-bottom:12px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--atg-teal);margin-bottom:2px;">Other</div>
+      <div style="font-size:20px;font-weight:600;color:var(--atg-navy);letter-spacing:-0.01em;font-family:'IBM Plex Sans',sans-serif;">Additional Rules</div>
+      <div style="height:2px;width:40px;background:var(--atg-teal);margin-top:6px;border-radius:99px;"></div>
+    </div>
+    <div class="grid" id="other-grid" style="margin-bottom:20px;"></div>
+    <div class="results-area" id="results-area"></div>
   </div>
 
-  <div class="footer">The goal is to limit ELD exemption overrides to those that are legitimate under this policy. Granting an ELD exemption — even for a legitimate reason — negates ping-at-pickup protection for the full duration of the override.</div>
+  <!-- ALERTS HOME -->
+  <div class="screen" id="screen-alerts">
+    <div class="page-title">Identity alert guide</div>
+    <div class="page-sub">Select the alert type showing on this carrier.</div>
+    <div class="alert-grid" id="alert-grid"></div>
+    <div style="margin-top:20px;"><button class="back-btn" onclick="switchMode('checker')">&#8592;&nbsp; Back to vetting checker</button></div>
+  </div>
+
+  <!-- ALERT DETAIL -->
+  <div class="screen" id="screen-alert-detail">
+    <div id="alert-detail-content"></div>
+  </div>
 
 </div>
 
 <script>
-const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const d = new Date(document.lastModified);
-const modDate = `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
-document.getElementById("mod-date").textContent = modDate;
+const tierLabel={hard:'Hard no',escalate:'Escalate',coi:'COI required',refer:'Refer to alert guide',eld:'Refer to ELD guide',approval:'Requires approval',setting:'Use setting',soft:'Soft / verify first',review:'Escalate for review',conditional:'Review required',inactive:'Not applicable',info:'Review required'};
+const tierDot={hard:'var(--hard-dot)',escalate:'var(--escalate-dot)',coi:'var(--coi-dot)',refer:'var(--refer-dot)',eld:'var(--eld-dot)',approval:'var(--hard-dot)',setting:'var(--text-3)',conditional:'var(--conditional-dot)',inactive:'var(--text-3)',info:'var(--coi-dot)'};
 
-const progressSteps = ["Engine / Equip", "Carrier", "Load History", "Result"];
-const progressMap = {
-  model_year_new: 0, model_year: 0, flatbed_cargo: 0,
-  carrier_status: 1, new_carrier_default: 1, new_carrier_exceptions: 1, new_carrier_rare_prompt: 1, new_carrier_check: 1,
-  load_history: 2, cargo_value: 2,
-  exceptions: 2, equipment_specialized: 2, short_haul_check: 2, incompatible_eld: 2, glider_kit: 2,
-};
+const rules=[
+  {id:'dot',short:"DOT number",rule:"Carrier must have a DOT number.",tier:"hard",guidance:"This carrier does not have a DOT number on file. Carrier is ineligible for use at this time.",script:"This carrier doesn't have a DOT number on file — carrier is ineligible for use at this time.",note:"This is rare. If flagged, also check interstate authority — these two issues often appear together."},
+  {id:'mc',short:"MC number",rule:"Carrier must have an MC number.",tier:"hard",guidance:"This carrier does not have an MC number, which is required for interstate freight. Carrier is ineligible for use at this time.",script:"This carrier doesn't have an MC number, which is required for interstate freight — carrier is ineligible for use at this time.",note:"Intrastate only carriers may have a DOT number only and no MC number. Confirm whether this is an intrastate carrier before applying this rule."},
+  {id:'ops',short:"Operating status",rule:"Carrier must have an operating status authorized for property.",tier:"hard",guidance:"This carrier's operating status is not authorized for property. Carrier is ineligible for use at this time.",script:"This carrier's operating status is not authorized for property — carrier is ineligible for use at this time."},
+  {id:'auth',short:"Interstate authority",rule:"Carrier must have active interstate authority for property.",tier:"hard",guidance:"This carrier does not have active interstate authority for property. Carrier is ineligible for use at this time.",script:"This carrier does not have active interstate authority for property — carrier is ineligible for use at this time.",note:"If this is flagged, also check whether the carrier has a DOT number — these two issues often appear together."},
+  {id:'oos',short:"Out of service orders",rule:"Carrier must not have any active out of service orders.",tier:"hard",guidance:"This carrier has an active out of service order. Carrier is ineligible for use at this time.",script:"This carrier has an active out of service order — carrier is ineligible for use at this time."},
+  {id:'safety',short:"Safety rating",rule:"If rated, carrier must have a satisfactory safety rating.",tier:"hard",guidance:"This carrier's safety rating does not meet our minimum requirements. Carrier is ineligible for use at this time.",script:"This carrier's safety rating does not meet our minimum requirements — carrier is ineligible for use at this time.",note:"A conditional or unsatisfactory rating means the carrier does not have adequate safety management controls in place to ensure compliance with the safety fitness standard (49 CFR 385.5 a–k). Allowing use of a conditionally rated carrier elevates risk and liability for ATG. By approving such a carrier, we are accepting this increased risk — even with additional due diligence, these measures may not fully mitigate the heightened liability in the eyes of the legal system. A conditional safety rating is a clear indication of safety concerns."},
+  {id:'safer',short:"SAFER status",rule:"Carrier must have a SAFER operating status of active.",tier:"hard",guidance:"This carrier's SAFER operating status is not active. Carrier is ineligible for use at this time.",script:"This carrier's SAFER operating status is not active — carrier is ineligible for use at this time."},
+  {id:'auth90',short:"90-day authority",rule:"Carrier must have at least 90 days of continuous authority.",tier:"conditional",flow:'auth90'},
+  {id:'bipd',short:"BIPD coverage",rule:"Carrier must have minimum BIPD coverage of $1,000,000 USD / $1,500,000 CAD / $20,000,000 MXN.",tier:"coi",guidance:["Request a COI from Highway.","If valid and verified BIPD coverage at or above the minimum is confirmed, carrier may proceed.","If valid and verified insurance cannot be confirmed, carrier is ineligible for use at this time."]},
+  {id:'cargo',short:"Cargo coverage",rule:"Carrier must have minimum Cargo coverage of $100,000 USD / $150,000 CAD / $2,000,000 MXN.",tier:"coi",guidance:["Request a COI from Highway.","If valid and verified cargo coverage at or above the minimum is confirmed, carrier may proceed.","If valid and verified insurance cannot be confirmed, carrier is ineligible for use at this time."]},
+  {id:'nj',short:"NJ BIPD coverage",rule:"Carrier must have minimum BIPD coverage of $1,500,000 if principal address is in New Jersey.",tier:"coi",guidance:["Request a COI from Highway.","If valid and verified insurance at or above $1,500,000 (inclusive of umbrella/excess) is confirmed, carrier may proceed.","If valid and verified insurance cannot be confirmed, carrier is ineligible for use at this time."]},
+  {id:'tia',short:"TIA WatchDog report",rule:"Carrier must not have any published TIA WatchDog reports.",tier:"conditional",guidance:"TIA WatchDog report categories closely mirror Highway Identity Alert types. Identify the report category and follow the corresponding response guidance in the Identity Alert guide.",note:"TIA WatchDog reports follow the same response logic as Highway Identity Alerts — use the same guide."},
+  {id:'identity',short:"Identity alert",rule:"Carrier must not have any published Identity Alerts (identity theft excluded).",tier:"conditional",guidance:"Refer to the Identity Alert guide for the alert type on file and follow the corresponding response guidance. Note: identity theft reports are handled separately."},
+  {id:'eld',short:"Footprint / ELD",rule:"Carrier must have a clear physical and digital footprint or ELD connection with Highway.",tier:"eld",guidance:"Refer to the ELD guide tool for steps to verify this carrier's footprint or ELD connection before proceeding."},
+  {id:'identifier',short:"Verified identifier",rule:"Carrier must have any manually entered identifier verified by Highway.",tier:"escalate",guidance:"This should almost never come up. Do not make a decision — escalate to a manager immediately.",script:"There's a manually entered identifier that hasn't been verified by Highway — I need to escalate this to a manager before we can proceed."},
+  {id:'impersonation',short:"Impersonation insights",rule:"Carrier must not have a combination of Insights suggesting carrier impersonation.",tier:"escalate",guidance:"This is uncommon but serious. Review the carrier's profile carefully and escalate to a manager as needed. Do not approve unilaterally.",script:"This carrier has a combination of Insights suggesting possible impersonation. I need to review this and escalate before we can proceed."},
+  {id:'fmcsa',short:"FMCSA contact change",rule:"Carrier must not have had an FMCSA phone or email change in the last 60 days.",tier:"conditional",flow:'fmcsa'},
+  {id:'na',short:"North America access",rule:"Carrier must have at least one authorized user who accessed Highway from North America.",tier:"escalate",guidance:"This is uncommon. Review the carrier's profile and escalate to a manager as needed before proceeding.",script:"This carrier doesn't have a verified North America access record on Highway. I need to review this and escalate before we can proceed."},
+  {id:'load',short:"Load limit",rule:"Carrier must not exceed the Highway & TriumphPay Load Limit if it has 10 or fewer power units.",tier:"conditional",flow:'load'},
+  {id:'glendale',short:"Glendale CA address",rule:"Carrier must not have address in postal code near or in Glendale, CA.",tier:"conditional",guidance:"This flag was historically associated with a California-based double brokering scheme centered in the Glendale area. While it no longer carries the same level of concern, it should not be dismissed entirely. Review the carrier's profile for any additional flags or patterns before proceeding. If other concerns are present, escalate to a manager.",script:"This carrier's address is flagged in the Glendale, CA area. I'm reviewing their profile for any additional concerns before we proceed."},
+  {id:'factoring',short:"Factoring approval",rule:"Certain factoring companies require broker approval.",tier:"coi",guidance:["Follow standard vetting procedures.","Confirm broker approval status if required.","Escalate as necessary."]},
+  {id:'insights',short:"Insights approval",rule:"Carrier must not have one or more Insight(s) requiring approval.",tier:"inactive",guidance:"This rule is no longer applicable."},
+];
 
-let history = [{ step: "model_year_new", label: "Engine / Equipment" }];
+const alerts=[
+  {id:'double',name:"Double brokering",tier:"conditional",desc:"The carrier booked a load and brokered it to another carrier without the shipper or broker's knowledge.",script:"We've identified a double brokering alert on this carrier's Highway profile. This is a hard stop — we're not able to move forward with this carrier on this load.",action:"Carrier is ineligible for use at this time. No exceptions.",flow:null},
+  {id:'identity-theft',name:"Identity theft",tier:"conditional",desc:"A carrier's identity was used by another person or company without their permission — the carrier is typically the victim.",script:"There's an identity theft alert on this carrier's profile — this typically means they were a victim. Before we proceed, let's verify we're communicating with the actual carrier using FMCSA contact info, not the load tender.",action:"Verify contact info independently using FMCSA. Document confirmation before proceeding.",flow:null},
+  {id:'hostage',name:"Hostage load",tier:"hard",desc:"The carrier refused to release freight upon demand or exerted unauthorized control over freight.",script:"This carrier has one or more hostage load reports on file. Given the nature of this alert, we are unable to move forward — carrier is ineligible for use at this time.",action:"Carrier is ineligible for use at this time. No exceptions.",flow:null},
+  {id:'stolen',name:"Stolen assets",tier:"hard",desc:"The carrier stole equipment or cargo from a broker or shipper.",script:"We're seeing one or more stolen asset alerts on this carrier. Unfortunately we're unable to use them for this load — carrier is ineligible for use at this time.",action:"Carrier is ineligible for use at this time. No exceptions.",flow:null},
+  {id:'trailer',name:"Trailer misuse",tier:"info",desc:"The carrier misused a trailer by overloading it, damaging it, or using it for unintended purposes.",flow:'trailer'},
+  {id:'solicitation',name:"Back solicitation",tier:"info",desc:"The carrier used broker-obtained information to solicit the broker's customer directly.",script:"This carrier has a back solicitation flag. I need to loop in a manager before we use them. I'll get back to you shortly — do you want me to hold a backup option in the meantime?",action:"Escalate. Note the load and customer in your request.",flow:null},
+  {id:'insurance',name:"Unresolved insurance claims",tier:"info",desc:"The carrier failed to resolve a legitimate, documented claim filed by a broker or shipper.",flow:'insurance'},
+  {id:'ownership',name:"Change in ownership",tier:"conditional",desc:"This carrier recently purchased an MC number and may be misrepresenting their authority and inspection history.",flow:'ownership'},
+  {id:'pending',name:"Pending investigation",tier:"hard",desc:"There is an active fraud concern or report currently being investigated.",script:"There's an active pending investigation flag on this carrier. Until that's resolved, we can't use them.",action:"Carrier is ineligible for use at this time. No exceptions.",flow:null},
+  {id:'bankruptcy',name:"Bankruptcy filing",tier:"hard",desc:"The carrier has filed for Chapter 11 Bankruptcy.",script:"This carrier has a Chapter 11 bankruptcy filing on record. I need manager approval before booking — there are risks around insurance and cargo claims to account for.",action:"Escalate. Manager to assess insurance validity and claim risk.",flow:null},
+  {id:'other',name:"Other types",tier:"review",desc:"Additional Identity Alert types that are equally strong signals of potential risk.",script:"This carrier has an Identity Alert that requires a closer look. I don't want to make a call without review — let me escalate and get back to you.",action:"Escalate for review regardless of alert subtype.",flow:null},
+];
 
-function go(step, label) { history.push({ step, label }); render(); }
-function back() { if (history.length > 1) { history.pop(); render(); } }
-function reset() { history = [{ step: "model_year_new", label: "Engine / Equipment" }]; render(); }
+const checked=new Set();
+const expanded=new Set();
+const flowState={};
 
-function renderProgress(step) {
-  const isResult = step.startsWith("result_");
-  const current = isResult ? 4 : (progressMap[step] ?? 0);
-  return progressSteps.map((label, i) => {
-    const active = i === current, done = i < current || isResult;
-    const color = (done || active) ? "var(--atg-teal)" : "var(--border)";
-    const textColor = (done || active) ? "var(--atg-teal)" : "var(--text-3)";
-    const opacity = active ? 1 : done ? 0.6 : 1;
-    return `<div class="progress-item">
-      <div class="progress-bar" style="background:${color};opacity:${opacity}"></div>
-      <span style="color:${textColor}">${label}</span>
+function switchMode(m){
+  ['checker','alerts'].forEach(k=>{
+    const btn = document.getElementById('nav-'+k);
+    if(k===m){
+      btn.style.cssText='font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#0069A6;color:#ffffff;border:2px solid #0069A6;';
+    } else {
+      btn.style.cssText='font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#ffffff;color:#1A2E44;border:2px solid #ffffff;';
+    }
+  });
+  if(m==='checker') showScreen('screen-checker');
+  else showScreen('screen-alerts');
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function toggleTile(id){
+  if(checked.has(id))checked.delete(id);else{checked.add(id);delete flowState[id];}
+  renderGrid();renderResults();
+}
+
+function tileClass(r){
+  const t=r.tier==='approval'?'hard':r.tier;
+  return checked.has(r.id)?'on-'+t:'';
+}
+
+const otherRules=[
+  {id:'non-domiciled',short:"Non-domiciled carrier",rule:"Carrier is non-domiciled.",tier:"conditional",guidance:"Non-domiciled carriers require additional review. Verify the carrier's authority, insurance and operating base before proceeding. Escalate to a manager if concerns are present."},
+];
+
+const otherChecked=new Set();
+
+function toggleOtherTile(id){
+  if(otherChecked.has(id))otherChecked.delete(id);else otherChecked.add(id);
+  renderOtherGrid();
+  renderResults();
+}
+
+function renderOtherGrid(){
+  const g=document.getElementById('other-grid');
+  if(!g) return;
+  g.innerHTML=otherRules.map(r=>{
+    const on=otherChecked.has(r.id);
+    const t=r.tier;
+    return`<div class="tile ${on?'tile-checked-'+t:'tile-default'}" onclick="toggleOtherTile('${r.id}')" style="max-width:280px;">
+      ${on?`<div class="check-mark check-${t}">✓</div>`:''}
+      <div class="tile-name ${on?'tile-name-checked-'+t:''}">${r.short}</div>
+      <div class="tile-tier ${on?'tile-tier-checked-'+t:''}">${tierLabel[r.tier]||r.tier}</div>
     </div>`;
-  }).join("");
+  }).join('');
 }
 
-function renderCrumb(trail) {
-  if (trail.length <= 1) return "";
-  return trail.map((s, i) =>
-    `<span class="crumb-item">${s}</span>${i < trail.length - 1 ? '<span class="crumb-sep"> › </span>' : ''}`
-  ).join("");
+const reeferRules=[
+  {id:'reefer-breakdown',short:"Refrigeration breakdown coverage",rule:"Carrier must have refrigeration breakdown coverage.",tier:"coi",guidance:["Review the COI in Highway and look for refrigeration breakdown coverage — this can sometimes be found further down the document.","If refrigeration breakdown coverage is confirmed, carrier may proceed for refrigerated loads.","If coverage cannot be confirmed, carrier is ineligible for refrigerated loads at this time."]},
+];
+
+const reeferChecked=new Set();
+
+function toggleReeferTile(id){
+  if(reeferChecked.has(id))reeferChecked.delete(id);else reeferChecked.add(id);
+  renderReeferGrid();
+renderOtherGrid();
+  renderReeferResults();
 }
 
-function badge(type) {
-  const map = {
-    exempt: ['badge-exempt', '✓ Exempt'],
-    conditional: ['badge-conditional', '⚠ Conditional'],
-    notexempt: ['badge-notexempt', '✗ Not Exempt']
-  };
-  const [cls, text] = map[type];
-  return `<span class="badge ${cls}">${text}</span>`;
+function renderReeferGrid(){
+  const g=document.getElementById('reefer-grid');
+  if(!g) return;
+  g.innerHTML=reeferRules.map(r=>{
+    const on=reeferChecked.has(r.id);
+    const t=r.tier;
+    return`<div class="tile ${on?'tile-checked-'+t:'tile-default'}" onclick="toggleReeferTile('${r.id}')" style="max-width:280px;">
+      ${on?`<div class="check-mark check-${t}">✓</div>`:''}
+      <div class="tile-name ${on?'tile-name-checked-'+t:''}">${r.short}</div>
+      <div class="tile-tier ${on?'tile-tier-checked-'+t:''}">${tierLabel[r.tier]||r.tier}</div>
+    </div>`;
+  }).join('');
 }
 
-function question({ text, tip, noLabel = "No", yesLabel = "Yes", onNo, onYes, isFirst }) {
-  const tipHtml = tip ? `<div class="tip"><span class="tip-icon">💡</span><span class="tip-text">${tip}</span></div>` : "";
-  const backBtn = !isFirst ? `<button class="btn-ghost" onclick="back()">‹ Back</button>` : "";
-  const resetBtn = !isFirst ? `<button class="btn-ghost btn-ml" onclick="reset()">↺ Start Over</button>` : "";
-  return `<div class="fade">
-    <p class="q-text">${text}</p>
-    ${tipHtml}
-    <div class="btn-row">
-      <button class="btn-primary" onclick="${onNo}">${noLabel}</button>
-      <button class="btn-secondary" onclick="${onYes}">${yesLabel}</button>
-      ${backBtn}
-      ${resetBtn}
-    </div>
-  </div>`;
+function renderReeferResults(){
+  const failing=reeferRules.filter(r=>reeferChecked.has(r.id));
+  const area=document.getElementById('results-area');
+  renderResults();
 }
 
-function responseBox(text) {
-  return `<div class="response-box">
-    <div class="slabel">💬 Suggested Response</div>
-    <div class="response-text">${text}</div>
-  </div>`;
+function renderGrid(){
+  document.getElementById('tile-grid').innerHTML=rules.map(r=>{
+    const on=checked.has(r.id);
+    const t=r.tier==='approval'?'hard':r.tier;
+    const dotColor=tierDot[r.tier]||'var(--text-3)';
+    return`<div class="tile ${on?'on-'+t:''}" onclick="toggleTile('${r.id}')">
+      ${on?`<div class="check-mark">✓</div>`:''}
+      <div class="tile-name">${r.short}</div>
+      <div class="tile-tier">${tierLabel[r.tier]||r.tier}</div>
+    </div>`;
+  }).join('');
 }
 
-function result({ type, title, detail, override, extra, response }) {
-  const resCls = { exempt: "res-exempt", conditional: "res-conditional", notexempt: "res-notexempt" }[type];
-  const colCls = { exempt: "col-exempt", conditional: "col-conditional", notexempt: "col-notexempt" }[type];
-  const overrideHtml = override ? `<div class="override-pill"><span class="override-label">Override duration</span><span class="override-val ${colCls}">${override}</span></div>` : "";
-  const noteHtml = extra ? `<div class="note-box"><div class="slabel">Note</div><div class="note-text">${extra}</div></div>` : "";
-  const responseHtml = response ? responseBox(response) : "";
-  return `<div class="fade">
-    <div class="result-box ${resCls}">
-      ${badge(type)}
-      <div class="result-title">${title}</div>
-      <div class="result-detail">${detail}</div>
-      ${overrideHtml}
-    </div>
-    ${noteHtml}
-    ${responseHtml}
-    <div class="result-nav">
-      <button class="btn-ghost" onclick="back()">‹ Back</button>
-      <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-    </div>
-  </div>`;
+function toggleExpand(id){
+  if(expanded.has(id))expanded.delete(id);else expanded.add(id);
+  renderResults();
 }
 
-function hardStop({ title, detail, response, exceptionLabel, exceptionText, exceptionBtn, exceptionTarget, exceptionLabel2 }) {
-  const respHtml = response ? responseBox(response) : "";
-  const excHtml = exceptionLabel ? `<div class="exception-box">
-    <div class="exception-label">${exceptionLabel}</div>
-    <div class="exception-text">${exceptionText}</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn-amber" onclick="${exceptionTarget}">${exceptionBtn}</button>
-      <button class="btn-ghost" onclick="back()">‹ Back</button>
-      <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-    </div>
-  </div>` : `<div class="result-nav"><button class="btn-ghost" onclick="back()">‹ Back</button><button class="btn-ghost" onclick="reset()">↺ Start Over</button></div>`;
-  return `<div class="fade">
-    <div class="hard-stop-box">
-      ${badge('notexempt')}
-      <div class="result-title">${title}</div>
-      <div class="result-detail">${detail}</div>
-    </div>
-    ${respHtml}
-    ${excHtml}
-  </div>`;
-}
-
-function exceptions() {
-  const options = [
-    ["go('equipment_specialized','Drayage or specialized equipment')", "Drayage or specialized equipment (step deck, RGN, flatbed)"],
-    ["go('short_haul_check','Short-haul exemption')", "Short-haul exemption (under 150 air miles)"],
-    ["go('incompatible_eld','Incompatible ELD provider')", "Incompatible ELD provider (e.g. Garmin, Super Dispatch)"],
-    ["go('glider_kit','Glider kit')", "Glider kit with verified pre-2000 engine"],
-    ["go('result_not_exempt_history','No exception')", "No exception — carrier cannot qualify"],
-  ];
-  return `<div class="fade">
-    <p class="q-text">Is the carrier claiming an exception?</p>
-    <p style="font-size:12px;color:var(--text-2);margin-bottom:18px">Select the exception the carrier is raising, if any.</p>
-    <div class="exc-list">
-      ${options.map(([fn, label]) => `<button class="btn-list" onclick="${fn}">${label}</button>`).join("")}
-      <div class="exc-nav">
-        <button class="btn-ghost" onclick="back()">‹ Back</button>
-        <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-function renderStep(step) {
-  switch (step) {
-
-    case "model_year_new":
-      return question({ text: "Is the equipment model year 2001 to present?", tip: "Check Equipment in Highway. You can usually determine the model year from here.", noLabel: "No", yesLabel: "Yes", onNo: "go('model_year','2001 to present → No')", onYes: "go('carrier_status','2001 to present → Yes')", isFirst: true });
-
-    case "model_year":
-      return question({ text: "Is this a Sprinter van / hot shot (Class 1 or 2)?", tip: "Check Equipment in Highway first. Class 1 and 2 vehicles are light-duty — if the truck is a full-size semi or heavy hauler, it's not a hot shot.", onNo: "go('carrier_status','Sprinter/Hot Shot → No')", onYes: "go('result_exempt_pre2000','Sprinter/Hot Shot → Yes')" });
-
-    case "carrier_status":
-      return question({ text: "Is this a new or existing carrier?", tip: "Check the carrier's load history in Highway. If they have any prior completed loads with ATG, they are an existing carrier.", noLabel: "New carrier", yesLabel: "Existing carrier", onNo: "go('new_carrier_default','New carrier')", onYes: "go('load_history','Existing carrier')" });
-
-    case "new_carrier_default":
-      return `<div class="fade">
-        <div class="hard-stop-box">
-          ${badge('notexempt')}
-          <div class="result-title">Not Exempt — New Carrier</div>
-          <div class="result-detail">New carriers are generally not exempt and cannot qualify via load history. Request carrier to connect their ELD via Highway.</div>
-        </div>
-        ${responseBox("Our records indicate this is a new carrier without prior load history with us. Per current policy, new carriers are required to have an active ELD connection to proceed. Please connect your ELD via Highway to continue. If you believe an exception applies, please provide documentation supporting that request and we will review accordingly.")}
-        <div class="exception-box">
-          <div class="exception-label">Is the carrier claiming an exception?</div>
-          <div class="exception-text">If the carrier believes an exception applies, evaluate below. Otherwise this is a hard stop.</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn-amber" onclick="go('new_carrier_exceptions','Claiming exception')">Evaluate Exception</button>
-            <button class="btn-ghost" onclick="back()">‹ Back</button>
-            <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-          </div>
-        </div>
-      </div>`;
-
-    case "new_carrier_exceptions":
-      return `<div class="fade">
-        <p class="q-text">Is the carrier claiming an exception?</p>
-        <p style="font-size:12px;color:var(--text-2);margin-bottom:18px">Select the exception the carrier is raising, if any.</p>
-        <div class="exc-list">
-          <button class="btn-list" onclick="go('equipment_specialized','Drayage or specialized equipment')">Drayage or specialized equipment (step deck, RGN, flatbed)</button>
-          <button class="btn-list" onclick="go('short_haul_check','Short-haul exemption')">Short-haul exemption (under 150 air miles)</button>
-          <button class="btn-list" onclick="go('incompatible_eld','Incompatible ELD provider')">Incompatible ELD provider (e.g. Garmin, Super Dispatch)</button>
-          <button class="btn-list" onclick="go('glider_kit','Glider kit')">Glider kit with verified pre-2000 engine</button>
-          <button class="btn-list" onclick="go('new_carrier_rare_prompt','No exception — carrier cannot qualify')">No exception — carrier cannot qualify</button>
-          <div class="exc-nav">
-            <button class="btn-ghost" onclick="back()">‹ Back</button>
-            <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-          </div>
-        </div>
-      </div>`;
-
-    case "new_carrier_rare_prompt":
-      return `<div class="fade">
-        <div class="exception-box">
-          <div class="exception-label">Is the agent or carrier citing a specific, valid reason for a rare exemption override?</div>
-          <div class="exception-text">A general request or pushback alone does not qualify. Only proceed if the carrier can articulate a legitimate, documented reason that falls outside standard policy. Otherwise, require ELD connection.</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn-amber" onclick="go('new_carrier_check','Requesting rare override')">Evaluate Override</button>
-            <button class="btn-ghost" onclick="go('result_not_exempt_new','Not exempt accepted')">No — require ELD</button>
-            <button class="btn-ghost" onclick="back()">‹ Back</button>
-            <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-          </div>
-        </div>
-      </div>`;
-
-    case "new_carrier_check":
-      return question({ text: "Does the carrier meet ALL of the following? Load is not high value · Passes all standard rules · No ownership change in past 365 days · Can provide cab card", tip: "Check ownership history in SAFER or Highway. Cab card must be provided directly — do not proceed without it.", noLabel: "No — one or more missing", yesLabel: "Yes — all criteria met", onNo: "go('result_not_exempt_new','Rare override criteria → Not met')", onYes: "go('result_new_carrier_rare','Rare override criteria → Met')" });
-
-    case "load_history":
-      return question({ text: "Does the carrier have 3 or more completed loads in the last 90 days?", tip: "Review load history in ATG. Count only completed loads within the last 90 days — pending or cancelled loads do not qualify.", noLabel: "No — fewer than 3", yesLabel: "Yes — 3+ loads", onNo: "go('result_not_exempt_thin','Load history → Thin/missing')", onYes: "go('cargo_value','Load history → Qualifies')" });
-
-    case "cargo_value":
-      return question({ text: "Is cargo value above $100,000?", tip: "Cargo value may not always be known at this stage. If it becomes known later and exceeds $100K, the override should not be granted.", noLabel: "No / Unknown", yesLabel: "Yes — above $100K", onNo: "go('result_exempt_history','Cargo >$100K → No')", onYes: "go('result_not_exempt_cargo','Cargo >$100K → Yes')" });
-
-    case "exceptions":
-      return exceptions();
-
-    case "equipment_specialized":
-      return `<div class="fade">
-        <p class="q-text">What type of specialized equipment is this?</p>
-        <p style="font-size:12px;color:var(--text-2);margin-bottom:18px">Select the equipment type the carrier is operating.</p>
-        <div class="exc-list">
-          <button class="btn-list" onclick="go('result_exempt_drayage','Drayage')">Drayage</button>
-          <button class="btn-list" onclick="go('result_exempt_stepdeck','Step deck / RGN')">Step deck / RGN</button>
-          <button class="btn-list" onclick="go('flatbed_cargo','Flatbed')">Flatbed</button>
-          <button class="btn-list" onclick="go('result_not_exempt_history','None of the above')">None of the above</button>
-          <div class="exc-nav">
-            <button class="btn-ghost" onclick="back()">‹ Back</button>
-            <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-          </div>
-        </div>
-      </div>`;
-
-    case "flatbed_cargo":
-      return question({ text: "Is the cargo metals, ATVs/UTVs/off-road vehicles, or anything high-value or easily offloaded?", tip: "Ask the carrier or agent what is being hauled. When in doubt, treat the cargo as high-risk and require ELD connection.", noLabel: "No — standard cargo", yesLabel: "Yes — High Value / High Risk", onNo: "go('result_exempt_equipment','High-risk cargo → No')", onYes: "go('result_not_exempt_flatbed','High-risk cargo → Yes')" });
-
-    case "short_haul_check":
-      return question({ text: "Is this a consistent short-haul pattern (carrier routinely operates under 150 air miles)?", tip: "Review route history in Highway. A consistent pattern means the carrier regularly runs short-haul — not just this one load.", noLabel: "No — this load only", yesLabel: "Yes — established pattern", onNo: "go('result_conditional_shorthaul','Short-haul → Situational')", onYes: "go('result_exempt_shorthaul_consistent','Short-haul → Consistent')" });
-
-    case "incompatible_eld":
-      return question({ text: "Does the carrier pass all standard checks, no ownership change in 365 days, AND can provide DL, cab card, and title?", tip: "DL, cab card, and title are required. If concerns still remain, also request ELD audit log and a photo of the truck. Macropoint or Trucker Tools must also be set up and active. No loads over $100K allowed.", noLabel: "No — missing requirements", yesLabel: "Yes — all docs available", onNo: "go('result_not_exempt_history','Incompatible ELD → Docs missing')", onYes: "go('result_conditional_eld','Incompatible ELD → Docs met')" });
-
-    case "glider_kit":
-      return question({ text: "Can the carrier provide standard exemption documentation plus invoice, work order, or engine tag verifying pre-2000 engine year?", tip: "The engine year must be verified with a physical document — invoice, work order, or engine tag. Self-reported year alone is not sufficient.", noLabel: "No", yesLabel: "Yes — docs available", onNo: "go('result_not_exempt_history','Glider kit → No docs')", onYes: "go('result_exempt_glider','Glider kit → Docs verified')" });
-
-    case "result_not_exempt_thin":
-      return `<div class="fade">
-        <div class="hard-stop-box">
-          ${badge('notexempt')}
-          <div class="result-title">Not Exempt — Insufficient Load History</div>
-          <div class="result-detail">The carrier does not have 3 or more completed loads in the last 90 days and does not qualify under load history policy.</div>
-        </div>
-        ${responseBox("Our records do not reflect sufficient load history to qualify for an ELD exemption at this time. Per current policy, a minimum of 3 completed loads within the last 90 days is required. Please connect your ELD via Highway to proceed. If you believe an exception applies, please provide documentation supporting that request and we will review accordingly.")}
-        <div class="exception-box">
-          <div class="exception-label">Is the carrier claiming an exception?</div>
-          <div class="exception-text">If the agent or carrier is pushing back and believes an exception applies, you can evaluate that below. Otherwise this is a hard stop.</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn-amber" onclick="go('exceptions','Claiming exception')">Evaluate Exception</button>
-            <button class="btn-ghost" onclick="back()">‹ Back</button>
-            <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-          </div>
-        </div>
-      </div>`;
-
-    case "result_exempt_pre2000":
-      return result({ type: "exempt", title: "Exempt by Model Year or Equipment Type", detail: "Pre-2000 engine confirmed, or equipment is a Sprinter van / hot shot (Class 1 or 2). No further evaluation needed.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on the engine model year or equipment type on file, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_exempt_drayage":
-      return result({ type: "exempt", title: "Exempt — Drayage", detail: "Drayage equipment qualifies for ELD exemption under current policy. No further evaluation needed.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on the equipment type on file, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_exempt_stepdeck":
-      return result({ type: "exempt", title: "Exempt — Step Deck / RGN", detail: "Step deck or RGN equipment qualifies for ELD exemption under current policy. No further evaluation needed.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on the equipment type on file, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_exempt_equipment":
-      return result({ type: "exempt", title: "Exempt by Equipment Type", detail: "Sprinter van, hot shot (Class 1/2), or qualifying specialized equipment. No further evaluation needed.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on the equipment type on file, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_not_exempt_flatbed":
-      return result({ type: "notexempt", title: "Not Exempt — High-Risk Flatbed Cargo", detail: "Flatbed carriers hauling metals, ATVs/UTVs, or high-value/easily-offloaded cargo must connect a valid, active ELD regardless of any other exemption criteria.", response: "Per current policy, carriers hauling this cargo type are required to have an active ELD connection regardless of equipment or load history. Please connect your ELD via Highway to proceed." });
-
-    case "result_not_exempt_new":
-      return result({ type: "notexempt", title: "Not Exempt — New Carrier", detail: "New carriers generally cannot qualify for ELD exemption via load history. The rare override criteria were not fully met.", response: "Our records indicate this is a new carrier without prior load history with us. Per current policy, new carriers are required to have an active ELD connection to proceed. Please connect your ELD via Highway to continue. If you believe an exception applies, please provide documentation supporting that request and we will review accordingly." });
-
-    case "result_new_carrier_rare":
-      return result({ type: "conditional", title: "Rare Override — New Carrier", detail: "All rare override criteria are met. This is an exception and should be handled with additional scrutiny.", override: "24 hours", extra: "This is not a standard path. Ensure all criteria are documented before granting any override.", response: "A limited override has been applied based on the documentation provided. This override is valid for 24 hours only and is not a standard exemption. All criteria must be on file before this load proceeds. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_not_exempt_cargo":
-      return result({ type: "notexempt", title: "Not Exempt — Cargo Value Exceeds $100,000", detail: "Regardless of load history or equipment, no ELD exemption override can be granted when cargo value is above $100,000.", response: "Per current policy, ELD exemptions cannot be applied to loads with a cargo value above $100,000. An active ELD connection is required for this load. Please connect your ELD via Highway to proceed." });
-
-    case "result_exempt_history":
-      return result({ type: "exempt", title: "Exempt by Load History", detail: "Existing carrier with 3+ completed loads in the last 90 days. Qualifies under load history policy.", override: "90 days", extra: "Inform the agent this override is valid for 90 days. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on verified load history with us, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 90 days. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_not_exempt_history":
-      return result({ type: "notexempt", title: "Not Exempt — Insufficient Load History", detail: "The carrier does not qualify by model year, equipment type, or load history, and no valid exception applies. ELD connection is required.", extra: "Ask the carrier to connect their ELD via Highway. If they claim an exemption, they can submit documentation via Highway or directly to your team.", response: "Based on our review, this carrier does not meet the criteria for an ELD exemption at this time. An active ELD connection is required to proceed. Please connect your ELD via Highway. If you believe you qualify for an exemption, please submit supporting documentation for review." });
-
-    case "result_exempt_shorthaul_consistent":
-      return result({ type: "exempt", title: "Exempt — Consistent Short-Haul Operator", detail: "Carrier routinely operates under 150 air miles. Route history verified. Qualifies for short-haul exemption.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on verified route history, this carrier qualifies for a short-haul ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_conditional_shorthaul":
-      return result({ type: "conditional", title: "Conditional — Situational Short-Haul", detail: "This specific load is under 150 air miles, but the carrier has not established a consistent short-haul pattern.", override: "30 days", extra: "Inform the agent this is a 30-day conditional override only. The carrier should be re-evaluated at expiration.", response: "A conditional override has been applied for this load based on the route falling within 150 air miles. This override is valid for 30 days only and does not establish an ongoing exemption. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_conditional_eld":
-      return result({ type: "conditional", title: "Conditional — Incompatible ELD Provider", detail: "All required documentation provided. Macropoint/Trucker Tools required. No loads over $100K permitted during this override.", override: "30 days", extra: "Macropoint or Trucker Tools must be active. This override cannot apply to any load over $100K.", response: "A conditional override has been applied based on the documentation provided. This override is valid for 30 days. Macropoint or Trucker Tools must remain active for the duration of this override, and it cannot be applied to any load with a cargo value above $100,000. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_exempt_glider":
-      return result({ type: "exempt", title: "Exempt — Glider Kit (Pre-2000 Engine Verified)", detail: "Standard exemption documentation plus engine year verification (invoice, work order, or engine tag) confirmed.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on the verified engine documentation provided, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    default:
-      return "<div>Unknown step</div>";
+function setFlow(id,state){
+  flowState[id]=state;
+  // If we're on the alert detail screen, re-render it
+  const alertDetail=document.getElementById('screen-alert-detail');
+  if(alertDetail && alertDetail.classList.contains('active') && currentAlertId){
+    showAlertDetail(currentAlertId);
+  } else {
+    renderResults();
   }
 }
 
-function render() {
-  const current = history[history.length - 1];
-  const step = current.step;
-  const trail = history.map(h => h.label);
-  document.getElementById("progress").innerHTML = renderProgress(step);
-  document.getElementById("crumb").innerHTML = trail.length > 1 ? renderCrumb(trail) : "";
-  document.getElementById("content").innerHTML = renderStep(step);
+function renderAuth90Flow(){
+  const s=flowState['auth90']||'q1';
+  if(s==='q1')return`<div class="q-text">Is the carrier's authority currently active?</div><div class="q-opts"><button class="q-btn" onclick="setFlow('auth90','q2')">Yes — currently active</button><button class="q-btn" onclick="setFlow('auth90','hard')">No — not currently active</button></div>`;
+  if(s==='q2')return`<div class="q-text">Was the authority inactive for 30 days or less?</div><div class="q-opts"><button class="q-btn" onclick="setFlow('auth90','override')">Yes — inactive 30 days or less</button><button class="q-btn" onclick="setFlow('auth90','hard')">No — inactive more than 30 days</button></div>`;
+  if(s==='override')return`<div class="outcome outcome-soft"><div class="outcome-title ot-soft">Carrier may proceed.</div><div class="outcome-body ob-soft">Authority was inactive for 30 days or less and is currently active. No escalation required — carrier is eligible to use.</div></div><div class="slabel">Suggested response</div><div class="script-box">"This carrier's authority didn't meet the 90-day continuous requirement, but it was only inactive for 30 days or less and is currently active. We're good to proceed."</div><button class="reset-btn" onclick="setFlow('auth90','q1')">&#8635; Check again</button>`;
+  if(s==='hard')return`<div class="outcome outcome-hard"><div class="outcome-title ot-hard">Carrier is ineligible for use at this time.</div><div class="outcome-body ob-hard">The authority does not meet the 90-day continuous requirement and no override applies.</div></div><div class="slabel">Suggested response</div><div class="script-box">"This carrier hasn't met the 90-day continuous authority requirement — carrier is ineligible for use at this time."</div><button class="reset-btn" onclick="setFlow('auth90','q1')">&#8635; Check again</button>`;
+  return'';
 }
 
-render();
+function renderFmcsaFlow(){
+  const s=flowState['fmcsa']||'q1';
+  if(s==='q1')return`<div class="q-text">Can you reach a verified contact in the Highway verified user section?</div><div class="co-note" style="margin-bottom:10px;">&#9432; Use only the verified user section in Highway. Prefer contacts with a green shield next to their name. Do not use contact info from the load tender or email chain.</div><div class="q-opts"><button class="q-btn" onclick="setFlow('fmcsa','q2')">Yes — reached a verified contact</button><button class="q-btn" onclick="setFlow('fmcsa','hard')">No — unable to reach a verified contact</button></div>`;
+  if(s==='q2')return`<div class="q-text">Did the verified contact confirm the carrier's identity and the contact change?</div><div class="q-opts"><button class="q-btn" onclick="setFlow('fmcsa','clear')">Yes — identity confirmed</button><button class="q-btn" onclick="setFlow('fmcsa','hard')">No — could not confirm</button></div>`;
+  if(s==='clear')return`<div class="outcome outcome-soft"><div class="outcome-title ot-soft">Carrier may proceed.</div><div class="outcome-body ob-soft">Identity confirmed via a verified Highway contact. Document your verification and proceed.</div></div><div class="slabel">Suggested response</div><div class="script-box">"I've verified the carrier's identity through a confirmed contact in Highway. We're good to proceed — I'm documenting the verification."</div><button class="reset-btn" onclick="setFlow('fmcsa','q1')">&#8635; Check again</button>`;
+  if(s==='hard')return`<div class="outcome outcome-hard"><div class="outcome-title ot-hard">Carrier is ineligible for use at this time.</div><div class="outcome-body ob-hard">A verified contact could not be reached or could not confirm the carrier's identity. Do not proceed until verification is complete.</div></div><div class="slabel">Suggested response</div><div class="script-box">"This carrier has had a recent FMCSA contact change and we weren't able to verify their identity through a confirmed Highway contact — carrier is ineligible for use at this time."</div><button class="reset-btn" onclick="setFlow('fmcsa','q1')">&#8635; Check again</button>`;
+  return'';
+}
+
+function renderLoadFlow(){
+  const s=flowState['load']||'q1';
+  if(s==='q1')return`<div class="q-text">Is there corroborating evidence of double brokering?</div><div class="co-note" style="margin-bottom:10px;">&#9432; Look for: internal notes or prior incidents, load history inconsistencies vs. fleet size, overlapping loads impossible to cover with reported equipment.</div><div class="q-opts"><button class="q-btn" onclick="setFlow('load','hard')">Yes — supporting evidence found</button><button class="q-btn" onclick="setFlow('load','q2')">No — no supporting evidence yet</button></div>`;
+  if(s==='q2')return`<div class="q-text">Does the carrier have a scheduled auto policy (specific VINs insured)?</div><div class="q-opts"><button class="q-btn" onclick="setFlow('load','coi')">Yes — view the COI to verify truck count</button><button class="q-btn" onclick="setFlow('load','q3')">No — or unknown</button></div>`;
+  if(s==='coi')return`<div class="outcome outcome-review"><div class="outcome-title ot-review">View the COI.</div><div class="outcome-body ob-review">The COI is the source of truth for insured trucks. Compare insured VINs against load history. If the number of loads is feasible given the insured fleet, carrier may proceed.</div></div><div class="slabel">Suggested response</div><div class="script-box">"I need to review the COI for this carrier to verify their insured truck count before we can proceed."</div><button class="reset-btn" onclick="setFlow('load','q1')">&#8635; Check again</button>`;
+  if(s==='q3')return`<div class="q-text">Is a quick decision required (within 5–10 minutes)?</div><div class="q-opts"><button class="q-btn" onclick="setFlow('load','decline-temp')">Yes — time is limited</button><button class="q-btn" onclick="setFlow('load','benefit')">No — time to review</button></div>`;
+  if(s==='decline-temp')return`<div class="outcome outcome-review"><div class="outcome-title ot-review">Temporarily decline while reviewing.</div><div class="outcome-body ob-review">Declining now allows time to source an alternative while a full review is completed. This is not a final decision — conduct a thorough analysis and revisit.</div></div><div class="slabel">Suggested response</div><div class="script-box">"I need a few more minutes to review this carrier's load history. I'm going to hold on approving them for now — let me source a backup option in the meantime."</div><button class="reset-btn" onclick="setFlow('load','q1')">&#8635; Check again</button>`;
+  if(s==='benefit')return`<div class="outcome outcome-soft"><div class="outcome-title ot-soft">Give the carrier the benefit of the doubt.</div><div class="outcome-body ob-soft">No supporting evidence of double brokering found. Review load history for partial loads or miscategorized shipments that may explain the flag. The load limit indicator cannot account for partials and sprinter vans.</div></div><div class="slabel">Suggested response</div><div class="script-box">"I've reviewed the load limit flag and found no supporting evidence of double brokering. We're okay to proceed — I'm documenting my review."</div><button class="reset-btn" onclick="setFlow('load','q1')">&#8635; Check again</button>`;
+  if(s==='hard')return`<div class="outcome outcome-hard"><div class="outcome-title ot-hard">Carrier is ineligible for use at this time.</div><div class="outcome-body ob-hard">Supporting evidence of double brokering has been found. Do not proceed with this carrier.</div></div><div class="slabel">Suggested response</div><div class="script-box">"We've found evidence that supports the load limit flag on this carrier — carrier is ineligible for use at this time."</div><button class="reset-btn" onclick="setFlow('load','q1')">&#8635; Check again</button>`;
+  return'';
+}
+
+function renderTrailerFlow(){
+  const s=flowState['trailer-alert']||'q1';
+  if(s==='q1')return`<div class="q-text">Is the trailer misuse report filed against ATG directly?</div><div class="q-opts"><button class="q-btn" onclick="setFlow('trailer-alert','hard')">Yes — report is against ATG</button><button class="q-btn" onclick="setFlow('trailer-alert','q2')">No — filed against another party</button></div>`;
+  if(s==='q2')return`<div class="q-text">Does the carrier have multiple trailer misuse reports in Highway or C411?</div><div class="q-opts"><button class="q-btn" onclick="setFlow('trailer-alert','escalate-multi')">Yes — multiple reports present</button><button class="q-btn" onclick="setFlow('trailer-alert','proceed')">No — single report only</button></div>`;
+  if(s==='hard')return`<div class="outcome outcome-hard"><div class="outcome-title ot-hard">Carrier is ineligible for use at this time.</div><div class="outcome-body ob-hard">The trailer misuse report is filed against ATG directly. Do not use this carrier.</div></div><div class="slabel">Suggested response</div><div class="detail-script hard">"This carrier has a trailer misuse report filed against us directly — carrier is ineligible for use at this time."</div><button class="reset-btn" onclick="setFlow('trailer-alert','q1')">&#8635; Check again</button>`;
+  if(s==='escalate-multi')return`<div class="outcome outcome-review"><div class="outcome-title ot-review">Escalate for evaluation.</div><div class="outcome-body ob-review">Multiple trailer misuse reports are present in Highway or C411. Evaluate the pattern and escalate to a manager before proceeding.</div></div><div class="slabel">Suggested response</div><div class="detail-script review">"This carrier has multiple trailer misuse reports on file. I need to escalate this for a closer look before we can proceed."</div><button class="reset-btn" onclick="setFlow('trailer-alert','q1')">&#8635; Check again</button>`;
+  if(s==='proceed')return`<div class="outcome outcome-soft"><div class="outcome-title ot-soft">Carrier may proceed with caution.</div><div class="outcome-body ob-soft">Single report, not against ATG. We typically do not DNU based on this alone — proceed, but document the flag.</div></div><div class="slabel">Suggested response</div><div class="detail-script soft">"There's a trailer misuse report on file, but it's a single report and not filed against us directly. We're okay to proceed — I'm documenting the flag."</div><button class="reset-btn" onclick="setFlow('trailer-alert','q1')">&#8635; Check again</button>`;
+  return'';
+}
+
+function renderInsuranceAlertFlow(){
+  const s=flowState['insurance-alert']||'q1';
+  if(s==='q1')return`<div class="q-text">Is the unresolved claim dispute with ATG directly?</div><div class="q-opts"><button class="q-btn" onclick="setFlow('insurance-alert','hard')">Yes — dispute is with ATG</button><button class="q-btn" onclick="setFlow('insurance-alert','q2')">No — dispute is with another party</button></div>`;
+  if(s==='q2')return`<div class="q-text">Does the carrier have multiple unresolved claim reports in Highway or C411?</div><div class="q-opts"><button class="q-btn" onclick="setFlow('insurance-alert','escalate-multi')">Yes — multiple reports present</button><button class="q-btn" onclick="setFlow('insurance-alert','proceed')">No — single report only</button></div>`;
+  if(s==='hard')return`<div class="outcome outcome-hard"><div class="outcome-title ot-hard">Carrier is ineligible for use at this time.</div><div class="outcome-body ob-hard">The unresolved claim is with ATG directly. Do not use this carrier.</div></div><div class="slabel">Suggested response</div><div class="detail-script hard">"This carrier has an unresolved insurance claim with us directly — carrier is ineligible for use at this time."</div><button class="reset-btn" onclick="setFlow('insurance-alert','q1')">&#8635; Check again</button>`;
+  if(s==='escalate-multi')return`<div class="outcome outcome-review"><div class="outcome-title ot-review">Escalate for evaluation.</div><div class="outcome-body ob-review">Multiple unresolved claim reports are present in Highway or C411. Evaluate the pattern and escalate to a manager before proceeding.</div></div><div class="slabel">Suggested response</div><div class="detail-script review">"This carrier has multiple unresolved insurance claim reports on file. I need to escalate this for a closer look before we can proceed."</div><button class="reset-btn" onclick="setFlow('insurance-alert','q1')">&#8635; Check again</button>`;
+  if(s==='proceed')return`<div class="outcome outcome-soft"><div class="outcome-title ot-soft">Carrier may proceed with caution.</div><div class="outcome-body ob-soft">Single report, not with ATG. We typically do not DNU based on this alone — proceed, but document the flag.</div></div><div class="slabel">Suggested response</div><div class="detail-script soft">"There's an unresolved insurance claim on file, but it's a single report and not with us directly. We're okay to proceed — I'm documenting the flag."</div><button class="reset-btn" onclick="setFlow('insurance-alert','q1')">&#8635; Check again</button>`;
+  return'';
+}
+
+function renderResults(){
+  const reeferFailing=reeferRules.filter(r=>reeferChecked.has(r.id));
+  const otherFailing=otherRules.filter(r=>otherChecked.has(r.id));
+  const failing=[...rules.filter(r=>checked.has(r.id)),...reeferFailing,...otherFailing];
+  const area=document.getElementById('results-area');
+  if(!failing.length){
+    area.innerHTML=`<div class="summary-bar clear"><div>No flags selected</div><div class="summary-sub">Select any failing rules above to see guidance.</div></div>`;
+    return;
+  }
+  const order=['hard','approval','escalate','conditional','coi','refer','eld','setting'];
+  const sorted=[...failing].sort((a,b)=>order.indexOf(a.tier)-order.indexOf(b.tier));
+  const hasHard=sorted.some(r=>r.tier==='hard'||r.tier==='approval');
+
+  const multiNote=failing.length>1?`<div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--atg-teal);background:var(--atg-teal-light);border:1px solid var(--atg-teal-mid);border-left:3px solid var(--atg-teal);border-radius:var(--radius);border-top-left-radius:0;border-bottom-left-radius:0;padding:8px 12px;margin-bottom:10px;line-height:1.6;">&#9432; Multiple rules are failing. Make sure to communicate each failing rule to the agent — do not address only one and overlook the others.</div>`:'';
+  let html=hasHard
+    ?`<div class="summary-bar hard"><div>Carrier is ineligible for use at this time.</div><div class="summary-sub">One or more hard stop rules are failing. Do not proceed with this carrier.</div></div>${multiNote}`
+    :`<div class="summary-bar action"><div>Action required before proceeding.</div><div class="summary-sub">Resolve each flagged item below before this carrier can be used.</div></div>${multiNote}`;
+
+  html+=sorted.map(r=>{
+    const t=r.tier==='approval'?'hard':r.tier==='conditional'?'conditional':r.tier;
+    const isOpen=expanded.has(r.id);
+    const dot=tierDot[r.tier]||'var(--text-3)';
+    let body='';
+
+    if(r.flow==='auth90'){
+      body=`<div class="flag-rule r-conditional">${r.rule}</div><div class="slabel" style="margin-bottom:6px;">Decision flow</div>${renderAuth90Flow()}`;
+    } else if(r.flow==='fmcsa'){
+      body=`<div class="flag-rule r-conditional">${r.rule}</div><div class="slabel" style="margin-bottom:6px;">Decision flow</div>${renderFmcsaFlow()}`;
+    } else if(r.flow==='load'){
+      body=`<div class="flag-rule r-conditional">${r.rule}</div><div class="slabel" style="margin-bottom:6px;">Decision flow</div>${renderLoadFlow()}`;
+    } else if(r.tier==='hard'||r.tier==='approval'){
+      const noteHtml=r.note?`<div class="co-note">&#9432; ${r.note}</div>`:'';
+      body=`<div class="flag-rule r-hard">${r.rule}</div><div class="slabel">Guidance</div><div class="guidance-text" style="margin-bottom:${r.note||r.script?'8px':'0'}">${r.guidance}</div>${noteHtml}${r.script?`<div class="slabel" style="margin-top:8px;">Suggested response</div><div class="script-box">"${r.script}"</div>`:''}`;
+    } else if(r.tier==='escalate'){
+      body=`<div class="flag-rule r-escalate">${r.rule}</div><div class="slabel">Guidance</div><div class="guidance-text" style="margin-bottom:${r.script?'8px':'0'}">${r.guidance}</div>${r.script?`<div class="slabel" style="margin-top:4px;">Suggested response</div><div class="script-box">"${r.script}"</div>`:''}`;
+    } else if(r.tier==='coi'){
+      body=`<div class="flag-rule r-coi">${r.rule}</div><div class="slabel">Steps</div><div class="step-list">${r.guidance.map((g,i)=>`<div class="step-row"><div class="step-dot">${i+1}</div><div class="step-text">${g}</div></div>`).join('')}</div>`;
+    } else if(r.tier==='refer'){
+      const noteHtml=r.note?`<div class="co-note" style="margin-bottom:8px;">&#9432; ${r.note}</div>`:'';
+      body=`<div class="flag-rule r-refer">${r.rule}</div><div class="slabel">Guidance</div><div class="guidance-text" style="margin-bottom:8px;">${r.guidance}</div>${noteHtml}<button class="btn-link" onclick="showScreen('screen-alerts');document.getElementById('nav-alerts').classList.add('active');document.getElementById('nav-checker').classList.remove('active');">Open Identity Alert guide &#8594;</button>`;
+    } else if(r.tier==='eld'){
+      body=`<div class="flag-rule r-eld">${r.rule}</div><div class="slabel">Guidance</div><div class="guidance-text">${r.guidance}</div>`;
+    } else if(r.tier==='inactive'){
+      body=`<div class="flag-rule" style="color:var(--text-3)">${r.rule}</div><div class="slabel">Status</div><div class="guidance-text" style="color:var(--text-3);">This rule is no longer applicable and does not need to be evaluated.</div>`;
+    } else {
+      body=`<div class="flag-rule" style="color:var(--text-2)">${r.rule}</div><div class="slabel">Guidance</div><div class="guidance-text">${r.guidance}</div>`;
+    }
+
+    return`<div class="flag-card fc-${t}">
+      <div class="flag-header" onclick="toggleExpand('${r.id}')">
+        <div class="flag-dot" style="background:${dot}"></div>
+        <div class="flag-title t-${t}">${r.short}</div>
+        <div class="flag-tier">${tierLabel[r.tier]}</div>
+        <div class="flag-chevron${isOpen?' open':''}">&#9658;</div>
+      </div>
+      <div class="flag-body${isOpen?' open':''}">${body}</div>
+    </div>`;
+  }).join('');
+
+  html+=`<button class="clear-btn" onclick="clearAll()">&#10005; Clear all flags</button>`;
+  area.innerHTML=html;
+}
+
+function clearAll(){
+  checked.clear();expanded.clear();
+  Object.keys(flowState).forEach(k=>delete flowState[k]);
+  renderGrid();renderResults();
+}
+
+function renderAlertGrid(){
+  document.getElementById('alert-grid').innerHTML=alerts.map(a=>{
+    const cls=a.tier==='soft'?'soft':a.tier==='hard'?'hard':a.tier==='conditional'?'conditional':a.tier==='info'?'info':'review';
+    const lbl=tierLabel[a.tier]||a.tier;
+    return`<div class="alert-tile at-${cls}" onclick="showAlertDetail('${a.id}')">
+      <div class="alert-tile-name">${a.name}</div>
+      <div class="alert-tile-tier">${lbl}</div>
+    </div>`;
+  }).join('');
+}
+
+var currentAlertId=null;
+function showAlertDetail(id){
+  currentAlertId=id;
+  const a=alerts.find(x=>x.id===id);
+  const t=a.tier;
+  const badgeCls=t==='hard'?'hard':t==='soft'?'soft':t==='conditional'?'conditional':t==='info'?'info':'review';
+  const lbl=tierLabel[t]||t;
+  let html=`<button class="back-btn" onclick="showScreen('screen-alerts')">&#8592; Back to alert types</button>
+  <span class="badge badge-${badgeCls}">${lbl}</span>
+  <div class="alert-title">${a.name}</div>
+  <div class="alert-desc">${a.desc}</div>`;
+
+  if(a.flow==='trailer'){
+    html+=`<div class="slabel" style="margin-bottom:8px;">Decision flow</div>${renderTrailerFlow()}`;
+  } else if(a.flow==='insurance'){
+    html+=`<div class="slabel" style="margin-bottom:8px;">Decision flow</div>${renderInsuranceAlertFlow()}`;
+  } else if(a.flow==='ownership'){
+    html+=ownershipFlow();
+  } else {
+    if(t==='hard') html+=`<div class="outcome outcome-hard"><div class="outcome-title ot-hard">Carrier is ineligible for use at this time.</div><div class="outcome-body ob-hard">${a.action}</div></div>`;
+    else if(t==='review'||t==='info') html+=`<div class="outcome outcome-review"><div class="outcome-title ot-review">Escalate for review.</div><div class="outcome-body ob-review">${a.action}</div></div>`;
+    else if(t==='soft') html+=`<div class="outcome outcome-soft"><div class="outcome-title ot-soft">Verify before proceeding.</div><div class="outcome-body ob-soft">${a.action}</div></div>`;
+    const sc=t==='hard'?'hard':t==='soft'?'soft':'review';
+    html+=`<div class="slabel">Suggested response</div><div class="detail-script ${sc}">"${a.script}"</div>`;
+  }
+
+  
+  document.getElementById('alert-detail-content').innerHTML=html;
+  showScreen('screen-alert-detail');
+}
+
+function ownershipFlow(){
+  return`<div class="slabel" style="margin-bottom:8px;">Decision flow</div>
+  <div id="ow-q1"><div class="q-text">Is the change of ownership report more than one year old?</div><div class="q-opts"><button class="q-btn" onclick="owQ2()">Yes — over one year old</button><button class="q-btn" onclick="owNo()">No — under one year old</button></div></div>
+  <div id="ow-q2" style="display:none"><div class="q-text">Are there any other flags or alerts on this carrier?</div><div class="q-opts"><button class="q-btn" onclick="owFlags()">Yes — other flags exist</button><button class="q-btn" onclick="owClear()">No — no other flags</button></div></div>
+  <div id="ow-clear" style="display:none"><div class="outcome outcome-soft"><div class="outcome-title ot-soft">Carrier may be considered.</div><div class="outcome-body ob-soft">Report is over one year old with no other flags. Document your review and proceed.</div></div><div class="slabel">Suggested response</div><div class="detail-script soft">"I've reviewed the change of ownership alert — the report is over a year old and there are no other flags on file. We're good to proceed with this carrier."</div><button class="reset-btn" onclick="owReset()">&#8635; Check again</button></div>
+  <div id="ow-no" style="display:none"><div class="outcome outcome-review"><div class="outcome-title ot-review">Escalate to a manager.</div><div class="outcome-body ob-review">Report is under one year old. Do not approve without manager sign-off.</div></div><div class="slabel">Suggested response</div><div class="detail-script review">"This carrier has a change of ownership alert and the report is recent. I need to escalate before we can proceed."</div><button class="reset-btn" onclick="owReset()">&#8635; Check again</button></div>
+  <div id="ow-flags" style="display:none"><div class="outcome outcome-review"><div class="outcome-title ot-review">Escalate to a manager.</div><div class="outcome-body ob-review">Additional flags are present. Do not approve without manager sign-off.</div></div><div class="slabel">Suggested response</div><div class="detail-script review">"This carrier has a change of ownership alert along with other flags. I need to escalate before we can proceed."</div><button class="reset-btn" onclick="owReset()">&#8635; Check again</button></div>`;
+}
+
+function owQ2(){document.getElementById('ow-q1').style.display='none';document.getElementById('ow-q2').style.display='block';}
+function owNo(){document.getElementById('ow-q1').style.display='none';document.getElementById('ow-no').style.display='block';}
+function owClear(){document.getElementById('ow-q2').style.display='none';document.getElementById('ow-clear').style.display='block';}
+function owFlags(){document.getElementById('ow-q2').style.display='none';document.getElementById('ow-flags').style.display='block';}
+function owReset(){['ow-q2','ow-clear','ow-no','ow-flags'].forEach(i=>document.getElementById(i).style.display='none');document.getElementById('ow-q1').style.display='block';}
+
+renderGrid();
+renderAlertGrid();
+renderResults();
+renderReeferGrid();
+renderOtherGrid();
+(function(){
+  const d=new Date(document.lastModified);
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const hrs=String(d.getHours()).padStart(2,'0');
+  const mins=String(d.getMinutes()).padStart(2,'0');
+  const str=months[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear()+' · '+hrs+':'+mins;
+  document.getElementById('mod-date').textContent=str;
+})();
+// Set initial button styles
+(function(){
+  const checker = document.getElementById('nav-checker');
+  const alerts = document.getElementById('nav-alerts');
+  checker.style.cssText='font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#0069A6;color:#ffffff;border:2px solid #0069A6;';
+  alerts.style.cssText='font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#ffffff;color:#1A2E44;border:2px solid #ffffff;';
+})();
 </script>
+  <div style="text-align:center;padding:20px 24px 24px;margin-top:16px;">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--atg-teal);background:var(--atg-teal-light);border:1.5px solid var(--atg-teal-mid);border-radius:99px;padding:6px 18px;display:inline-block;">&#9650; Experimental Phase &#9650;</span>
+  </div>
 </body>
 </html>
+
