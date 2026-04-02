@@ -701,13 +701,25 @@ const expanded=new Set();
 const flowState={};
 
 function switchMode(m){
-  ['checker','alerts'].forEach(k=>{
-    const btn = document.getElementById('nav-'+k);
-    if(k===m){
-      btn.style.cssText='font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#0069A6;color:#ffffff;border:2px solid #0069A6;';
-    } else {
-      btn.style.cssText='font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#ffffff;color:#1A2E44;border:2px solid #ffffff;';
-    }
+  const checker = document.getElementById('nav-checker');
+  const alerts = document.getElementById('nav-alerts');
+  const hvhr = document.getElementById('nav-hvhr');
+
+  checker.style.cssText='font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#ffffff;color:#1A2E44;border:2px solid #ffffff;';
+  alerts.style.cssText='font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#ffffff;color:#1A2E44;border:2px solid #ffffff;';
+  hvhr.style.cssText='font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#ffffff;color:#1A2E44;border:2px solid #ffffff;';
+
+  if(m==='checker'){
+    checker.style.cssText='font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#0069A6;color:#ffffff;border:2px solid #0069A6;';
+    showScreen('screen-checker');
+  } else if(m==='alerts'){
+    alerts.style.cssText='font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#0069A6;color:#ffffff;border:2px solid #0069A6;';
+    showScreen('screen-alerts');
+  } else if(m==='hvhr'){
+    hvhr.style.cssText='font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#0069A6;color:#ffffff;border:2px solid #0069A6;';
+    showScreen('screen-hvhr');
+  }
+}
   });
   if(m==='checker') showScreen('screen-checker');
   else showScreen('screen-alerts');
