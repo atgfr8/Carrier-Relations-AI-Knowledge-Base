@@ -956,9 +956,11 @@ renderOtherGrid();
 // Set initial button styles
 (function(){
   const checker = document.getElementById('nav-checker');
-  const alerts = document.getElementById('nav-alerts');
-  checker.style.cssText='font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#0069A6;color:#ffffff;border:2px solid #0069A6;';
-  alerts.style.cssText='font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#ffffff;color:#1A2E44;border:2px solid #ffffff;';
+const alerts = document.getElementById('nav-alerts');
+const hvhr = document.getElementById('nav-hvhr');
+checker.style.cssText = 'font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#0069A6;color:#ffffff;border:2px solid #0069A6;';
+alerts.style.cssText = 'font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#ffffff;color:#1A2E44;border:2px solid #ffffff;';
+hvhr.style.cssText = 'font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:500;padding:6px 14px;border-radius:4px;cursor:pointer;letter-spacing:0.03em;background:#ffffff;color:#1A2E44;border:2px solid #ffffff;';
 })();
 </script>
   <div style="text-align:center;padding:20px 24px 24px;margin-top:16px;">
