@@ -1,1 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Identity Alert Guide</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --atg-teal: #0069A6;
+  --atg-teal-light: #E6F2F9;
+  --atg-navy: #1A2E44;
+  --bg: #D9E4ED;
+  --surface: #FFFFFF;
+  --border: #C8D8E4;
+  --text: #1A2E44;
+  --text-2: #4A6478;
+  --radius: 6px;
+  --radius-lg: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* HEADER */
+.header {
+  background: var(--atg-navy);
+  border-bottom: 3px solid var(--atg-teal);
+  padding: 14px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* NAV */
+.nav-links {
+  display: flex;
+  gap: 0;
+}
+
+.nav-link {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  padding: 10px 16px;
+  text-decoration: none;
+  color: rgba(255,255,255,0.7);
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+  background: rgba(255,255,255,0.05);
+}
+
+.nav-link.active {
+  color: #ffffff;
+  border-bottom: 3px solid var(--atg-teal);
+  background: rgba(255,255,255,0.05);
+}
+
+/* PAGE */
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 28px 24px 60px;
+}
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: 28px 32px;
+}
+
+h1 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+p {
+  color: var(--text-2);
+  font-size: 13px;
+  margin-bottom: 20px;
+}
+
+/* ALERT LIST */
+.alert {
+  padding: 14px;
+  border-radius: var(--radius);
+  margin-bottom: 10px;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: #fff;
+  transition: 0.15s;
+}
+
+.alert:hover {
+  background: var(--atg-teal-light);
+}
+
+.alert-title {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.alert-desc {
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+
+  <div class="header-brand">
+    <div style="line-height:1.25;">
+      <div style="font-size:18px;font-weight:700;letter-spacing:2px;color:#fff;text-transform:uppercase;">Armstrong</div>
+      <div style="font-size:8px;letter-spacing:4px;color:rgba(255,255,255,0.6);text-transform:uppercase;">Transport Group</div>
+    </div>
+
+    <div style="width:1px;height:30px;background:rgba(255,255,255,0.2);"></div>
+
+    <div style="font-size:15px;font-weight:600;color:#fff;">
+      Identity Alert Guide
+    </div>
+  </div>
+
+  <div class="nav-links">
+    <a href="index.html" class="nav-link">Vetting checker</a>
+    <a href="alerts.html" class="nav-link active">Identity alert guide</a>
+    <a href="hvhr.html" class="nav-link">HVHR</a>
+  </div>
+
+</div>
+
+<!-- CONTENT -->
+<div class="container">
+
+  <div class="card">
+
+    <h1>Identity Alerts</h1>
+    <p>Select an alert type to review guidance.</p>
+
+    <div class="alert">
+      <div class="alert-title">Double Brokering</div>
+      <div class="alert-desc">Carrier re-brokers freight without approval.</div>
+    </div>
+
+    <div class="alert">
+      <div class="alert-title">Identity Theft</div>
+      <div class="alert-desc">Carrier identity is being impersonated.</div>
+    </div>
+
+    <div class="alert">
+      <div class="alert-title">Stolen Assets</div>
+      <div class="alert-desc">Carrier involved in stolen freight or equipment.</div>
+    </div>
+
+    <div class="alert">
+      <div class="alert-title">Hostage Load</div>
+      <div class="alert-desc">Carrier holding freight for payment.</div>
+    </div>
+
+  </div>
+
+</div>
+
+</body>
+</html>
