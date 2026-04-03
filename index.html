@@ -730,72 +730,7 @@
 
 <!-- HVHR SCREEN -->
 <div class="screen" id="screen-hvhr">
-  <div class="page-inner">
-
-    <!-- EXCLUSION NOTICE -->
-    <div class="excl-banner">
-      <div class="excl-icon">⛔</div>
-      <div class="excl-body">
-        <strong>Insurance Exclusions — Do Not Book</strong>
-        <p>Includes: <em>Jewelry, Firearms, Tobacco, Mobile Phones, Microchips, Furs, Live Animals, Explosives, Rx Pharmaceuticals, Narcotics</em></p>
-        <button class="excl-link" onclick="openModal()">View full exclusion list →</button>
-      </div>
-    </div>
-
-    <div class="verdict" id="verdict">
-      <div class="verdict-eyebrow">// Assessment Result</div>
-      <div class="verdict-title" id="v-title"></div>
-      <div class="verdict-desc" id="v-desc"></div>
-      <div class="verdict-flags" id="v-flags"></div>
-    </div>
-
-    <!-- CARRIER ELIGIBILITY -->
-    <div class="block">
-      <div class="block-title">Carrier Eligibility</div>
-      <div class="block-body">
-
-        <div class="q-row">
-          <div class="q-label">180+ days of continuous authority?</div>
-          <div class="toggle-wrap">
-            <button class="toggle-btn yes" onclick="toggle(this,'auth')">YES</button>
-            <button class="toggle-btn no" onclick="toggle(this,'auth'); authHardStop()">NO</button>
-          </div>
-        </div>
-
-        <div class="q-row">
-          <div class="q-label">Equipment type?</div>
-          <div class="toggle-wrap">
-            <button class="toggle-btn" onclick="selectEquip(this,'dryvan')">DRY VAN</button>
-            <button class="toggle-btn" onclick="selectEquip(this,'reefer')">REEFER</button>
-            <button class="toggle-btn" onclick="selectEquip(this,'flatbed')">FLATBED</button>
-            <button class="toggle-btn" onclick="selectEquip(this,'other')">OTHER</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- LOAD PROFILE -->
-    <div class="block">
-      <div class="block-title">Load Profile</div>
-
-      <div class="commodity-grid">
-        <div class="pill" onclick="togglePill(this)">Electronics</div>
-        <div class="pill" onclick="togglePill(this)">Food</div>
-        <div class="pill" onclick="togglePill(this)">Alcohol</div>
-        <div class="pill" onclick="togglePill(this)">Metals</div>
-      </div>
-
-      <div class="q-row">
-        <div class="q-label">Estimated load value</div>
-        <input id="loadValue" oninput="formatValue(this)" placeholder="$0">
-      </div>
-
-    </div>
-
-    <button class="run-btn" onclick="runCheck()">Check Carrier →</button>
-
-  </div>
+  
 
 </div>
 
