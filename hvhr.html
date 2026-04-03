@@ -220,6 +220,37 @@
   </div>
 
 </div>
+<script>
+let state = {
+  authority: null,
+  equipment: null,
+  california: null
+};
 
+function setValue(key, value) {
+  state[key] = value;
+}
+
+function runCheck() {
+  const value = parseInt(document.getElementById('loadValue').value || 0);
+
+  let result = "✅ OK";
+
+  if (state.authority === false) {
+    result = "❌ HARD NO — insufficient authority";
+  }
+
+  if (value > 100000) {
+    result = "⚠️ HVHR — high value load";
+  }
+
+  if (state.california === true) {
+    result = "⚠️ HVHR — California origin";
+  }
+
+  document.getElementById('verdict').innerHTML =
+    "<strong>Verdict:</strong> " + result;
+}
+</script>
 </body>
 </html>
