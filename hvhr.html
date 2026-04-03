@@ -79,7 +79,26 @@
   border-bottom: 3px solid var(--atg-teal);
   background: rgba(255,255,255,0.05);
 }
+/* TOGGLE BUTTONS */
+.toggle-btn {
+  margin: 4px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 12px;
+}
 
+.toggle-btn:hover {
+  background: var(--atg-teal-light);
+}
+
+.toggle-btn.active {
+  background: var(--atg-teal);
+  color: white;
+  border-color: var(--atg-teal);
+}
   /* PAGE */
   .container {
     max-width: 860px;
