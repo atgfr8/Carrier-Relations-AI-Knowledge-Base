@@ -156,45 +156,70 @@
 
 <!-- CONTENT -->
 <div class="container">
+  <div class="container">
 
-</div>
+  <!-- EXCLUSIONS -->
+  <div class="card" style="margin-bottom:16px;">
+    <strong>🚫 Insurance Exclusions — Do Not Book</strong>
+    <p style="margin-top:6px;">
+      Jewelry, Firearms, Tobacco, Mobile Phones, Microchips, Furs, Live Animals,
+      Explosives, Rx Pharmaceuticals, Narcotics
+    </p>
+  </div>
 
-<!-- CONTENT -->
-<div class="container">
-  <div class="card">
+  <!-- VERDICT -->
+  <div id="verdict" class="card" style="margin-bottom:16px;">
+    <strong>Verdict:</strong> Run check to evaluate carrier
+  </div>
 
-    <h1>High Value / High Risk Cargo (HVHR)</h1>
-    <p>This page provides internal guidance for identifying and handling shipments that carry elevated theft, compliance, or operational risk.</p>
+  <!-- CARRIER ELIGIBILITY -->
+  <div class="card" style="margin-bottom:16px;">
+    <h2>Carrier Eligibility</h2>
 
-    <h2>Common HVHR Cargo</h2>
-    <ul>
-      <li>Metals (copper, aluminum, scrap)</li>
-      <li>ATVs / UTVs</li>
-      <li>Electronics</li>
-      <li>Pharmaceuticals</li>
-      <li>Retail / resale goods</li>
-    </ul>
-
-    <h2>Risk Factors</h2>
-    <ul>
-      <li>High declared value</li>
-      <li>Ease of theft or resale</li>
-      <li>Unsecured or untracked freight</li>
-      <li>No ELD / tracking visibility</li>
-    </ul>
-
-    <h2>Guidance</h2>
-    <ul>
-      <li>Require tracking when possible</li>
-      <li>Verify carrier history</li>
-      <li>Escalate unclear cases</li>
-    </ul>
-
-    <div class="note">
-      ⚠️ If unsure, escalate — do not assume eligibility.
+    <div style="margin-top:10px;">
+      <label>180+ days authority?</label><br/>
+      <button class="toggle-btn" onclick="setValue('authority', true)">YES</button>
+      <button class="toggle-btn" onclick="setValue('authority', false)">NO</button>
     </div>
 
+    <div style="margin-top:10px;">
+      <label>Equipment type</label><br/>
+      <button class="toggle-btn" onclick="setValue('equipment','dryvan')">Dry Van</button>
+      <button class="toggle-btn" onclick="setValue('equipment','reefer')">Reefer</button>
+      <button class="toggle-btn" onclick="setValue('equipment','flatbed')">Flatbed</button>
+    </div>
   </div>
+
+  <!-- LOAD PROFILE -->
+  <div class="card" style="margin-bottom:16px;">
+    <h2>Load Profile</h2>
+
+    <div style="margin-top:10px;">
+      <label>Estimated Load Value ($)</label><br/>
+      <input id="loadValue" type="number" style="padding:6px;width:120px;">
+    </div>
+
+    <div style="margin-top:10px;">
+      <label>California origin?</label><br/>
+      <button class="toggle-btn" onclick="setValue('california', true)">YES</button>
+      <button class="toggle-btn" onclick="setValue('california', false)">NO</button>
+    </div>
+  </div>
+
+  <!-- RUN BUTTON -->
+  <div class="card">
+    <button onclick="runCheck()" style="
+      background: var(--atg-teal);
+      color: white;
+      border: none;
+      padding: 12px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+    ">
+      Run HVHR Check
+    </button>
+  </div>
+
 </div>
 
 </body>
