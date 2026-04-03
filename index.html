@@ -620,84 +620,549 @@
 
 <!-- HVHR SCREEN -->
 <div class="screen" id="screen-hvhr">
-  <div class="card">
-
-  <!-- 🚨 EXCLUSIONS -->
-  <div style="border:1px solid #e57373;background:#fdecea;padding:16px;border-radius:8px;margin-bottom:16px;">
-    <div style="font-weight:600;color:#c62828;margin-bottom:6px;">
-      🚫 INSURANCE EXCLUSIONS — DO NOT BOOK
-    </div>
-    <div style="font-size:13px;">
-      Includes: <strong>Jewelry, Firearms, Tobacco, Mobile Phones, Microchips, Furs, Live Animals, Explosives, Rx Pharmaceuticals, Narcotics</strong>
+  <!-- EXCLUSION NOTICE -->
+  <div class="excl-banner">
+    <div class="excl-icon">⛔</div>
+    <div class="excl-body">
+      <strong>Insurance Exclusions — Do Not Book</strong>
+      <p>Includes: <em>Jewelry, Firearms, Tobacco, Mobile Phones, Microchips, Furs, Live Animals, Explosives, Rx Pharmaceuticals, Narcotics</em></p>
+      <button class="excl-link" onclick="openModal()">View full exclusion list →</button>
     </div>
   </div>
 
-  <!-- 🧾 CARRIER ELIGIBILITY -->
-  <div style="margin-bottom:20px;">
-    <div class="slabel">Carrier Eligibility</div>
+  <div class="verdict" id="verdict">
+    <div class="verdict-eyebrow">// Assessment Result</div>
+    <div class="verdict-title" id="v-title"></div>
+    <div class="verdict-desc"  id="v-desc"></div>
+    <div class="verdict-flags" id="v-flags"></div>
+  </div>
 
-    <div style="margin-top:10px;font-weight:600;">
-      180+ days of continuous authority?
-    </div>
+  <!-- CARRIER ELIGIBILITY -->
+  <div class="block">
+    <div class="block-title">Carrier Eligibility</div>
+    <div class="block-body">
 
-    <div style="margin-top:8px;">
-      <button class="back-btn" onclick="this.classList.toggle('active')">YES</button>
-      <button class="back-btn" onclick="this.classList.toggle('active')">NO</button>
-    </div>
+      <div class="q-row">
+        <div class="q-label">180+ days of continuous authority?
+          <span class="q-sub">Required for all HVHR loads</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'auth'); document.getElementById('verdict').style.display='none'">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'auth'); authHardStop()">NO</button>
+        </div>
+      </div>
 
-    <div style="margin-top:14px;font-weight:600;">
-      Equipment type?
-    </div>
+      <div class="q-row">
+        <div class="q-label">Equipment type?
+          <span class="q-sub">Determines load history requirements</span>
+        </div>
+        <div class="toggle-wrap" style="flex-wrap:wrap;">
+          <button class="toggle-btn yes" onclick="selectEquip(this,'dryvan')">DRY VAN</button>
+          <button class="toggle-btn yes" onclick="selectEquip(this,'reefer')">REEFER</button>
+          <button class="toggle-btn yes" onclick="selectEquip(this,'flatbed')">FLATBED</button>
+          <button class="toggle-btn yes" onclick="selectEquip(this,'flatbed')">CONESTOGA</button>
+          <button class="toggle-btn yes" onclick="selectEquip(this,'flatbed')">STEP DECK</button>
+          <button class="toggle-btn yes" onclick="selectEquip(this,'flatbed')">RGN</button>
+          <button class="toggle-btn na"  onclick="selectEquip(this,'other')">OTHER</button>
+        </div>
+      </div>
 
-    <div style="margin-top:8px;">
-      <button class="back-btn">DRY VAN</button>
-      <button class="back-btn">REEFER</button>
-      <button class="back-btn">FLATBED</button>
-      <button class="back-btn">CONESTOGA</button>
-      <button class="back-btn">STEP DECK</button>
-      <button class="back-btn">RGN</button>
-      <button class="back-btn">OTHER</button>
+      <div class="q-row" id="row-flatbed-cargo" style="display:none">
+        <div class="q-label">Is the cargo metals, ATVs / UTVs / off-road vehicles, or anything easily offloaded?
+          <span class="q-sub">If yes, HVHR requirements apply to this flatbed load</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'flatbedcargo')">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'flatbedcargo')">NO</button>
+        </div>
+      </div>
+
+      <div class="q-row" id="row-loads" style="display:none">
+        <div class="q-label">3 completed loads in past 180 days, with at least 2 in the past 90 days?
+          <span class="q-sub">Required for Dry Van, Reefer &amp; Flatbed (easily offloaded cargo) HVHR loads</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'loads180')">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'loads180')">NO</button>
+        </div>
+      </div>
+
+      <div class="q-row" id="row-reefer" style="display:none">
+        <div class="q-label">Breakdown coverage verified?
+          <span class="q-sub">Required for all Reefer HVHR loads</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'reefer')">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'reefer')">NO</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- 📦 LOAD PROFILE -->
-  <div style="margin-bottom:20px;">
-    <div class="slabel">Load Profile</div>
+  <!-- LOAD PROFILE -->
+  <div class="block">
+    <div class="block-title">Load Profile</div>
+    <div class="block-body">
 
-    <div style="margin-top:10px;font-weight:600;">
-      What commodity is being hauled?
-    </div>
+      <div class="q-row" style="flex-direction:column; align-items:flex-start; gap:10px;">
+        <div class="q-label">What commodity is being hauled?
+          <span class="q-sub">Select all that apply — any selection triggers HVHR requirements</span>
+        </div>
+        <div class="commodity-grid">
+          <div class="pill" onclick="togglePill(this)">Electronics / Tech</div>
+          <div class="pill" onclick="togglePill(this)">Meat &amp; Seafood</div>
+          <div class="pill" onclick="togglePill(this)">Produce &amp; Nuts</div>
+          <div class="pill" onclick="togglePill(this)">Food &amp; Beverage</div>
+          <div class="pill" onclick="togglePill(this)">Supplements &amp; OTC Pharma</div>
+          <div class="pill" onclick="togglePill(this)">Cosmetics &amp; Personal Care</div>
+          <div class="pill" onclick="togglePill(this)">Clothing &amp; Apparel</div>
+          <div class="pill" onclick="togglePill(this)">Alcohol</div>
+          <div class="pill" onclick="togglePill(this)">Copper / Base Metals</div>
+          <div class="pill" onclick="togglePill(this)">Precious Metals</div>
+          <div class="pill" onclick="togglePill(this)">Tires / Industrial</div>
+          <div class="pill" onclick="togglePill(this)">General Merchandise</div>
+          <div class="pill" onclick="togglePill(this)">Other High-Theft</div>
+        </div>
+      </div>
 
-    <div style="margin-top:8px;">
-      <button class="back-btn">Electronics / Tech</button>
-      <button class="back-btn">Meat & Seafood</button>
-      <button class="back-btn">Produce & Nuts</button>
-      <button class="back-btn">Food & Beverage</button>
-      <button class="back-btn">Supplements & Pharma</button>
-      <button class="back-btn">Cosmetics</button>
-      <button class="back-btn">Clothing</button>
-      <button class="back-btn">Alcohol</button>
-      <button class="back-btn">Copper / Metals</button>
-      <button class="back-btn">Precious Metals</button>
-      <button class="back-btn">Tires</button>
-      <button class="back-btn">General Merchandise</button>
-      <button class="back-btn">Other High-Theft</button>
+      <div class="q-row">
+        <div class="q-label">Estimated load value
+          <span class="q-sub">HVHR triggers above $100,000</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+          <span style="font-family:var(--mono);font-size:13px;color:var(--ink-mid);">$</span>
+          <input class="value-input" type="text" id="loadValue" placeholder="0" oninput="formatValue(this)">
+        </div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-label">California origin?
+          <span class="q-sub">Auto-triggers HVHR + enhanced scrutiny</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'origin')">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'origin')">NO</button>
+        </div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-label">5+ CA-origin loads in past 180 days?
+          <span class="q-sub">California origin only · mark N/A otherwise</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'ca')">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'ca')">NO</button>
+          <button class="toggle-btn na"  onclick="toggle(this,'ca')">N/A</button>
+        </div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-label">Does this carrier have a current or past address in Fresno, CA?
+          <span class="q-sub">HVHR loads only · do not use, escalate to manager</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'fresno')">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'fresno')">NO</button>
+          <button class="toggle-btn na"  onclick="toggle(this,'fresno')">N/A</button>
+        </div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-label">Does this carrier have a unit pinging within a reasonable range of the pickup?
+          <span class="q-sub">HVHR loads only · GPS proximity check</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'ping')">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'ping')">NO</button>
+          <button class="toggle-btn na"  onclick="toggle(this,'ping')">N/A</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- 💰 LOAD VALUE -->
-  <div>
-    <div class="slabel">Estimated Load Value</div>
+  <div style="display:flex;gap:10px;margin-top:8px;">
+    <button class="run-btn" style="margin-top:0;flex:3;" onclick="runCheck()">Check Carrier Eligibility →</button>
+    <button class="run-btn" style="margin-top:0;flex:1;background:transparent;border:1.5px solid var(--border-dark);color:var(--ink-mid);" onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background='transparent'" onclick="resetAll()">↺ Reset</button>
+  </div>
 
-    <div style="margin-top:10px;">
-      <input type="number" placeholder="$ Enter value"
-        style="padding:10px;border-radius:6px;border:1px solid #ccc;width:200px;">
-    </div>
-
-    <div style="margin-top:8px;font-size:12px;color:#999;">
-      HVHR triggers above $100,000
+  <div class="caveat">
+    <div class="caveat-icon">⚠️</div>
+    <div class="caveat-text">
+      <strong>Important Disclaimer</strong>
+      This tool is intended as a guide to help evaluate carrier eligibility for HVHR loads based on current policy. Results may not account for every situation and may contain errors. All results must be reviewed and confirmed by a qualified team member. No carrier should be approved or denied without human review.
     </div>
   </div>
+
+</div>
+
+<!-- EXCLUSION MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <strong>Full Exclusion List — Per Stephanie Wilson 8/14/2024</strong>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="excl-cat">
+        <div class="excl-cat-title">Household Goods</div>
+        <div class="excl-items">
+          <span class="excl-tag">Used Household Goods</span>
+          <span class="excl-tag">Personal Effects</span>
+          <span class="excl-tag">Arts &amp; Collectibles</span>
+          <span class="excl-tag">Antiques</span>
+          <span class="excl-tag">Art</span>
+        </div>
+      </div>
+      <div class="excl-cat">
+        <div class="excl-cat-title">Live Animals</div>
+        <div class="excl-items">
+          <span class="excl-tag">Living Creatures of Any Kind</span>
+        </div>
+      </div>
+      <div class="excl-cat">
+        <div class="excl-cat-title">Luxury Goods</div>
+        <div class="excl-items">
+          <span class="excl-tag">Furs</span>
+          <span class="excl-tag">Precious Stones</span>
+          <span class="excl-tag">Jewelry</span>
+          <span class="excl-tag">High-Value Watches</span>
+          <span class="excl-tag">Perfumes</span>
+          <span class="excl-tag">Tobacco &amp; Tobacco Products</span>
+        </div>
+      </div>
+      <div class="excl-cat">
+        <div class="excl-cat-title">Dangerous / Regulated</div>
+        <div class="excl-items">
+          <span class="excl-tag">Satellites</span>
+          <span class="excl-tag">Nuclear Fuel</span>
+          <span class="excl-tag">Explosives</span>
+          <span class="excl-tag">Firearms</span>
+          <span class="excl-tag">Ammunition</span>
+        </div>
+      </div>
+      <div class="excl-cat">
+        <div class="excl-cat-title">Tech Goods</div>
+        <div class="excl-items">
+          <span class="excl-tag">Digital Cameras &amp; Photo Sticks</span>
+          <span class="excl-tag">Microchips</span>
+          <span class="excl-tag">Motherboards</span>
+          <span class="excl-tag">Standalone Memory</span>
+          <span class="excl-tag">Mobile Phones</span>
+          <span class="excl-tag">Phone Components &amp; Accessories</span>
+        </div>
+      </div>
+      <div class="excl-cat">
+        <div class="excl-cat-title">Pharmaceuticals &amp; Controlled Substances</div>
+        <div class="excl-items">
+          <span class="excl-tag">Rx / Non-OTC Pharmaceuticals</span>
+          <span class="excl-tag">Non-OTC Nutraceuticals</span>
+          <span class="excl-tag">Marijuana</span>
+          <span class="excl-tag">CBD &gt; 0.3% THC</span>
+          <span class="excl-tag">Narcotics</span>
+        </div>
+      </div>
+      <div class="modal-note">
+        <strong>Exception:</strong> OTC pharmaceuticals and domestic CBD (≤ 0.3% THC) are permitted under current policy. All other items above are hard exclusions — do not book without written underwriting approval.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const state = {
+  origin: null, auth: null, fresno: null, ping: null,
+  equip: null, loads180: null, reefer: null, flatbedcargo: null, ca: null
+};
+
+function toggle(btn, key) {
+  btn.closest('.toggle-wrap').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state[key] = btn.textContent.trim().toLowerCase();
+  // Show load history row if flatbed cargo = yes
+  if (key === 'flatbedcargo') {
+    const show = state.flatbedcargo === 'yes';
+    document.getElementById('row-loads').style.display = show ? 'flex' : 'none';
+    if (!show) { state.loads180 = null; document.querySelectorAll('#row-loads .toggle-btn').forEach(b => b.classList.remove('active')); }
+  }
+}
+
+function selectEquip(btn, val) {
+  btn.closest('.toggle-wrap').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.equip = val;
+  document.getElementById('row-loads').style.display = (val === 'dryvan' || val === 'reefer') ? 'flex' : 'none';
+  document.getElementById('row-reefer').style.display = val === 'reefer' ? 'flex' : 'none';
+  document.getElementById('row-flatbed-cargo').style.display = val === 'flatbed' ? 'flex' : 'none';
+  state.loads180 = null;
+  state.reefer = null;
+  state.flatbedcargo = null;
+  document.querySelectorAll('#row-loads .toggle-btn, #row-reefer .toggle-btn, #row-flatbed-cargo .toggle-btn').forEach(b => b.classList.remove('active'));
+}
+
+function togglePill(el) { el.classList.toggle('active'); }
+
+function isHVHR() {
+  if (document.querySelectorAll('.pill.active').length > 0) return true;
+  if (getRawValue() >= 1000000) return 'overlimit';
+  if (getRawValue() > 100000) return true;
+  if (state.origin === 'yes') return true;
+  if (state.flatbedcargo === 'yes') return true;
+  return false;
+}
+
+function authHardStop() {
+  showVerdict('fail', 'CARRIER INELIGIBLE',
+    'Carrier does not meet the minimum 180-day continuous authority requirement. Do not tender this load.',
+    [{ type: 'bad', text: 'Authority under 180 days — hard stop, no exceptions' }]);
+}
+
+function formatValue(input) {
+  const raw = input.value.replace(/[^0-9]/g, '');
+  input.value = raw ? parseInt(raw, 10).toLocaleString('en-US') : '';
+  checkValueLimit();
+}
+
+function getRawValue() {
+  const raw = document.getElementById('loadValue').value.replace(/[^0-9]/g, '');
+  return parseFloat(raw) || 0;
+}
+
+function checkValueLimit() {
+  const val = getRawValue();
+  if (val >= 1000000) {
+    showVerdict('fail', 'REQUIRES UNDERWRITER APPROVAL',
+      'Cargo value exceeds $1,000,000. This load is subject to additional criteria and underwriter approval. Do not book — send request to Claims.',
+      [{ type: 'bad', text: 'Load value over $1,000,000 — hard stop pending underwriter review' }]);
+  } else {
+    document.getElementById('verdict').style.display = 'none';
+  }
+}
+
+function runCheck() {
+  const hvhr = isHVHR();
+  const flags = [];
+  let failCount = 0, warnCount = 0;
+
+  // $1M hard stop — fires before everything else, no exceptions
+  if (getRawValue() >= 1000000) {
+    showVerdict('fail', 'REQUIRES UNDERWRITER APPROVAL',
+      'Cargo value exceeds $1,000,000. This load is subject to additional criteria and underwriter approval. Do not book — send request to Claims.',
+      [{ type: 'bad', text: 'Load value over $1,000,000 — hard stop pending underwriter review' }]);
+    return;
+  }
+
+  // Required fields validation
+  const missing = [];
+  if (state.auth === null) missing.push('180+ days of continuous authority');
+  if (state.equip === null) missing.push('Equipment type');
+  if (getRawValue() === 0) missing.push('Estimated load value');
+  if (missing.length > 0) {
+    showVerdict('warn', 'INCOMPLETE ASSESSMENT',
+      'Please answer all required fields before running a check.',
+      missing.map(m => ({ type: 'warn', text: m + ' — required' })));
+    return;
+  }
+
+  // Fresno hard stop — applies regardless of HVHR status
+  if (state.fresno === 'yes') {
+    showVerdict('fail', 'CARRIER INELIGIBLE',
+      'Carrier has a current or past Fresno, CA address. Do not use — escalate to your manager if this load requires further review.',
+      [{ type: 'bad', text: 'Fresno, CA address on file — do not use. Escalate to manager if needed.' }]);
+    return;
+  }
+
+  // Auth hard stop — must pass regardless of HVHR status
+  if (state.auth === 'no') {
+    showVerdict('fail', 'CARRIER INELIGIBLE',
+      'Carrier does not meet the minimum 180-day continuous authority requirement. Do not tender this load.',
+      [{ type: 'bad', text: 'Authority under 180 days — hard stop, no exceptions' }]);
+    return;
+  }
+
+  if (hvhr === 'overlimit') {
+    showVerdict('fail', 'REQUIRES UNDERWRITER APPROVAL',
+      'Cargo value exceeds $1,000,000. This load is subject to additional criteria and underwriter approval. Do not book — send request to Claims.',
+      [{ type: 'bad', text: 'Load value over $1,000,000 — hard stop pending underwriter review' }]);
+    return;
+  }
+
+  if (!hvhr) {
+    if ((state.equip === 'dryvan' || state.equip === 'reefer') && state.loads180 === 'no') {
+      showVerdict('fail', 'CARRIER INELIGIBLE',
+        'Carrier does not meet the minimum load history requirement for Dry Van / Reefer loads. Do not tender this load.',
+        [{ type: 'bad', text: 'Load history requirement not met — carrier ineligible for this Dry Van / Reefer load' }]);
+      return;
+    }
+    showVerdict('pass', 'STANDARD LOAD',
+      'No HVHR triggers detected. Standard carrier vetting applies — no enhanced requirements.',
+      [{ type: 'ok', text: 'No HVHR indicators present' }]);
+    return;
+  }
+
+  flags.push({ type: 'warn', text: 'Load classified HVHR — enhanced carrier requirements apply' });
+
+
+  // Commodity-specific risk flags
+  const activePills = [...document.querySelectorAll('.pill.active')].map(p => p.textContent.trim());
+  if (activePills.some(p => p.includes('Meat') || p.includes('Seafood'))) {
+    warnCount++; flags.push({ type: 'warn', text: 'Meat & Seafood: high-theft target — verify reefer integrity, seal numbers, and driver identity at pickup' });
+  }
+  if (activePills.some(p => p.includes('Food') && p.includes('Beverage'))) {
+    warnCount++; flags.push({ type: 'warn', text: 'Food & Beverage: frozen/refrigerated food (e.g. beef, poultry) is a high-theft target — confirm commodity specifics and apply elevated scrutiny' });
+  }
+  if (activePills.some(p => p.includes('Electronics'))) {
+    warnCount++; flags.push({ type: 'warn', text: 'Electronics / Tech: highest theft risk category — verify carrier identity carefully' });
+  }
+  if (activePills.some(p => p.includes('Alcohol'))) {
+    warnCount++; flags.push({ type: 'warn', text: 'Alcohol: high-value and frequently targeted — confirm secure facility for any stops or layovers' });
+  }
+  if (activePills.some(p => p.includes('Precious Metals') || p.includes('Copper'))) {
+    warnCount++; flags.push({ type: 'warn', text: 'Metals: high intrinsic value — elevated risk of theft or diversion, limit stop exposure' });
+  }
+  // Authority — hard stop
+  if (state.auth === 'yes') {
+    flags.push({ type: 'ok', text: '180+ days continuous authority confirmed' });
+  } else if (state.auth === 'no') {
+    showVerdict('fail', 'CARRIER INELIGIBLE',
+      'Carrier does not meet the minimum 180-day continuous authority requirement. Do not tender this load.',
+      [{ type: 'bad', text: 'Authority under 180 days — hard stop, no exceptions' }]);
+    return;
+  } else {
+    flags.push({ type: 'warn', text: 'Authority age not answered — must verify before booking' });
+    warnCount++;
+  }
+
+  // Load history — Dry Van & Reefer only
+  if (state.equip === 'dryvan' || state.equip === 'reefer') {
+    if (state.loads180 === 'yes') {
+      flags.push({ type: 'ok', text: '3 loads in 180 days with 2 in past 90 days confirmed' });
+    } else if (state.loads180 === 'no') {
+      flags.push({ type: 'bad', text: 'Load history requirement not met — carrier ineligible for this Dry Van / Reefer HVHR load' });
+      failCount++;
+    } else {
+      flags.push({ type: 'warn', text: 'Load history not answered — required for Dry Van / Reefer' });
+      warnCount++;
+    }
+  } else if (state.equip === 'flatbed') {
+    if (state.flatbedcargo === 'yes') {
+      flags.push({ type: 'warn', text: 'Flatbed cargo flagged as easily offloaded — load history requirement applies' });
+      if (state.loads180 === 'yes') {
+        flags.push({ type: 'ok', text: '3 loads in 180 days with 2 in past 90 days confirmed' });
+      } else if (state.loads180 === 'no') {
+        flags.push({ type: 'bad', text: 'Load history requirement not met — carrier ineligible for this Flatbed HVHR load' });
+        failCount++;
+      } else {
+        flags.push({ type: 'warn', text: 'Load history not answered — required for Flatbed with easily offloaded cargo' });
+        warnCount++;
+      }
+    } else if (state.flatbedcargo === 'no') {
+      flags.push({ type: 'ok', text: 'Flatbed cargo assessed as standard — no enhanced load history required' });
+    } else {
+      flags.push({ type: 'warn', text: 'Flatbed cargo type not answered — verify whether HVHR applies' });
+      warnCount++;
+    }
+  } else if (state.equip === 'other') {
+    flags.push({ type: 'ok', text: 'Non-Dry Van / Reefer equipment — no minimum load history required' });
+  } else {
+    flags.push({ type: 'warn', text: 'Equipment type not selected — required to determine load history eligibility' });
+    warnCount++;
+  }
+
+  // CA
+  if (state.origin === 'yes') {
+    if (state.ca === 'yes') {
+      flags.push({ type: 'ok', text: '5+ CA origin loads — meets California recommendation' });
+    } else if (state.ca === 'no') {
+      flags.push({ type: 'warn', text: 'Fewer than 5 CA loads — elevated scrutiny required for CA origin' });
+      warnCount++;
+    } else {
+      flags.push({ type: 'warn', text: 'CA load history not answered — verify for California origin load' });
+      warnCount++;
+    }
+  }
+
+  // Reefer breakdown coverage
+  if (state.equip === 'reefer') {
+    if (state.reefer === 'yes') {
+      flags.push({ type: 'ok', text: 'Reefer breakdown coverage verified' });
+    } else if (state.reefer === 'no') {
+      flags.push({ type: 'bad', text: 'Breakdown coverage not verified — required for all Reefer HVHR loads' });
+      failCount++;
+    } else {
+      flags.push({ type: 'warn', text: 'Reefer breakdown coverage not answered — must verify before booking' });
+      warnCount++;
+    }
+  }
+
+  // GPS ping check — HVHR loads only
+  if (state.ping === 'yes') {
+    flags.push({ type: 'ok', text: 'Unit pinging within reasonable range of pickup — GPS check passed' });
+  } else if (state.ping === 'no') {
+    flags.push({ type: 'warn', text: 'Unit not pinging within reasonable range of pickup — advise agent, would not recommend using this carrier' });
+    warnCount++;
+  } else {
+    flags.push({ type: 'warn', text: 'GPS ping not verified — confirm unit location before booking' });
+    warnCount++;
+  }
+
+  if (failCount > 0) {
+    showVerdict('fail', 'CARRIER INELIGIBLE',
+      `${failCount} requirement${failCount > 1 ? 's' : ''} not met. Do not tender this HVHR load without supervisor approval and a documented exception.`,
+      flags);
+  } else if (warnCount > 0) {
+    const warnItems = flags.filter(f => f.type === 'warn').map(f => f.text);
+    const warnSummary = warnItems.length === 1
+      ? `Attention needed: ${warnItems[0]}`
+      : `${warnCount} items need attention: ${warnItems.join(' · ')}`;
+    showVerdict('warn', 'PROCEED WITH CAUTION', warnSummary,
+      flags);
+  } else {
+    showVerdict('pass', 'CARRIER ELIGIBLE',
+      'All HVHR requirements verified. Carrier meets eligibility standards. Document vetting in your TMS.',
+      flags);
+  }
+}
+
+function showVerdict(type, title, desc, flags) {
+  const v = document.getElementById('verdict');
+  v.className = 'verdict ' + type;
+  v.style.display = 'block';
+  document.getElementById('v-title').textContent = title;
+  document.getElementById('v-desc').textContent = desc;
+  document.getElementById('v-flags').innerHTML = flags.map(f =>
+    `<div class="flag ${f.type}"><div class="flag-dot"></div><span>${f.text}</span></div>`
+  ).join('');
+  v.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetAll() {
+  Object.keys(state).forEach(k => state[k] = null);
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  document.getElementById('loadValue').value = '';
+  document.getElementById('row-loads').style.display = 'none';
+  state.ping = null;
+  document.getElementById('row-reefer').style.display = 'none';
+  document.getElementById('row-flatbed-cargo').style.display = 'none';
+  const v = document.getElementById('verdict');
+  v.style.display = 'none';
+}
+
+function openModal()  { document.getElementById('modal').classList.add('open'); }
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+function closeModalOutside(e) { if (e.target.id === 'modal') closeModal(); }
+</script>
+<script>
+(function(){
+  const d = new Date(document.lastModified);
+  const opts = { month: 'short', day: 'numeric', year: 'numeric' };
+  document.getElementById('last-modified').textContent = d.toLocaleDateString('en-US', opts);
+})();
+</script>
+</body>
+</html>
 
 </div>
     </div>
