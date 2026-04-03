@@ -247,8 +247,16 @@ let state = {
   california: null
 };
 
-function setValue(key, value) {
+function setValue(key, value, el) {
   state[key] = value;
+
+  // remove active from group
+  const group = el.parentElement.querySelectorAll('.toggle-btn');
+  group.forEach(btn => btn.classList.remove('active'));
+
+  // add active to clicked
+  el.classList.add('active');
+}
 }
 
 function runCheck() {
