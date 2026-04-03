@@ -196,15 +196,15 @@
 
     <div style="margin-top:10px;">
       <label>180+ days authority?</label><br/>
-      <button class="toggle-btn" onclick="setValue('authority', true)">YES</button>
-      <button class="toggle-btn" onclick="setValue('authority', false)">NO</button>
+      <button class="toggle-btn" onclick="setValue('authority', true, this)">YES</button>
+      <button class="toggle-btn" onclick="setValue('authority', false, this)">NO</button>
     </div>
 
     <div style="margin-top:10px;">
       <label>Equipment type</label><br/>
-      <button class="toggle-btn" onclick="setValue('equipment','dryvan')">Dry Van</button>
-      <button class="toggle-btn" onclick="setValue('equipment','reefer')">Reefer</button>
-      <button class="toggle-btn" onclick="setValue('equipment','flatbed')">Flatbed</button>
+      <button class="toggle-btn" onclick="setValue('equipment','dryvan', this)">Dry Van</button>
+      <button class="toggle-btn" onclick="setValue('equipment','reefer', this)">Reefer</button>
+      <button class="toggle-btn" onclick="setValue('equipment','flatbed', this)">Flatbed</button>
     </div>
   </div>
 
@@ -219,8 +219,9 @@
 
     <div style="margin-top:10px;">
       <label>California origin?</label><br/>
-      <button class="toggle-btn" onclick="setValue('california', true)">YES</button>
-      <button class="toggle-btn" onclick="setValue('california', false)">NO</button>
+      <button class="toggle-btn" onclick="setValue('california', true, this)">YES</button>
+      <button class="toggle-btn" onclick="setValue('california', false, this)">NO</button>
+      
     </div>
   </div>
 
