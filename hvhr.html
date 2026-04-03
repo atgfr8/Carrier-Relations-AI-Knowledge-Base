@@ -3,59 +3,57 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HVHR Cargo Guide</title>
-
+<title>HVHR Assessment Guide</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --atg-teal: #0069A6;
-    --atg-teal-dark: #004F7C;
-    --atg-teal-light: #E6F2F9;
-    --atg-navy: #1A2E44;
-    --bg: #D9E4ED;
-    --surface: #FFFFFF;
-    --border: #C8D8E4;
-    --text: #1A2E44;
-    --text-2: #4A6478;
-    --radius: 6px;
-    --radius-lg: 10px;
-  }
+:root {
+  --atg-teal: #0069A6;
+  --atg-teal-dark: #004F7C;
+  --atg-teal-light: #E6F2F9;
+  --atg-teal-mid: #CCE4F1;
+  --atg-navy: #1A2E44;
+  --atg-navy-light: #EBF0F5;
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+  --bg: #D6E3ED;
+  --surface: #FFFFFF;
+  --surface-2: #EBF0F5;
+  --border: #C8D8E4;
+  --border-dark: #8AAFC5;
+  --ink: #1A2E44;
+  --ink-mid: #4A6478;
+  --ink-light: #8AAFC5;
+  --accent: #D64340;
+  --accent-light: #FDF0EF;
+  --amber: #C98F00;
+  --amber-light: #FDF5E8;
+  --green: #1A9458;
+  --green-light: #EDFAF4;
+  --mono: 'IBM Plex Mono', monospace;
+  --display: 'IBM Plex Sans', sans-serif;
+  --body: 'IBM Plex Sans', sans-serif;
+  --radius: 6px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.page { max-width: 960px; margin: 0 auto; padding: 0 0 80px; }
 
-  body {
-    font-family: 'IBM Plex Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
-
-  /* HEADER (MATCHES MAIN TOOL) */
-  .header {
-    background: var(--atg-navy);
-    border-bottom: 3px solid var(--atg-teal);
-    padding: 14px 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .header-brand {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-  }
-
-  /* NAV LINKS */
-  .nav-links {
+/* Header */
+/* NAV LINKS */
+.nav-links {
   display: flex;
   gap: 0;
 }
 
 .nav-link {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--mono);
   font-size: 11px;
   font-weight: 500;
   padding: 10px 16px;
@@ -63,7 +61,6 @@
 
   color: rgba(255,255,255,0.7);
   background: transparent;
-  border: none;
   border-bottom: 3px solid transparent;
 
   transition: all 0.2s ease;
@@ -79,205 +76,927 @@
   border-bottom: 3px solid var(--atg-teal);
   background: rgba(255,255,255,0.05);
 }
-/* TOGGLE BUTTONS */
-.toggle-btn {
-  margin: 4px;
-  padding: 6px 12px;
-  border: 1px solid var(--border);
-  background: white;
+.header {
+
+  background: var(--atg-navy);
+  border-bottom: 3px solid var(--atg-teal);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+  width: 100%;
+}
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  flex-shrink: 1;
+}
+.atg-logo-text {
+  line-height: 1.2;
+}
+.atg-logo-text strong {
+  font-family: var(--body);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ffffff;
+  text-transform: uppercase;
+  display: block;
+}
+.atg-logo-text span {
+  font-family: var(--body);
+  font-size: 8.5px;
+  font-weight: 400;
+  letter-spacing: 4px;
+  color: rgba(255,255,255,0.6);
+  text-transform: uppercase;
+  display: block;
+}
+.header-divider {
+  width: 1px;
+  height: 26px;
+  background: rgba(255,255,255,0.18);
+  flex-shrink: 0;
+}
+.header-tool-name {
+  font-family: var(--body);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #ffffff;
+  white-space: nowrap;
+}
+.header-reset {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.75);
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.4);
+  border-radius: var(--radius);
+  padding: 6px 14px;
   cursor: pointer;
-  border-radius: 4px;
+  letter-spacing: 0.03em;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.header-reset:hover { color: #fff; border-color: rgba(255,255,255,0.7); }
+
+/* Block */
+.block {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.block-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  padding: 14px 20px 0;
+}
+.block-body { padding: 14px 20px 20px; }
+.page-inner { padding: 0 24px; }
+
+/* Question rows */
+.q-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+.q-row:last-child { border-bottom: none; padding-bottom: 0; }
+.q-row:first-child { padding-top: 0; }
+.q-label { font-size: 14px; color: var(--ink); line-height: 1.4; flex: 1; }
+.q-sub {
+  font-size: 11px;
+  color: var(--ink-light);
+  font-family: var(--mono);
+  font-weight: 500;
+  display: block;
+  margin-top: 2px;
+  letter-spacing: 0.02em;
+}
+
+/* Toggle */
+.toggle-wrap {
+  display: flex;
+  border: 1.5px solid var(--border-dark);
+  border-radius: var(--radius);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.toggle-btn {
+  padding: 7px 16px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  background: none;
+  border: none;
+  border-right: 1px solid var(--border-dark);
+  cursor: pointer;
+  color: var(--ink-light);
+  transition: all 0.15s;
+  font-weight: 500;
+}
+.toggle-btn:last-child { border-right: none; }
+.toggle-btn:hover { background: var(--atg-teal-light); color: var(--atg-teal-dark); }
+.toggle-btn.yes.active { background: var(--green); color: #fff; }
+.toggle-btn.no.active  { background: var(--accent); color: #fff; }
+.toggle-btn.na.active  { background: var(--ink-mid); color: #fff; }
+
+/* Commodity pills */
+.commodity-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+.pill {
+  padding: 5px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 99px;
+  font-size: 11px;
+  font-family: var(--mono);
+  font-weight: 500;
+  color: var(--ink-mid);
+  background: var(--surface);
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+.pill:hover { border-color: var(--atg-teal); color: var(--atg-teal-dark); }
+.pill.active { background: var(--amber); color: #fff; border-color: var(--amber); }
+
+/* Value input */
+.value-input {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 7px 12px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink);
+  width: 160px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.value-input:focus { border-color: var(--atg-teal); }
+
+/* Exclusion banner */
+.excl-banner {
+  background: var(--accent-light);
+  border: 1.5px solid #E8A09C;
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.excl-icon { font-size: 14px; flex-shrink: 0; margin-top: 3px; }
+.excl-body { flex: 1; }
+.excl-body strong {
+  font-size: 10px;
+  font-family: var(--mono);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #8B2220;
+  display: block;
+  margin-bottom: 4px;
+}
+.excl-body p { font-size: 12px; color: var(--ink-mid); line-height: 1.5; }
+.excl-body p em { font-style: normal; color: var(--ink); font-weight: 600; }
+.excl-link {
+  background: none; border: none;
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  color: var(--atg-teal); text-decoration: underline;
+  cursor: pointer; padding: 0; margin-top: 6px;
+  display: inline-block; letter-spacing: 0.03em;
+}
+
+/* Run button */
+.run-btn {
+  width: 100%; padding: 14px;
+  background: var(--atg-teal); color: #fff;
+  border: none; font-family: var(--mono);
+  font-size: 13px; font-weight: 500;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  cursor: pointer; margin-top: 8px;
+  border-radius: var(--radius);
+  transition: all 0.2s;
+}
+.run-btn:hover { background: var(--atg-teal-dark); }
+
+/* Verdict */
+.verdict {
+  border: 1.5px solid; padding: 18px 20px;
+  margin-top: 8px; display: none;
+  border-radius: var(--radius);
+  animation: pop 0.25s ease;
+}
+@keyframes pop {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.verdict.pass  { border-color: #8ED4B0; border-left: 4px solid var(--green); background: var(--green-light); border-radius: var(--radius); border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.verdict.fail  { border-color: #E8A09C; border-left: 4px solid var(--accent); background: var(--accent-light); border-radius: var(--radius); border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.verdict.warn  { border-color: #E8C87A; border-left: 4px solid var(--amber);  background: var(--amber-light);  border-radius: var(--radius); border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.verdict-eyebrow {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 4px; font-weight: 500;
+}
+.verdict.pass .verdict-eyebrow { color: var(--green); }
+.verdict.fail .verdict-eyebrow { color: var(--accent); }
+.verdict.warn .verdict-eyebrow { color: var(--amber); }
+.verdict-title {
+  font-family: var(--mono); font-size: 22px;
+  font-weight: 500; letter-spacing: -0.01em;
+  line-height: 1; margin-bottom: 8px;
+}
+.verdict.pass .verdict-title { color: #0E5C38; }
+.verdict.fail .verdict-title { color: #8B2220; }
+.verdict.warn .verdict-title { color: #7A5200; }
+.verdict-desc {
+  font-size: 13px; color: var(--ink-mid);
+  line-height: 1.6; margin-bottom: 14px;
+}
+.verdict-flags { display: flex; flex-direction: column; gap: 7px; }
+.flag { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.4; }
+.flag-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.flag.ok   .flag-dot { background: var(--green); }
+.flag.bad  .flag-dot { background: var(--accent); }
+.flag.warn .flag-dot { background: var(--amber); }
+.flag.ok   span { color: var(--ink-mid); }
+.flag.bad  span { color: #8B2220; font-weight: 600; }
+.flag.warn span { color: var(--ink-mid); }
+
+/* Modal */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(26,46,68,0.6); z-index: 100;
+  align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  max-width: 540px; width: 100%; max-height: 82vh; overflow-y: auto;
+}
+.modal-head {
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+  position: sticky; top: 0; background: var(--surface);
+}
+.modal-head strong {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.05em; text-transform: uppercase; color: var(--atg-teal);
+}
+.modal-close {
+  background: none; border: none; font-size: 18px;
+  cursor: pointer; color: var(--ink-light); line-height: 1;
+}
+.modal-body { padding: 20px; }
+.excl-cat { margin-bottom: 18px; }
+.excl-cat-title {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.05em; text-transform: uppercase;
+  color: var(--ink-light); margin-bottom: 8px;
+}
+.excl-items { display: flex; flex-wrap: wrap; gap: 5px; }
+.excl-tag {
+  font-size: 11px; padding: 4px 10px;
+  background: var(--accent-light);
+  border: 1px solid #E8A09C;
+  border-radius: 99px;
+  color: #8B2220; font-family: var(--mono);
+}
+.modal-note {
+  margin-top: 4px; font-size: 12px; color: #7A5200;
+  background: var(--amber-light); border-left: 3px solid var(--amber);
+  padding: 10px 14px; line-height: 1.6; border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.caveat {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border: 1.5px solid #E8C87A;
+  border-left: 4px solid #C98F00;
+  border-radius: var(--radius);
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  background: var(--amber-light);
   font-size: 12px;
+  font-family: var(--body);
+  font-weight: 500;
+  color: #7A5200;
+  line-height: 1.7;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.caveat-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.caveat-text strong {
+  display: block;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: var(--mono);
+  color: #7A5200;
+  margin-bottom: 4px;
 }
 
-.toggle-btn:hover {
-  background: var(--atg-teal-light);
+@media (max-width: 560px) {
+  .header { flex-direction: column; gap: 12px; align-items: flex-start; }
+  .q-row { flex-direction: column; align-items: flex-start; gap: 8px; }
 }
-
-.toggle-btn.active {
-  background: var(--atg-teal);
-  color: white;
-  border-color: var(--atg-teal);
-}
-  /* PAGE */
-  .container {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 28px 24px 60px;
-  }
-
-  .card {
-    background: var(--surface);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border);
-    padding: 28px 32px;
-    box-shadow: 0 2px 12px rgba(26,46,68,0.07);
-  }
-
-  h1 {
-    font-size: 22px;
-    margin-bottom: 10px;
-  }
-
-  h2 {
-    font-size: 16px;
-    margin-top: 24px;
-    margin-bottom: 8px;
-  }
-
-  p, li {
-    color: var(--text-2);
-    font-size: 13px;
-    line-height: 1.6;
-  }
-
-  ul {
-    padding-left: 18px;
-    margin-top: 6px;
-  }
-
-  .note {
-    margin-top: 18px;
-    padding: 12px 16px;
-    background: var(--atg-teal-light);
-    border-left: 4px solid var(--atg-teal);
-    border-radius: var(--radius);
-    color: var(--atg-teal-dark);
-    font-size: 13px;
-  }
-
 </style>
 </head>
-
 <body>
-
-<!-- HEADER -->
 <div class="header">
 
   <div class="header-brand">
     <div style="line-height:1.25;">
-      <div style="font-size:18px;font-weight:700;letter-spacing:2px;color:#fff;text-transform:uppercase;">Armstrong</div>
-      <div style="font-size:8px;letter-spacing:4px;color:rgba(255,255,255,0.6);text-transform:uppercase;">Transport Group</div>
+      <div style="font-size:18px;font-weight:700;letter-spacing:2px;color:#fff;text-transform:uppercase;">
+        Armstrong
+      </div>
+      <div style="font-size:8px;letter-spacing:4px;color:rgba(255,255,255,0.6);text-transform:uppercase;">
+        Transport Group
+      </div>
     </div>
 
     <div style="width:1px;height:30px;background:rgba(255,255,255,0.2);"></div>
 
     <div style="font-size:15px;font-weight:600;color:#fff;">
-      HVHR Guide
+      Carrier Ruleset & Vetting Guide
     </div>
   </div>
-<div class="nav-links">
-  <a href="index.html" class="nav-link">Vetting checker</a>
-  <a href="alerts.html" class="nav-link">Identity alert guide</a>
-  <a href="hvhr.html" class="nav-link active">HVHR</a>
-</div>
- </div>   <!-- header -->
 
-<!-- CONTENT -->
-<div class="container">
-
-  <!-- EXCLUSIONS -->
-  <div class="card" style="margin-bottom:16px;">
-    <strong>🚫 Insurance Exclusions — Do Not Book</strong>
-    <p style="margin-top:6px;">
-      Jewelry, Firearms, Tobacco, Mobile Phones, Microchips, Furs, Live Animals,
-      Explosives, Rx Pharmaceuticals, Narcotics
-    </p>
+  <div class="nav-links">
+    <a href="index.html" class="nav-link" id="nav-checker">Vetting checker</a>
+    <a href="alerts.html" class="nav-link" id="nav-alerts">Identity alert guide</a>
+    <a href="hvhr.html" class="nav-link active" id="nav-hvhr">HVHR</a>
   </div>
 
-  <!-- VERDICT -->
-  <div id="verdict" class="card" style="margin-bottom:16px;">
-    <strong>Verdict:</strong> Run check to evaluate carrier
+</div>
+<div class="page">
+<div class="page-inner">
+
+  <!-- EXCLUSION NOTICE -->
+  <div class="excl-banner">
+    <div class="excl-icon">⛔</div>
+    <div class="excl-body">
+      <strong>Insurance Exclusions — Do Not Book</strong>
+      <p>Includes: <em>Jewelry, Firearms, Tobacco, Mobile Phones, Microchips, Furs, Live Animals, Explosives, Rx Pharmaceuticals, Narcotics</em></p>
+      <button class="excl-link" onclick="openModal()">View full exclusion list →</button>
+    </div>
+  </div>
+
+  <div class="verdict" id="verdict">
+    <div class="verdict-eyebrow">// Assessment Result</div>
+    <div class="verdict-title" id="v-title"></div>
+    <div class="verdict-desc"  id="v-desc"></div>
+    <div class="verdict-flags" id="v-flags"></div>
   </div>
 
   <!-- CARRIER ELIGIBILITY -->
-  <div class="card" style="margin-bottom:16px;">
-    <h2>Carrier Eligibility</h2>
+  <div class="block">
+    <div class="block-title">Carrier Eligibility</div>
+    <div class="block-body">
 
-    <div style="margin-top:10px;">
-      <label>180+ days authority?</label><br/>
-      <button class="toggle-btn" onclick="setValue('authority', true, this)">YES</button>
-      <button class="toggle-btn" onclick="setValue('authority', false, this)">NO</button>
-    </div>
+      <div class="q-row">
+        <div class="q-label">180+ days of continuous authority?
+          <span class="q-sub">Required for all HVHR loads</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'auth'); document.getElementById('verdict').style.display='none'">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'auth'); authHardStop()">NO</button>
+        </div>
+      </div>
 
-    <div style="margin-top:10px;">
-      <label>Equipment type</label><br/>
-      <button class="toggle-btn" onclick="setValue('equipment','dryvan', this)">Dry Van</button>
-      <button class="toggle-btn" onclick="setValue('equipment','reefer', this)">Reefer</button>
-      <button class="toggle-btn" onclick="setValue('equipment','flatbed', this)">Flatbed</button>
+      <div class="q-row">
+        <div class="q-label">Equipment type?
+          <span class="q-sub">Determines load history requirements</span>
+        </div>
+        <div class="toggle-wrap" style="flex-wrap:wrap;">
+          <button class="toggle-btn yes" onclick="selectEquip(this,'dryvan')">DRY VAN</button>
+          <button class="toggle-btn yes" onclick="selectEquip(this,'reefer')">REEFER</button>
+          <button class="toggle-btn yes" onclick="selectEquip(this,'flatbed')">FLATBED</button>
+          <button class="toggle-btn yes" onclick="selectEquip(this,'flatbed')">CONESTOGA</button>
+          <button class="toggle-btn yes" onclick="selectEquip(this,'flatbed')">STEP DECK</button>
+          <button class="toggle-btn yes" onclick="selectEquip(this,'flatbed')">RGN</button>
+          <button class="toggle-btn na"  onclick="selectEquip(this,'other')">OTHER</button>
+        </div>
+      </div>
+
+      <div class="q-row" id="row-flatbed-cargo" style="display:none">
+        <div class="q-label">Is the cargo metals, ATVs / UTVs / off-road vehicles, or anything easily offloaded?
+          <span class="q-sub">If yes, HVHR requirements apply to this flatbed load</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'flatbedcargo')">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'flatbedcargo')">NO</button>
+        </div>
+      </div>
+
+      <div class="q-row" id="row-loads" style="display:none">
+        <div class="q-label">3 completed loads in past 180 days, with at least 2 in the past 90 days?
+          <span class="q-sub">Required for Dry Van, Reefer &amp; Flatbed (easily offloaded cargo) HVHR loads</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'loads180')">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'loads180')">NO</button>
+        </div>
+      </div>
+
+      <div class="q-row" id="row-reefer" style="display:none">
+        <div class="q-label">Breakdown coverage verified?
+          <span class="q-sub">Required for all Reefer HVHR loads</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'reefer')">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'reefer')">NO</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <!-- LOAD PROFILE -->
-  <div class="card" style="margin-bottom:16px;">
-    <h2>Load Profile</h2>
+  <div class="block">
+    <div class="block-title">Load Profile</div>
+    <div class="block-body">
 
-    <div style="margin-top:10px;">
-      <label>Estimated Load Value ($)</label><br/>
-      <input id="loadValue" type="number" style="padding:6px;width:120px;">
-    </div>
+      <div class="q-row" style="flex-direction:column; align-items:flex-start; gap:10px;">
+        <div class="q-label">What commodity is being hauled?
+          <span class="q-sub">Select all that apply — any selection triggers HVHR requirements</span>
+        </div>
+        <div class="commodity-grid">
+          <div class="pill" onclick="togglePill(this)">Electronics / Tech</div>
+          <div class="pill" onclick="togglePill(this)">Meat &amp; Seafood</div>
+          <div class="pill" onclick="togglePill(this)">Produce &amp; Nuts</div>
+          <div class="pill" onclick="togglePill(this)">Food &amp; Beverage</div>
+          <div class="pill" onclick="togglePill(this)">Supplements &amp; OTC Pharma</div>
+          <div class="pill" onclick="togglePill(this)">Cosmetics &amp; Personal Care</div>
+          <div class="pill" onclick="togglePill(this)">Clothing &amp; Apparel</div>
+          <div class="pill" onclick="togglePill(this)">Alcohol</div>
+          <div class="pill" onclick="togglePill(this)">Copper / Base Metals</div>
+          <div class="pill" onclick="togglePill(this)">Precious Metals</div>
+          <div class="pill" onclick="togglePill(this)">Tires / Industrial</div>
+          <div class="pill" onclick="togglePill(this)">General Merchandise</div>
+          <div class="pill" onclick="togglePill(this)">Other High-Theft</div>
+        </div>
+      </div>
 
-    <div style="margin-top:10px;">
-      <label>California origin?</label><br/>
-      <button class="toggle-btn" onclick="setValue('california', true, this)">YES</button>
-      <button class="toggle-btn" onclick="setValue('california', false, this)">NO</button>
-      
+      <div class="q-row">
+        <div class="q-label">Estimated load value
+          <span class="q-sub">HVHR triggers above $100,000</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
+          <span style="font-family:var(--mono);font-size:13px;color:var(--ink-mid);">$</span>
+          <input class="value-input" type="text" id="loadValue" placeholder="0" oninput="formatValue(this)">
+        </div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-label">California origin?
+          <span class="q-sub">Auto-triggers HVHR + enhanced scrutiny</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'origin')">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'origin')">NO</button>
+        </div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-label">5+ CA-origin loads in past 180 days?
+          <span class="q-sub">California origin only · mark N/A otherwise</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'ca')">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'ca')">NO</button>
+          <button class="toggle-btn na"  onclick="toggle(this,'ca')">N/A</button>
+        </div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-label">Does this carrier have a current or past address in Fresno, CA?
+          <span class="q-sub">HVHR loads only · do not use, escalate to manager</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'fresno')">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'fresno')">NO</button>
+          <button class="toggle-btn na"  onclick="toggle(this,'fresno')">N/A</button>
+        </div>
+      </div>
+
+      <div class="q-row">
+        <div class="q-label">Does this carrier have a unit pinging within a reasonable range of the pickup?
+          <span class="q-sub">HVHR loads only · GPS proximity check</span>
+        </div>
+        <div class="toggle-wrap">
+          <button class="toggle-btn yes" onclick="toggle(this,'ping')">YES</button>
+          <button class="toggle-btn no"  onclick="toggle(this,'ping')">NO</button>
+          <button class="toggle-btn na"  onclick="toggle(this,'ping')">N/A</button>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <!-- RUN BUTTON -->
-  <div class="card">
-    <button onclick="runCheck()" style="
-      background: var(--atg-teal);
-      color: white;
-      border: none;
-      padding: 12px 18px;
-      border-radius: 6px;
-      cursor: pointer;
-    ">
-      Run HVHR Check
-    </button>
+  <div style="display:flex;gap:10px;margin-top:8px;">
+    <button class="run-btn" style="margin-top:0;flex:3;" onclick="runCheck()">Check Carrier Eligibility →</button>
+    <button class="run-btn" style="margin-top:0;flex:1;background:transparent;border:1.5px solid var(--border-dark);color:var(--ink-mid);" onmouseover="this.style.background='var(--surface-2)'" onmouseout="this.style.background='transparent'" onclick="resetAll()">↺ Reset</button>
+  </div>
+
+  <div class="caveat">
+    <div class="caveat-icon">⚠️</div>
+    <div class="caveat-text">
+      <strong>Important Disclaimer</strong>
+      This tool is intended as a guide to help evaluate carrier eligibility for HVHR loads based on current policy. Results may not account for every situation and may contain errors. All results must be reviewed and confirmed by a qualified team member. No carrier should be approved or denied without human review.
+    </div>
   </div>
 
 </div>
+
+<!-- EXCLUSION MODAL -->
+<div class="modal-overlay" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-head">
+      <strong>Full Exclusion List — Per Stephanie Wilson 8/14/2024</strong>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="excl-cat">
+        <div class="excl-cat-title">Household Goods</div>
+        <div class="excl-items">
+          <span class="excl-tag">Used Household Goods</span>
+          <span class="excl-tag">Personal Effects</span>
+          <span class="excl-tag">Arts &amp; Collectibles</span>
+          <span class="excl-tag">Antiques</span>
+          <span class="excl-tag">Art</span>
+        </div>
+      </div>
+      <div class="excl-cat">
+        <div class="excl-cat-title">Live Animals</div>
+        <div class="excl-items">
+          <span class="excl-tag">Living Creatures of Any Kind</span>
+        </div>
+      </div>
+      <div class="excl-cat">
+        <div class="excl-cat-title">Luxury Goods</div>
+        <div class="excl-items">
+          <span class="excl-tag">Furs</span>
+          <span class="excl-tag">Precious Stones</span>
+          <span class="excl-tag">Jewelry</span>
+          <span class="excl-tag">High-Value Watches</span>
+          <span class="excl-tag">Perfumes</span>
+          <span class="excl-tag">Tobacco &amp; Tobacco Products</span>
+        </div>
+      </div>
+      <div class="excl-cat">
+        <div class="excl-cat-title">Dangerous / Regulated</div>
+        <div class="excl-items">
+          <span class="excl-tag">Satellites</span>
+          <span class="excl-tag">Nuclear Fuel</span>
+          <span class="excl-tag">Explosives</span>
+          <span class="excl-tag">Firearms</span>
+          <span class="excl-tag">Ammunition</span>
+        </div>
+      </div>
+      <div class="excl-cat">
+        <div class="excl-cat-title">Tech Goods</div>
+        <div class="excl-items">
+          <span class="excl-tag">Digital Cameras &amp; Photo Sticks</span>
+          <span class="excl-tag">Microchips</span>
+          <span class="excl-tag">Motherboards</span>
+          <span class="excl-tag">Standalone Memory</span>
+          <span class="excl-tag">Mobile Phones</span>
+          <span class="excl-tag">Phone Components &amp; Accessories</span>
+        </div>
+      </div>
+      <div class="excl-cat">
+        <div class="excl-cat-title">Pharmaceuticals &amp; Controlled Substances</div>
+        <div class="excl-items">
+          <span class="excl-tag">Rx / Non-OTC Pharmaceuticals</span>
+          <span class="excl-tag">Non-OTC Nutraceuticals</span>
+          <span class="excl-tag">Marijuana</span>
+          <span class="excl-tag">CBD &gt; 0.3% THC</span>
+          <span class="excl-tag">Narcotics</span>
+        </div>
+      </div>
+      <div class="modal-note">
+        <strong>Exception:</strong> OTC pharmaceuticals and domestic CBD (≤ 0.3% THC) are permitted under current policy. All other items above are hard exclusions — do not book without written underwriting approval.
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-let state = {
-  authority: null,
-  equipment: null,
-  california: null
+const state = {
+  origin: null, auth: null, fresno: null, ping: null,
+  equip: null, loads180: null, reefer: null, flatbedcargo: null, ca: null
 };
 
-function setValue(key, value, el) {
-  state[key] = value;
+function toggle(btn, key) {
+  btn.closest('.toggle-wrap').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state[key] = btn.textContent.trim().toLowerCase();
+  // Show load history row if flatbed cargo = yes
+  if (key === 'flatbedcargo') {
+    const show = state.flatbedcargo === 'yes';
+    document.getElementById('row-loads').style.display = show ? 'flex' : 'none';
+    if (!show) { state.loads180 = null; document.querySelectorAll('#row-loads .toggle-btn').forEach(b => b.classList.remove('active')); }
+  }
+}
 
-  // remove active from group
-  const group = el.parentElement.querySelectorAll('.toggle-btn');
-  group.forEach(btn => btn.classList.remove('active'));
+function selectEquip(btn, val) {
+  btn.closest('.toggle-wrap').querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.equip = val;
+  document.getElementById('row-loads').style.display = (val === 'dryvan' || val === 'reefer') ? 'flex' : 'none';
+  document.getElementById('row-reefer').style.display = val === 'reefer' ? 'flex' : 'none';
+  document.getElementById('row-flatbed-cargo').style.display = val === 'flatbed' ? 'flex' : 'none';
+  state.loads180 = null;
+  state.reefer = null;
+  state.flatbedcargo = null;
+  document.querySelectorAll('#row-loads .toggle-btn, #row-reefer .toggle-btn, #row-flatbed-cargo .toggle-btn').forEach(b => b.classList.remove('active'));
+}
 
-  // add active to clicked
-  el.classList.add('active');
+function togglePill(el) { el.classList.toggle('active'); }
+
+function isHVHR() {
+  if (document.querySelectorAll('.pill.active').length > 0) return true;
+  if (getRawValue() >= 1000000) return 'overlimit';
+  if (getRawValue() > 100000) return true;
+  if (state.origin === 'yes') return true;
+  if (state.flatbedcargo === 'yes') return true;
+  return false;
+}
+
+function authHardStop() {
+  showVerdict('fail', 'CARRIER INELIGIBLE',
+    'Carrier does not meet the minimum 180-day continuous authority requirement. Do not tender this load.',
+    [{ type: 'bad', text: 'Authority under 180 days — hard stop, no exceptions' }]);
+}
+
+function formatValue(input) {
+  const raw = input.value.replace(/[^0-9]/g, '');
+  input.value = raw ? parseInt(raw, 10).toLocaleString('en-US') : '';
+  checkValueLimit();
+}
+
+function getRawValue() {
+  const raw = document.getElementById('loadValue').value.replace(/[^0-9]/g, '');
+  return parseFloat(raw) || 0;
+}
+
+function checkValueLimit() {
+  const val = getRawValue();
+  if (val >= 1000000) {
+    showVerdict('fail', 'REQUIRES UNDERWRITER APPROVAL',
+      'Cargo value exceeds $1,000,000. This load is subject to additional criteria and underwriter approval. Do not book — send request to Claims.',
+      [{ type: 'bad', text: 'Load value over $1,000,000 — hard stop pending underwriter review' }]);
+  } else {
+    document.getElementById('verdict').style.display = 'none';
+  }
 }
 
 function runCheck() {
-  const value = parseInt(document.getElementById('loadValue').value || 0);
+  const hvhr = isHVHR();
+  const flags = [];
+  let failCount = 0, warnCount = 0;
 
-  let result = "✅ OK";
-
-  if (state.authority === false) {
-    result = "❌ HARD NO — insufficient authority";
+  // $1M hard stop — fires before everything else, no exceptions
+  if (getRawValue() >= 1000000) {
+    showVerdict('fail', 'REQUIRES UNDERWRITER APPROVAL',
+      'Cargo value exceeds $1,000,000. This load is subject to additional criteria and underwriter approval. Do not book — send request to Claims.',
+      [{ type: 'bad', text: 'Load value over $1,000,000 — hard stop pending underwriter review' }]);
+    return;
   }
 
-  if (value > 100000) {
-    result = "⚠️ HVHR — high value load";
+  // Required fields validation
+  const missing = [];
+  if (state.auth === null) missing.push('180+ days of continuous authority');
+  if (state.equip === null) missing.push('Equipment type');
+  if (getRawValue() === 0) missing.push('Estimated load value');
+  if (missing.length > 0) {
+    showVerdict('warn', 'INCOMPLETE ASSESSMENT',
+      'Please answer all required fields before running a check.',
+      missing.map(m => ({ type: 'warn', text: m + ' — required' })));
+    return;
   }
 
-  if (state.california === true) {
-    result = "⚠️ HVHR — California origin";
+  // Fresno hard stop — applies regardless of HVHR status
+  if (state.fresno === 'yes') {
+    showVerdict('fail', 'CARRIER INELIGIBLE',
+      'Carrier has a current or past Fresno, CA address. Do not use — escalate to your manager if this load requires further review.',
+      [{ type: 'bad', text: 'Fresno, CA address on file — do not use. Escalate to manager if needed.' }]);
+    return;
   }
 
-  document.getElementById('verdict').innerHTML =
-    "<strong>Verdict:</strong> " + result;
+  // Auth hard stop — must pass regardless of HVHR status
+  if (state.auth === 'no') {
+    showVerdict('fail', 'CARRIER INELIGIBLE',
+      'Carrier does not meet the minimum 180-day continuous authority requirement. Do not tender this load.',
+      [{ type: 'bad', text: 'Authority under 180 days — hard stop, no exceptions' }]);
+    return;
+  }
+
+  if (hvhr === 'overlimit') {
+    showVerdict('fail', 'REQUIRES UNDERWRITER APPROVAL',
+      'Cargo value exceeds $1,000,000. This load is subject to additional criteria and underwriter approval. Do not book — send request to Claims.',
+      [{ type: 'bad', text: 'Load value over $1,000,000 — hard stop pending underwriter review' }]);
+    return;
+  }
+
+  if (!hvhr) {
+    if ((state.equip === 'dryvan' || state.equip === 'reefer') && state.loads180 === 'no') {
+      showVerdict('fail', 'CARRIER INELIGIBLE',
+        'Carrier does not meet the minimum load history requirement for Dry Van / Reefer loads. Do not tender this load.',
+        [{ type: 'bad', text: 'Load history requirement not met — carrier ineligible for this Dry Van / Reefer load' }]);
+      return;
+    }
+    showVerdict('pass', 'STANDARD LOAD',
+      'No HVHR triggers detected. Standard carrier vetting applies — no enhanced requirements.',
+      [{ type: 'ok', text: 'No HVHR indicators present' }]);
+    return;
+  }
+
+  flags.push({ type: 'warn', text: 'Load classified HVHR — enhanced carrier requirements apply' });
+
+
+  // Commodity-specific risk flags
+  const activePills = [...document.querySelectorAll('.pill.active')].map(p => p.textContent.trim());
+  if (activePills.some(p => p.includes('Meat') || p.includes('Seafood'))) {
+    warnCount++; flags.push({ type: 'warn', text: 'Meat & Seafood: high-theft target — verify reefer integrity, seal numbers, and driver identity at pickup' });
+  }
+  if (activePills.some(p => p.includes('Food') && p.includes('Beverage'))) {
+    warnCount++; flags.push({ type: 'warn', text: 'Food & Beverage: frozen/refrigerated food (e.g. beef, poultry) is a high-theft target — confirm commodity specifics and apply elevated scrutiny' });
+  }
+  if (activePills.some(p => p.includes('Electronics'))) {
+    warnCount++; flags.push({ type: 'warn', text: 'Electronics / Tech: highest theft risk category — verify carrier identity carefully' });
+  }
+  if (activePills.some(p => p.includes('Alcohol'))) {
+    warnCount++; flags.push({ type: 'warn', text: 'Alcohol: high-value and frequently targeted — confirm secure facility for any stops or layovers' });
+  }
+  if (activePills.some(p => p.includes('Precious Metals') || p.includes('Copper'))) {
+    warnCount++; flags.push({ type: 'warn', text: 'Metals: high intrinsic value — elevated risk of theft or diversion, limit stop exposure' });
+  }
+  // Authority — hard stop
+  if (state.auth === 'yes') {
+    flags.push({ type: 'ok', text: '180+ days continuous authority confirmed' });
+  } else if (state.auth === 'no') {
+    showVerdict('fail', 'CARRIER INELIGIBLE',
+      'Carrier does not meet the minimum 180-day continuous authority requirement. Do not tender this load.',
+      [{ type: 'bad', text: 'Authority under 180 days — hard stop, no exceptions' }]);
+    return;
+  } else {
+    flags.push({ type: 'warn', text: 'Authority age not answered — must verify before booking' });
+    warnCount++;
+  }
+
+  // Load history — Dry Van & Reefer only
+  if (state.equip === 'dryvan' || state.equip === 'reefer') {
+    if (state.loads180 === 'yes') {
+      flags.push({ type: 'ok', text: '3 loads in 180 days with 2 in past 90 days confirmed' });
+    } else if (state.loads180 === 'no') {
+      flags.push({ type: 'bad', text: 'Load history requirement not met — carrier ineligible for this Dry Van / Reefer HVHR load' });
+      failCount++;
+    } else {
+      flags.push({ type: 'warn', text: 'Load history not answered — required for Dry Van / Reefer' });
+      warnCount++;
+    }
+  } else if (state.equip === 'flatbed') {
+    if (state.flatbedcargo === 'yes') {
+      flags.push({ type: 'warn', text: 'Flatbed cargo flagged as easily offloaded — load history requirement applies' });
+      if (state.loads180 === 'yes') {
+        flags.push({ type: 'ok', text: '3 loads in 180 days with 2 in past 90 days confirmed' });
+      } else if (state.loads180 === 'no') {
+        flags.push({ type: 'bad', text: 'Load history requirement not met — carrier ineligible for this Flatbed HVHR load' });
+        failCount++;
+      } else {
+        flags.push({ type: 'warn', text: 'Load history not answered — required for Flatbed with easily offloaded cargo' });
+        warnCount++;
+      }
+    } else if (state.flatbedcargo === 'no') {
+      flags.push({ type: 'ok', text: 'Flatbed cargo assessed as standard — no enhanced load history required' });
+    } else {
+      flags.push({ type: 'warn', text: 'Flatbed cargo type not answered — verify whether HVHR applies' });
+      warnCount++;
+    }
+  } else if (state.equip === 'other') {
+    flags.push({ type: 'ok', text: 'Non-Dry Van / Reefer equipment — no minimum load history required' });
+  } else {
+    flags.push({ type: 'warn', text: 'Equipment type not selected — required to determine load history eligibility' });
+    warnCount++;
+  }
+
+  // CA
+  if (state.origin === 'yes') {
+    if (state.ca === 'yes') {
+      flags.push({ type: 'ok', text: '5+ CA origin loads — meets California recommendation' });
+    } else if (state.ca === 'no') {
+      flags.push({ type: 'warn', text: 'Fewer than 5 CA loads — elevated scrutiny required for CA origin' });
+      warnCount++;
+    } else {
+      flags.push({ type: 'warn', text: 'CA load history not answered — verify for California origin load' });
+      warnCount++;
+    }
+  }
+
+  // Reefer breakdown coverage
+  if (state.equip === 'reefer') {
+    if (state.reefer === 'yes') {
+      flags.push({ type: 'ok', text: 'Reefer breakdown coverage verified' });
+    } else if (state.reefer === 'no') {
+      flags.push({ type: 'bad', text: 'Breakdown coverage not verified — required for all Reefer HVHR loads' });
+      failCount++;
+    } else {
+      flags.push({ type: 'warn', text: 'Reefer breakdown coverage not answered — must verify before booking' });
+      warnCount++;
+    }
+  }
+
+  // GPS ping check — HVHR loads only
+  if (state.ping === 'yes') {
+    flags.push({ type: 'ok', text: 'Unit pinging within reasonable range of pickup — GPS check passed' });
+  } else if (state.ping === 'no') {
+    flags.push({ type: 'warn', text: 'Unit not pinging within reasonable range of pickup — advise agent, would not recommend using this carrier' });
+    warnCount++;
+  } else {
+    flags.push({ type: 'warn', text: 'GPS ping not verified — confirm unit location before booking' });
+    warnCount++;
+  }
+
+  if (failCount > 0) {
+    showVerdict('fail', 'CARRIER INELIGIBLE',
+      `${failCount} requirement${failCount > 1 ? 's' : ''} not met. Do not tender this HVHR load without supervisor approval and a documented exception.`,
+      flags);
+  } else if (warnCount > 0) {
+    const warnItems = flags.filter(f => f.type === 'warn').map(f => f.text);
+    const warnSummary = warnItems.length === 1
+      ? `Attention needed: ${warnItems[0]}`
+      : `${warnCount} items need attention: ${warnItems.join(' · ')}`;
+    showVerdict('warn', 'PROCEED WITH CAUTION', warnSummary,
+      flags);
+  } else {
+    showVerdict('pass', 'CARRIER ELIGIBLE',
+      'All HVHR requirements verified. Carrier meets eligibility standards. Document vetting in your TMS.',
+      flags);
+  }
 }
+
+function showVerdict(type, title, desc, flags) {
+  const v = document.getElementById('verdict');
+  v.className = 'verdict ' + type;
+  v.style.display = 'block';
+  document.getElementById('v-title').textContent = title;
+  document.getElementById('v-desc').textContent = desc;
+  document.getElementById('v-flags').innerHTML = flags.map(f =>
+    `<div class="flag ${f.type}"><div class="flag-dot"></div><span>${f.text}</span></div>`
+  ).join('');
+  v.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetAll() {
+  Object.keys(state).forEach(k => state[k] = null);
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  document.getElementById('loadValue').value = '';
+  document.getElementById('row-loads').style.display = 'none';
+  state.ping = null;
+  document.getElementById('row-reefer').style.display = 'none';
+  document.getElementById('row-flatbed-cargo').style.display = 'none';
+  const v = document.getElementById('verdict');
+  v.style.display = 'none';
+}
+
+function openModal()  { document.getElementById('modal').classList.add('open'); }
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+function closeModalOutside(e) { if (e.target.id === 'modal') closeModal(); }
+</script>
+<script>
+(function(){
+  const d = new Date(document.lastModified);
+  const opts = { month: 'short', day: 'numeric', year: 'numeric' };
+  document.getElementById('last-modified').textContent = d.toLocaleDateString('en-US', opts);
+})();
 </script>
 </body>
 </html>
+
