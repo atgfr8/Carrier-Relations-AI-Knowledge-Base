@@ -85,8 +85,7 @@
     top: 0;
     z-index: 100;
   }
-  .header-brand {
-    /* NAV TABS */
+  /* NAV TABS */
 .nav-links {
   display: flex;
   gap: 0;
@@ -101,10 +100,21 @@
 
   color: rgba(255,255,255,0.7);
   background: transparent;
-  border: none;
   border-bottom: 3px solid transparent;
 
   transition: all 0.2s ease;
+}
+
+.nav-link:hover {
+  color: #ffffff;
+  background: rgba(255,255,255,0.05);
+}
+
+.nav-link.active {
+  color: #ffffff;
+  border-bottom: 3px solid var(--atg-teal);
+  background: rgba(255,255,255,0.05);
+}
 }
 
 .nav-link:hover {
