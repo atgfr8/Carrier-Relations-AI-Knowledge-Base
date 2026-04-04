@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Load Lock Alert Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #0B1F3A;
+    --navy-mid: #132848;
+    --navy-light: #1E3A5F;
+    --accent: #00C2FF;
+    --accent-soft: rgba(0,194,255,0.12);
+    --accent-glow: rgba(0,194,255,0.25);
+    --warn: #F59E0B;
+    --warn-soft: rgba(245,158,11,0.12);
+    --danger: #EF4444;
+    --danger-soft: rgba(239,68,68,0.12);
+    --success: #10B981;
+    --success-soft: rgba(16,185,129,0.12);
+    --text-primary: #F0F6FF;
+    --text-secondary: #8BA4C0;
+    --text-muted: #4A6580;
+    --border: rgba(255,255,255,0.07);
+    --border-active: rgba(0,194,255,0.4);
+    --card-bg: rgba(255,255,255,0.04);
+    --card-hover: rgba(255,255,255,0.07);
+    --tag-ll: #1E3A5F;
+    --tag-llp: #1A3040;
+  }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--navy);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* HEADER */
+  header {
+    background: #1A2E44;
+    border-bottom: 3px solid #0069A6;
+    padding: 14px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+  }
+  .header-brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-shrink: 0;
+  }
+  .brand-divider {
+    width: 1px;
+    height: 30px;
+    background: rgba(255,255,255,0.2);
+    flex-shrink: 0;
+  }
+  .brand-title {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+  }
+
+  /* SEARCH */
+  .search-wrap {
+    flex: 1;
+    max-width: 480px;
+    position: relative;
+  }
+  .search-wrap input {
+    width: 100%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px 8px 38px;
+    font-size: 13px;
+    color: var(--text-primary);
+    font-family: 'IBM Plex Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .search-wrap input::placeholder { color: var(--text-muted); }
+  .search-wrap input:focus { border-color: var(--accent); background: rgba(0,194,255,0.06); }
+  .search-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  /* TABS */
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .tab-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'IBM Plex Sans', sans-serif;
+    letter-spacing: 0.02em;
+  }
+  .tab-btn.all { background: var(--accent-soft); color: var(--accent); border-color: var(--border-active); }
+  .tab-btn.ll { background: rgba(30,58,95,0.5); color: #7DB3E8; border-color: rgba(125,179,232,0.25); }
+  .tab-btn.llp { background: rgba(26,48,64,0.5); color: #5DD4BA; border-color: rgba(93,212,186,0.25); }
+  .tab-btn:not(.active):hover { background: var(--card-hover); }
+  .tab-btn.active.all { background: var(--accent); color: var(--navy); border-color: var(--accent); }
+  .tab-btn.active.ll { background: #1E3A5F; color: #B3D4F5; border-color: #7DB3E8; }
+  .tab-btn.active.llp { background: #0F3040; color: #5DD4BA; border-color: #5DD4BA; }
+
+  /* MAIN LAYOUT */
+  .main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: sticky;
+    top: 80px;
+  }
+  .sidebar-section {
+    margin-bottom: 1.5rem;
+  }
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0 4px 8px;
+  }
+  .sidebar-filter {
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .sidebar-filter:hover {
+    color: var(--text-secondary);
+  }
+  .sidebar-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-secondary);
+    transition: all 0.15s;
+    border: 1px solid transparent;
+    margin-bottom: 2px;
+  }
+  .sidebar-item:hover { background: var(--card-hover); color: var(--text-primary); }
+  .sidebar-item.active { background: var(--accent-soft); color: var(--accent); border-color: var(--border-active); }
+  .sidebar-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-ll { background: #7DB3E8; }
+  .dot-llp { background: #5DD4BA; }
+  .sidebar-count {
+    margin-left: auto;
+    font-size: 11px;
+    background: rgba(255,255,255,0.06);
+    color: var(--text-muted);
+    padding: 1px 6px;
+    border-radius: 10px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+  .stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .stat-num {
+    font-size: 26px;
+    font-weight: 600;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label { font-size: 12px; color: var(--text-muted); }
+
+  /* NO RESULTS */
+  .no-results {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+    font-size: 14px;
+    display: none;
+  }
+  .no-results.visible { display: block; }
+
+  /* ALERT CARDS */
+  .alert-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+    cursor: pointer;
+  }
+  .alert-card:hover { border-color: rgba(255,255,255,0.14); }
+  .alert-card.open { border-color: var(--border-active); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 18px;
+    user-select: none;
+  }
+  .alert-badge {
+    flex-shrink: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 2px;
+  }
+  .badge-identity { background: var(--danger); }
+  .badge-capacity { background: var(--warn); }
+  .badge-vehicle { background: var(--accent); }
+  .badge-tracking { background: var(--success); }
+
+  .card-title-wrap { flex: 1; min-width: 0; }
+  .card-title {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 3px;
+  }
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .type-pill {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 20px;
+  }
+  .pill-ll { background: rgba(30,58,95,0.7); color: #7DB3E8; }
+  .pill-llp { background: rgba(15,48,64,0.7); color: #5DD4BA; }
+  .category-tag {
+    font-size: 10px;
+    color: var(--text-muted);
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+  }
+
+  .card-chevron {
+    color: var(--text-muted);
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+  .alert-card.open .card-chevron { transform: rotate(180deg); }
+
+  /* EXPANDED CONTENT */
+  .card-body {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 0;
+  }
+  .alert-card.open .card-body { display: block; }
+
+  .card-section {
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-section:last-child { border-bottom: none; }
+
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-label svg { width: 12px; height: 12px; }
+
+  .meaning-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+  .meaning-text strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  /* STEPS */
+  .steps-list { list-style: none; counter-reset: steps; }
+  .steps-list li {
+    counter-increment: steps;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding: 6px 0;
+  }
+  .steps-list li::before {
+    content: counter(steps);
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    background: var(--accent);
+    color: var(--navy);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    margin-top: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* QUICK ACTION CHIPS */
+  .action-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+  .chip {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 11px;
+    border-radius: 20px;
+    border: 1px solid;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .chip-call { background: var(--success-soft); color: var(--success); border-color: rgba(16,185,129,0.3); }
+  .chip-review { background: var(--warn-soft); color: var(--warn); border-color: rgba(245,158,11,0.3); }
+  .chip-remove { background: var(--danger-soft); color: var(--danger); border-color: rgba(239,68,68,0.3); }
+  .chip-verify { background: var(--accent-soft); color: var(--accent); border-color: rgba(0,194,255,0.3); }
+
+  /* RISK INDICATOR */
+  .risk-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  .risk-label { font-size: 12px; color: var(--text-muted); flex-shrink: 0; }
+  .risk-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+  .risk-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+  .risk-high .risk-fill { background: var(--danger); }
+  .risk-medium .risk-fill { background: var(--warn); }
+  .risk-low .risk-fill { background: var(--success); }
+  .risk-value { font-size: 11px; font-family: 'IBM Plex Mono', monospace; font-weight: 500; flex-shrink: 0; }
+  .risk-high .risk-value { color: var(--danger); }
+  .risk-medium .risk-value { color: var(--warn); }
+  .risk-low .risk-value { color: var(--success); }
+  .risk-critical .risk-fill { background: #FF1A1A; }
+  .risk-critical .risk-value { color: #FF1A1A; font-weight: 700; letter-spacing: 0.04em; }
+
+  /* SECTION DIVIDERS */
+  .group-header {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 8px 2px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .group-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .group-header:first-child { margin-top: 0; }
+
+  /* HIGHLIGHT */
+  .hl { background: rgba(0,194,255,0.2); color: var(--accent); border-radius: 3px; padding: 0 2px; }
+
+  @media (max-width: 768px) {
+    .main { grid-template-columns: 1fr; }
+    .sidebar { position: static; display: none; }
+    .stats-bar { grid-template-columns: 1fr 1fr; }
+    .header-inner { flex-wrap: wrap; height: auto; padding: 12px 0; gap: 8px; }
+    .tab-bar { order: 3; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-brand">
+      <div style="line-height:1.25;">
+        <div style="font-family:'IBM Plex Sans',sans-serif;font-size:18px;font-weight:700;letter-spacing:2.5px;color:#ffffff;text-transform:uppercase;">Armstrong</div>
+        <div style="font-family:'IBM Plex Sans',sans-serif;font-size:8px;font-weight:400;letter-spacing:4.5px;color:rgba(255,255,255,0.6);text-transform:uppercase;">Transport Group</div>
+      </div>
+      <div class="brand-divider"></div>
+      <div class="brand-title">Load Lock Alert Guide</div>
+    </div>
+
+    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.04em;text-align:right;line-height:1.6;flex-shrink:0;">LAST UPDATED<br><span id="last-updated"></span></div>
+
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M10 10l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <input type="text" id="searchInput" placeholder="Search alerts, keywords..." autocomplete="off">
+    </div>
+
+    <div class="tab-bar">
+      <button class="tab-btn all active" onclick="filterTab('all', this)">All Alerts</button>
+      <button class="tab-btn ll" onclick="filterTab('ll', this)">Load Lock</button>
+      <button class="tab-btn llp" onclick="filterTab('llp', this)">Load Lock Plus</button>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label sidebar-filter" onclick="filterTab('ll', document.querySelector('.tab-btn.ll'))">Load Lock</div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Identity Alert On Active Rate Confirmation')"><span class="sidebar-dot dot-ll"></span>Identity Alert On Active Rate Conf.<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Identity Alert On Non Active Load')"><span class="sidebar-dot dot-ll"></span>Identity Alert On Non Active Load<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Recent Identity Alert')"><span class="sidebar-dot dot-ll"></span>Recent Identity Alert<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Overbooked Carrier')"><span class="sidebar-dot dot-ll"></span>Overbooked Carrier<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Out Of Range')"><span class="sidebar-dot dot-ll"></span>Out Of Range<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Cargo Exclusion')"><span class="sidebar-dot dot-ll"></span>Cargo Exclusion<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Dispatch Service Domain')"><span class="sidebar-dot dot-ll"></span>Dispatch Service Domain<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Dispatch Service Email')"><span class="sidebar-dot dot-ll"></span>Dispatch Service Email<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Domain Spoofing')"><span class="sidebar-dot dot-ll"></span>Domain Spoofing<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Email Spoofing')"><span class="sidebar-dot dot-ll"></span>Email Spoofing<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Failed To Arrive At Pickup')"><span class="sidebar-dot dot-ll"></span>Failed To Arrive At Pickup<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Failing Broker Requirements')"><span class="sidebar-dot dot-ll"></span>Failing Broker Requirements<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Fraudulent Domain')"><span class="sidebar-dot dot-ll"></span>Fraudulent Domain<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Fraudulent Email')"><span class="sidebar-dot dot-ll"></span>Fraudulent Email<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Fraudulent Phone Number')"><span class="sidebar-dot dot-ll"></span>Fraudulent Phone Number<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'High Risk Area')"><span class="sidebar-dot dot-ll"></span>High Risk Area<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('ll', 'Voip Phone Number')"><span class="sidebar-dot dot-ll"></span>Voip Phone Number<span class="sidebar-count">1</span></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label sidebar-filter" onclick="filterTab('llp', document.querySelector('.tab-btn.llp'))">Load Lock Plus</div>
+      <div class="sidebar-item" onclick="filterAndScroll('llp', 'Carrier Assigned ELD Exempt Vehicle')"><span class="sidebar-dot dot-llp"></span>Carrier Assigned ELD Exempt<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('llp', 'Dormant Vehicle Assigned')"><span class="sidebar-dot dot-llp"></span>Dormant Vehicle Assigned<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('llp', 'Low Confidence Assignment')"><span class="sidebar-dot dot-llp"></span>Low Confidence Assignment<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('llp', 'Potentially Uninsured Vehicle Assigned')"><span class="sidebar-dot dot-llp"></span>Potentially Uninsured Vehicle<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('llp', 'Provided Vehicle Not Found')"><span class="sidebar-dot dot-llp"></span>Provided Vehicle Not Found<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('llp', 'Revoked ELD')"><span class="sidebar-dot dot-llp"></span>Revoked ELD<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('llp', 'Route Deviation')"><span class="sidebar-dot dot-llp"></span>Route Deviation<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('llp', 'Unauthorized Stop')"><span class="sidebar-dot dot-llp"></span>Unauthorized Stop<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('llp', 'Vehicle Assignment Required')"><span class="sidebar-dot dot-llp"></span>Vehicle Assignment Required<span class="sidebar-count">1</span></div>
+      <div class="sidebar-item" onclick="filterAndScroll('llp', 'Vehicle Not Nearby')"><span class="sidebar-dot dot-llp"></span>Vehicle Not Nearby<span class="sidebar-count">1</span></div>
+    </div>
+  </aside>
+
+  <div class="content">
+    <div class="stats-bar">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-total">27</div>
+        <div class="stat-label">Total Alert Types</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:#7DB3E8">17</div>
+        <div class="stat-label">Load Lock Alerts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" style="color:#5DD4BA">10</div>
+        <div class="stat-label">Load Lock Plus Alerts</div>
+      </div>
+    </div>
+
+    <div style="display:flex; justify-content:flex-end; margin-bottom:10px;">
+      <button onclick="collapseAll(this)" id="collapseBtn" style="font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:500;padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text-secondary);cursor:pointer;transition:all 0.15s;letter-spacing:0.02em;">Collapse All</button>
+    </div>
+    <div id="alertList">
+      <!-- Load Lock -->
+      <div class="group-header" data-group="ll">Load Lock</div>
+
+      <!-- Identity Alert On Active Rate Confirmation -->
+      <div class="alert-card" data-type="ll" data-id="Identity Alert On Active Rate Confirmation" data-keywords="identity alert active rate confirmation stolen assets date pickup delivery window">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-identity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Identity Alert On Active Rate Confirmation</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Identity</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">New Identity Alert for <strong>{Stolen Assets / Pending Investigation}</strong> published on <strong>{date within load pickup/delivery window}</strong>.</div>
+            <div class="risk-row risk-critical"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:100%"></div></div><span class="risk-value">Critical</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Review the description of the <strong>Identity Alert posted on the carrier profile</strong>.</li>
+              <li>Determine <strong>risk level</strong> and consider taking carrier off the load.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-review">📋 Review Identity Alert</span><span class="chip chip-remove">🚫 Consider Removing</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Identity Alert On Non Active Load -->
+      <div class="alert-card" data-type="ll" data-id="Identity Alert On Non Active Load" data-keywords="identity alert non active load stolen assets after delivery proof of delivery falsified carrier">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-identity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Identity Alert On Non Active Load</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Identity</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">New Identity Alert for <strong>Stolen Assets / Pending Investigation</strong> published on <strong>{date after delivery window}</strong> for <strong>{carrier}</strong> on previously delivered load. Confirm proof of delivery.</div>
+            <div class="risk-row risk-critical"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:100%"></div></div><span class="risk-value">Critical</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Review the <strong>proof of delivery provided by the carrier</strong>.</li>
+              <li>Determine risk of <strong>falsified proof of delivery</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-review">📋 Review Proof of Delivery</span><span class="chip chip-verify">✅ Verify Delivery</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Identity Alert -->
+      <div class="alert-card" data-type="ll" data-id="Recent Identity Alert" data-keywords="recent identity alert stolen assets date pickup delivery window carrier profile">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-identity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Recent Identity Alert</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Identity</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">New Identity Alert for <strong>{Stolen Assets / Pending Investigation}</strong> published on <strong>{date within load pickup/delivery window}</strong>.</div>
+            <div class="risk-row risk-critical"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:100%"></div></div><span class="risk-value">Critical</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Review the description of the <strong>Identity Alert posted on the carrier profile</strong>.</li>
+              <li>Determine <strong>risk level</strong> and consider taking carrier off the load.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-review">📋 Review Identity Alert</span><span class="chip chip-remove">🚫 Consider Removing</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overbooked Carrier -->
+      <div class="alert-card" data-type="ll" data-id="Overbooked Carrier" data-keywords="overbooked carrier loads trucks pickup 24 hours length of haul PU load count">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-identity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Overbooked Carrier</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Capacity</span><span class="category-tag" style="background:rgba(0,105,166,0.15);border-color:rgba(0,105,166,0.4);color:#5BAFD6;">🛡 Loadsure Warranty</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">The carrier has <strong># loads</strong> (seen with other Load Lock participants) with a <strong>scheduled pickup in the next 24 hours</strong>, and only has <strong># trucks observed</strong>.</div>
+            <div class="risk-row risk-medium"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:60%"></div></div><span class="risk-value">Medium</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Check the <strong>Length of Haul</strong> of the current shipment and the difference between PU and Load Count.</li>
+              <li>If the difference is material and the shipment has <strong>more than 200 miles</strong>, consider removing the carrier from a load.</li>
+              <li>Otherwise, contact the carrier to understand their <strong>local/regional operations</strong> to determine risk.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Contact Carrier</span><span class="chip chip-review">📋 Check Haul Length</span><span class="chip chip-remove">🚫 Consider Removing</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Out Of Range -->
+      <div class="alert-card" data-type="ll" data-id="Out Of Range" data-keywords="out of range power unit miles pickup origin hours travel threshold VIN equipment search">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-identity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Out Of Range</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Capacity</span><span class="category-tag" style="background:rgba(0,105,166,0.15);border-color:rgba(0,105,166,0.4);color:#5BAFD6;">🛡 Loadsure Warranty</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">The carrier's <strong>closest power unit is # miles from the origin</strong> for a load pickup in # hours, which <strong>exceeds the minimum travel distance threshold</strong>.</div>
+            <div class="risk-row risk-medium"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:55%"></div></div><span class="risk-value">Medium</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Look at the <strong>map on Highway</strong> and see if they have equipment in the area.</li>
+              <li>Cross reference the carrier in <strong>GenLogs</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-verify">🗺️ Check Highway Map</span><span class="chip chip-verify">🔍 Cross Reference in GenLogs</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cargo Exclusion -->
+      <div class="alert-card" data-type="ll" data-id="Cargo Exclusion" data-keywords="cargo exclusion commodity policy conflicts facility pickup exclusion intel haul">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-capacity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Cargo Exclusion</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Compliance</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">The carrier has a <strong>cargo exclusion for a specific commodity</strong> on their current cargo policy which conflicts with the <strong>facility commodity at the address for pick up</strong>. <em>*Included with the purchase of Exclusion Intel*</em></div>
+            <div class="risk-row risk-high"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:75%"></div></div><span class="risk-value">High</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Call the dispatch number under the carrier profile to verify if they are able to <strong>haul the specific commodity</strong>.</li>
+              <li>If they are not covered to haul that specific freight, you might consider <strong>taking the carrier off of the load</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Call Dispatch</span><span class="chip chip-remove">🚫 Remove if Not Covered</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dispatch Service Domain -->
+      <div class="alert-card" data-type="ll" data-id="Dispatch Service Domain" data-keywords="dispatch service domain third party approved contact highway red flag">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-capacity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Dispatch Service Domain</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Identity</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">The domain <strong>#{email}</strong> belongs to a <strong>third-party dispatcher service</strong>.</div>
+            <div class="risk-row risk-medium"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:50%"></div></div><span class="risk-value">Medium</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Call the dispatch number under the carrier profile to verify if they <strong>work with the dispatch service</strong>.</li>
+              <li>If they do, ask them to <strong>add the dispatcher service as an approved contact</strong> to their Highway profile.</li>
+              <li>If they don't work with a dispatch service, <strong>that's a red flag</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Call Carrier</span><span class="chip chip-verify">✅ Add to Highway if Approved</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dispatch Service Email -->
+      <div class="alert-card" data-type="ll" data-id="Dispatch Service Email" data-keywords="dispatch service email third party approved contact highway red flag">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-capacity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Dispatch Service Email</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Identity</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">The email <strong>#{email}</strong> belongs to a <strong>third-party dispatcher service</strong>.</div>
+            <div class="risk-row risk-medium"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:50%"></div></div><span class="risk-value">Medium</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Call the dispatch number under the carrier profile to verify if they <strong>work with the dispatch service</strong>.</li>
+              <li>If they do, ask them to <strong>add the dispatcher service as an approved contact</strong> to their Highway profile.</li>
+              <li>If they don't work with a dispatch service, <strong>that's a red flag</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Call Carrier</span><span class="chip chip-verify">✅ Add to Highway if Approved</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Domain Spoofing -->
+      <div class="alert-card" data-type="ll" data-id="Domain Spoofing" data-keywords="domain spoofing spoof carrier contact dispatch verify identity engine">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-identity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Domain Spoofing</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Identity</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">The domain <strong>#{email}</strong> appears to be <strong>spoofing the carrier's known contact information</strong>.</div>
+            <div class="risk-row risk-high"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:85%"></div></div><span class="risk-value">High</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Call the dispatch number under the carrier profile to <strong>verify the domain</strong>.</li>
+              <li>Either take the carrier off the load or ask them to <strong>verify their contact through Highway's identity engine</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Call Dispatch</span><span class="chip chip-verify">✅ Verify via Highway</span><span class="chip chip-remove">🚫 Remove if Unverified</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Email Spoofing -->
+      <div class="alert-card" data-type="ll" data-id="Email Spoofing" data-keywords="email spoofing spoof carrier contact dispatch verify identity engine">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-identity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Email Spoofing</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Identity</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">The email <strong>#{email}</strong> appears to be <strong>spoofing the carrier's known contact information</strong>.</div>
+            <div class="risk-row risk-high"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:85%"></div></div><span class="risk-value">High</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Call the dispatch number under the carrier profile to <strong>verify the email address</strong>.</li>
+              <li>Either take the carrier off the load or ask them to <strong>verify their contact through Highway's identity engine</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Call Dispatch</span><span class="chip chip-verify">✅ Verify via Highway</span><span class="chip chip-remove">🚫 Remove if Unverified</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Failed To Arrive At Pickup -->
+      <div class="alert-card" data-type="ll" data-id="Failed To Arrive At Pickup" data-keywords="failed arrive pickup carrier no show">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-capacity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Failed To Arrive At Pickup</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Capacity</span><span class="category-tag" style="background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.3);color:var(--warn);">Description Pending</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text" style="color:var(--text-muted);font-style:italic;">Official description not yet available — this alert was recently added to the Highway platform. Check back for updated guidance.</div>
+            <div class="risk-row risk-high"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:80%"></div></div><span class="risk-value">High</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Contact the carrier to determine if they are still en route or have encountered an issue.</li>
+              <li>Assess whether a replacement carrier is needed.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Contact Carrier</span><span class="chip chip-remove">🚫 Consider Replacing</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Failing Broker Requirements -->
+      <div class="alert-card" data-type="ll" data-id="Failing Broker Requirements" data-keywords="failing broker requirements rules carrier failing allow haul freight">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-capacity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Failing Broker Requirements</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Compliance</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">The carrier is <strong>failing X rules</strong>.</div>
+            <div class="risk-row risk-medium"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:60%"></div></div><span class="risk-value">Medium</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Review the rule that the carrier is failing.</li>
+              <li>Ensure you are still willing to <strong>allow the carrier to haul your freight</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-review">📋 Review Failed Rules</span><span class="chip chip-remove">🚫 Consider Removing</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fraudulent Domain -->
+      <div class="alert-card" data-type="ll" data-id="Fraudulent Domain" data-keywords="fraudulent domain reported fraud contact search identity alerts risk">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-identity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Fraudulent Domain</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Identity</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">The domain <strong>#{email}</strong> has been <strong>reported for fraud</strong>.</div>
+            <div class="risk-row risk-high"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:95%"></div></div><span class="risk-value">High</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Perform a <strong>contact search</strong> with the fraudulent domain.</li>
+              <li>Review the <strong>associated identity alert details</strong>.</li>
+              <li>Determine risk level and consider <strong>taking the carrier off shipment</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-verify">🔍 Contact Search</span><span class="chip chip-review">📋 Review Identity Alerts</span><span class="chip chip-remove">🚫 Consider Removing</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fraudulent Email -->
+      <div class="alert-card" data-type="ll" data-id="Fraudulent Email" data-keywords="fraudulent email reported fraud contact search identity alerts risk">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-identity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Fraudulent Email</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Identity</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">The email <strong>#{email}</strong> has been <strong>reported for fraud</strong>.</div>
+            <div class="risk-row risk-high"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:95%"></div></div><span class="risk-value">High</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Perform a <strong>contact search</strong> with the fraudulent email.</li>
+              <li>Review the <strong>associated identity alert details</strong>.</li>
+              <li>Determine risk level and consider <strong>taking the carrier off shipment</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-verify">🔍 Contact Search</span><span class="chip chip-review">📋 Review Identity Alerts</span><span class="chip chip-remove">🚫 Consider Removing</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fraudulent Phone Number -->
+      <div class="alert-card" data-type="ll" data-id="Fraudulent Phone Number" data-keywords="fraudulent phone number driver reported fraud contact search identity alerts">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-identity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Fraudulent Phone Number</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Identity</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">The driver phone number <strong>(XXX) XXX-XXXX</strong> has been <strong>reported for fraud</strong>.</div>
+            <div class="risk-row risk-high"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:95%"></div></div><span class="risk-value">High</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Perform a <strong>contact search</strong> with the fraudulent phone number.</li>
+              <li>Review the <strong>associated identity alert details</strong>.</li>
+              <li>Determine risk level and consider <strong>taking the carrier off shipment</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-verify">🔍 Contact Search</span><span class="chip chip-review">📋 Review Identity Alerts</span><span class="chip chip-remove">🚫 Consider Removing</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- High Risk Area -->
+      <div class="alert-card" data-type="ll" data-id="High Risk Area" data-keywords="high risk area physical presence zip code state carrier network strategic cargo theft">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-identity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">High Risk Area</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Location Risk</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">The load has a stop in <strong>{zip code}</strong> which is a <strong>high risk area for strategic cargo theft</strong> and this carrier has <strong>never been observed in that {state name}</strong>.</div>
+            <div class="risk-row risk-high"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:80%"></div></div><span class="risk-value">High</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Review <strong>Carrier Network Map</strong> in the Carrier Profile.</li>
+              <li>Consider <strong>removing the carrier from the load</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-review">🗺️ Review Network Map</span><span class="chip chip-remove">🚫 Consider Removing</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Voip Phone Number -->
+      <div class="alert-card" data-type="ll" data-id="Voip Phone Number" data-keywords="voip phone number driver registered carrier dispatch assess risk">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-identity"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Voip Phone Number</div>
+            <div class="card-meta"><span class="type-pill pill-ll">Load Lock</span><span class="category-tag">Identity</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">The driver phone number <strong>(XXX) XXX-XXXX</strong> is a <strong>VoIP number registered with {name of the phone} carrier</strong>.</div>
+            <div class="risk-row risk-medium"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:45%"></div></div><span class="risk-value">Medium</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Ensure that the provided phone number is the <strong>driver phone number (not a carrier dispatcher number)</strong>.</li>
+              <li>Consider <strong>taking the carrier off the load</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-verify">✅ Confirm Driver Number</span><span class="chip chip-remove">🚫 Consider Removing</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Load Lock Plus -->
+      <div class="group-header" data-group="llp">Load Lock Plus</div>
+
+      <!-- Carrier Assigned ELD Exempt Vehicle -->
+      <div class="alert-card" data-type="llp" data-id="Carrier Assigned ELD Exempt Vehicle" data-keywords="ELD exempt vehicle assigned validated app based tracking local pickup VIN delivery">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-tracking"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Carrier Assigned ELD Exempt Vehicle</div>
+            <div class="card-meta"><span class="type-pill pill-llp">Load Lock Plus</span><span class="category-tag">Tracking</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">A <strong>validated ELD Exempt vehicle</strong> is assigned to your load.</div>
+            <div class="risk-row risk-medium"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:45%"></div></div><span class="risk-value">Medium</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Call the dispatch number and request the carrier to <strong>set up app based tracking</strong> for the driver.</li>
+              <li>If it is a local pick up driver, ask for the <strong>VIN number that will be delivering the load</strong> after pick up completion.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-verify">📱 Request App Tracking</span><span class="chip chip-verify">✅ Confirm Delivery VIN</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dormant Vehicle Assigned -->
+      <div class="alert-card" data-type="llp" data-id="Dormant Vehicle Assigned" data-keywords="dormant vehicle assigned not moved 14 days ELD data reconnect refresh TMS">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-tracking"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Dormant Vehicle Assigned</div>
+            <div class="card-meta"><span class="type-pill pill-llp">Load Lock Plus</span><span class="category-tag">Tracking</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">The broker's TMS has assigned a vehicle that is <strong>dormant on the carrier's ELD</strong>, meaning the truck has <strong>not moved in the last 14 days</strong>.</div>
+            <div class="risk-row risk-medium"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:55%"></div></div><span class="risk-value">Medium</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Call the dispatch number under the carrier profile and request the carrier to <strong>ensure their ELD is connected with that VIN</strong>.</li>
+              <li>Once a dormant vehicle starts moving again, <strong>Highway will receive an updated location</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Call Dispatch</span><span class="chip chip-verify">🔗 Reconnect ELD</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Low Confidence Assignment -->
+      <div class="alert-card" data-type="llp" data-id="Low Confidence Assignment" data-keywords="low confidence assignment vehicle carrier">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-vehicle"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Low Confidence Assignment</div>
+            <div class="card-meta"><span class="type-pill pill-llp">Load Lock Plus</span><span class="category-tag">Vehicle</span><span class="category-tag" style="background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.3);color:var(--warn);">Description Pending</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text" style="color:var(--text-muted);font-style:italic;">Official description not yet available — this alert was recently added to the Highway platform. Check back for updated guidance.</div>
+            <div class="risk-row risk-medium"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:55%"></div></div><span class="risk-value">Medium</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Call dispatch to <strong>confirm the VIN</strong> assigned to the load.</li>
+              <li>Verify the vehicle is properly connected and en route.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Call Dispatch</span><span class="chip chip-verify">✅ Confirm VIN</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Potentially Uninsured Vehicle Assigned -->
+      <div class="alert-card" data-type="llp" data-id="Potentially Uninsured Vehicle Assigned" data-keywords="potentially uninsured vehicle assigned missing COI certificate of insurance VIN updated">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-vehicle"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Potentially Uninsured Vehicle Assigned</div>
+            <div class="card-meta"><span class="type-pill pill-llp">Load Lock Plus</span><span class="category-tag">Compliance</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">This alert is triggered when the vehicle is assigned to the load but is <strong>missing from the carrier's Certificate of Insurance (COI)</strong>.</div>
+            <div class="risk-row risk-high"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:75%"></div></div><span class="risk-value">High</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Call the dispatch number under the carrier profile and <strong>confirm the VIN that is on the load</strong>.</li>
+              <li>Request an <strong>updated COI with the VIN added</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Call Dispatch</span><span class="chip chip-verify">📄 Request Updated COI</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Provided Vehicle Not Found -->
+      <div class="alert-card" data-type="llp" data-id="Provided Vehicle Not Found" data-keywords="provided vehicle not found TMS assigned matching carrier highway confirm VIN ELD">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-vehicle"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Provided Vehicle Not Found</div>
+            <div class="card-meta"><span class="type-pill pill-llp">Load Lock Plus</span><span class="category-tag">Vehicle</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">This alert is triggered when a broker assigns a vehicle and <strong>Highway is not able to find a matching vehicle</strong> with that carrier.</div>
+            <div class="risk-row risk-medium"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:60%"></div></div><span class="risk-value">Medium</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Call the dispatch number under the carrier profile and <strong>confirm the VIN</strong>.</li>
+              <li>Ensure they are <strong>connected with ELD</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Call Dispatch</span><span class="chip chip-verify">🔗 Connect via ELD</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Revoked ELD -->
+      <div class="alert-card" data-type="llp" data-id="Revoked ELD" data-keywords="revoked ELD connection lost mid transit reconnect immediately real time">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-tracking"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Revoked ELD</div>
+            <div class="card-meta"><span class="type-pill pill-llp">Load Lock Plus</span><span class="category-tag">Tracking</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">This alert triggers automatically if a <strong>carrier's ELD connection is lost mid-transit</strong>, allowing you to quickly identify and investigate potential issues in real time.</div>
+            <div class="risk-row risk-high"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:80%"></div></div><span class="risk-value">High</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Call the dispatch number under the carrier profile and <strong>request the carrier connect their ELD</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Call Dispatch</span><span class="chip chip-verify">🔌 Require ELD Reconnect</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Route Deviation -->
+      <div class="alert-card" data-type="llp" data-id="Route Deviation" data-keywords="route deviation vehicle not moved 30 miles 3 hours toward delivery wrong vehicle VIN ETA">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-tracking"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Route Deviation</div>
+            <div class="card-meta"><span class="type-pill pill-llp">Load Lock Plus</span><span class="category-tag">Tracking</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">The vehicle assigned to the load has <strong>not moved toward the delivery location</strong>. The vehicle has <strong>not moved at least 30 miles in more than 3 hours</strong> toward the delivery.</div>
+            <div class="risk-row risk-medium"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:65%"></div></div><span class="risk-value">Medium</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Call the dispatch number under the carrier profile to get an <strong>updated location and ETA</strong>.</li>
+              <li>Confirm the <strong>VIN who picked up your load</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Call Dispatch</span><span class="chip chip-verify">✅ Confirm VIN</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Unauthorized Stop -->
+      <div class="alert-card" data-type="llp" data-id="Unauthorized Stop" data-keywords="unauthorized stop vehicle location unplanned">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-tracking"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Unauthorized Stop</div>
+            <div class="card-meta"><span class="type-pill pill-llp">Load Lock Plus</span><span class="category-tag">Tracking</span><span class="category-tag" style="background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.3);color:var(--warn);">Description Pending</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text" style="color:var(--text-muted);font-style:italic;">Official description not yet available — this alert was recently added to the Highway platform. Check back for updated guidance.</div>
+            <div class="risk-row risk-high"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:80%"></div></div><span class="risk-value">High</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Call dispatch to <strong>determine the reason for the stop</strong>.</li>
+              <li>Assess whether the stop poses a risk to the load and take action accordingly.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Call Dispatch</span><span class="chip chip-review">📋 Assess Risk</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vehicle Assignment Required -->
+      <div class="alert-card" data-type="llp" data-id="Vehicle Assignment Required" data-keywords="vehicle assignment required pickup window passed carrier portal VIN location">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-vehicle"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Vehicle Assignment Required</div>
+            <div class="card-meta"><span class="type-pill pill-llp">Load Lock Plus</span><span class="category-tag">Vehicle</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">Highway is unable to assign a vehicle to the load because the carrier has been <strong>assigned after the pickup appointment window has passed</strong>.</div>
+            <div class="risk-row risk-medium"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:55%"></div></div><span class="risk-value">Medium</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Call the dispatch number under the carrier profile and ask again for the <strong>VIN picking up your load and their location</strong>.</li>
+              <li>Have the carrier <strong>assign the vehicle in the Highway Carrier Portal</strong>.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Call Dispatch</span><span class="chip chip-verify">🖥️ Assign via Carrier Portal</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vehicle Not Nearby -->
+      <div class="alert-card" data-type="llp" data-id="Vehicle Not Nearby" data-keywords="vehicle not nearby 200 miles pickup manually assigned 300 ELD highway carrier portal">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="alert-badge badge-vehicle"></div>
+          <div class="card-title-wrap">
+            <div class="card-title">Vehicle Not Nearby</div>
+            <div class="card-meta"><span class="type-pill pill-llp">Load Lock Plus</span><span class="category-tag">Vehicle</span></div>
+          </div>
+          <svg class="card-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="card-body">
+          <div class="card-section">
+            <div class="section-label">What It Means</div>
+            <div class="meaning-text">Highway is unable to detect any vehicles in the <strong>200 mile radius of the pickup location</strong> OR a vehicle that is manually assigned is <strong>more than 300 miles away</strong> from the pickup location.</div>
+            <div class="risk-row risk-high"><span class="risk-label">Risk level</span><div class="risk-bar"><div class="risk-fill" style="width:80%"></div></div><span class="risk-value">High</span></div>
+          </div>
+          <div class="card-section">
+            <div class="section-label">What To Do</div>
+            <ol class="steps-list">
+              <li>Call the dispatch number under the carrier profile and ask again for the <strong>VIN picking up your load and their location</strong>.</li>
+              <li>Ask the dispatch to <strong>connect the vehicle's ELD in Highway</strong> by logging into their carrier portal OR to provide the proper vehicle hauling the load.</li>
+            </ol>
+          </div>
+          <div class="card-section">
+            <div class="section-label">Quick Actions</div>
+            <div class="action-chips"><span class="chip chip-call">📞 Call Dispatch</span><span class="chip chip-verify">🔗 Connect ELD in Highway</span></div>
+          </div>
+        </div>
+      </div>
+
+            <div class="no-results" id="noResults">No alerts match your search. Try different keywords.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const _now = new Date();
+  const _opts = { month: 'short', day: 'numeric', year: 'numeric' };
+  const _time = _now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+  document.getElementById('last-updated').textContent = _now.toLocaleDateString('en-US', _opts).toUpperCase() + ' ' + _time;
+  function toggleCard(headerEl) {
+    const card = headerEl.closest('.alert-card');
+    card.classList.toggle('open');
+  }
+
+  function collapseAll(btn) {
+    const openCards = document.querySelectorAll('.alert-card.open');
+    if (openCards.length > 0) {
+      openCards.forEach(c => c.classList.remove('open'));
+      btn.textContent = 'Expand All';
+    } else {
+      document.querySelectorAll('.alert-card').forEach(c => {
+        if (c.style.display !== 'none') c.classList.add('open');
+      });
+      btn.textContent = 'Collapse All';
+    }
+  }
+
+  const selectedIds = new Set();
+
+  function filterAndScroll(tab, id) {
+    // Toggle selection
+    if (selectedIds.has(id)) {
+      selectedIds.delete(id);
+      const clicked = [...document.querySelectorAll('.sidebar-item')].find(i => i.getAttribute('onclick')?.includes(`'${id}'`));
+      if (clicked) clicked.classList.remove('active');
+    } else {
+      selectedIds.add(id);
+      const clicked = [...document.querySelectorAll('.sidebar-item')].find(i => i.getAttribute('onclick')?.includes(`'${id}'`));
+      if (clicked) clicked.classList.add('active');
+    }
+
+    // If nothing selected, fall back to full tab filter
+    if (selectedIds.size === 0) {
+      activeTab = 'all';
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('.tab-btn.all').classList.add('active');
+      applyFilters();
+      return;
+    }
+
+    // Show only selected cards
+    const cards = document.querySelectorAll('.alert-card');
+    const headers = document.querySelectorAll('.group-header');
+    let visible = 0;
+
+    // Determine which groups are represented in selection
+    const activeGroups = new Set();
+    cards.forEach(card => { if (selectedIds.has(card.dataset.id)) activeGroups.add(card.dataset.type); });
+    headers.forEach(h => h.style.display = activeGroups.has(h.dataset.group) ? '' : 'none');
+
+    cards.forEach(card => {
+      if (selectedIds.has(card.dataset.id)) {
+        card.style.display = '';
+        card.classList.add('open');
+        visible++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    document.getElementById('stat-total').textContent = visible;
+    document.getElementById('noResults').classList.toggle('visible', visible === 0);
+
+    // Scroll to last added card
+    if (selectedIds.has(id)) {
+      setTimeout(() => {
+        const card = document.querySelector(`[data-id="${id}"]`);
+        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 50);
+    }
+  }
+
+  function scrollTo(id) {
+    const card = document.querySelector(`[data-id="${id}"]`);
+    if (card) {
+      card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      card.classList.add('open');
+    }
+  }
+
+  let activeTab = 'all';
+
+  function filterTab(tab, btn) {
+    selectedIds.clear();
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    activeTab = tab;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+  }
+
+  document.getElementById('searchInput').addEventListener('input', () => {
+    selectedIds.clear();
+    document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+    applyFilters();
+  });
+
+  function applyFilters() {
+    const query = document.getElementById('searchInput').value.toLowerCase().trim();
+    const cards = document.querySelectorAll('.alert-card');
+    const headers = document.querySelectorAll('.group-header');
+    let visible = 0;
+
+    headers.forEach(h => {
+      const group = h.dataset.group;
+      h.style.display = (activeTab === 'all' || activeTab === group) ? '' : 'none';
+    });
+
+    cards.forEach(card => {
+      const type = card.dataset.type;
+      const keywords = (card.dataset.keywords + ' ' + card.dataset.id).toLowerCase();
+      const title = card.querySelector('.card-title').textContent.toLowerCase();
+      const tabMatch = activeTab === 'all' || activeTab === type;
+      const searchMatch = !query || keywords.includes(query) || title.includes(query);
+
+      if (tabMatch && searchMatch) {
+        card.style.display = '';
+        visible++;
+
+        if (query) {
+          const titleEl = card.querySelector('.card-title');
+          const original = titleEl.textContent;
+          const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+          titleEl.innerHTML = original.replace(regex, '<span class="hl">$1</span>');
+        } else {
+          const titleEl = card.querySelector('.card-title');
+          titleEl.innerHTML = titleEl.textContent;
+        }
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    document.getElementById('stat-total').textContent = visible;
+    document.getElementById('noResults').classList.toggle('visible', visible === 0);
+  }
+</script>
+</body>
+</html>
