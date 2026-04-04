@@ -46,38 +46,7 @@ body {
 .page { max-width: 960px; margin: 0 auto; padding: 0 0 80px; }
 
 /* Header */
-/* NAV LINKS */
-.nav-links {
-  display: flex;
-  gap: 0;
-}
-
-.nav-link {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 500;
-  padding: 10px 16px;
-  text-decoration: none;
-
-  color: rgba(255,255,255,0.7);
-  background: transparent;
-  border-bottom: 3px solid transparent;
-
-  transition: all 0.2s ease;
-}
-
-.nav-link:hover {
-  color: #ffffff;
-  background: rgba(255,255,255,0.05);
-}
-
-.nav-link.active {
-  color: #ffffff;
-  border-bottom: 3px solid var(--atg-teal);
-  background: rgba(255,255,255,0.05);
-}
 .header {
-
   background: var(--atg-navy);
   border-bottom: 3px solid var(--atg-teal);
   padding: 14px 24px;
@@ -233,6 +202,9 @@ body {
 }
 .pill:hover { border-color: var(--atg-teal); color: var(--atg-teal-dark); }
 .pill.active { background: var(--amber); color: #fff; border-color: var(--amber); }
+.pill.excl { border-color: #E8A09C; color: #8B2220; background: var(--accent-light); }
+.pill.excl:hover { border-color: var(--accent); color: #8B2220; background: #FADDDB; }
+.pill.excl.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
 /* Value input */
 .value-input {
@@ -428,31 +400,17 @@ body {
 </head>
 <body>
 <div class="header">
-
   <div class="header-brand">
-    <div style="line-height:1.25;">
-      <div style="font-size:18px;font-weight:700;letter-spacing:2px;color:#fff;text-transform:uppercase;">
-        Armstrong
-      </div>
-      <div style="font-size:8px;letter-spacing:4px;color:rgba(255,255,255,0.6);text-transform:uppercase;">
-        Transport Group
-      </div>
+    <div class="atg-logo-text">
+      <strong>Armstrong</strong>
+      <span>Transport Group</span>
     </div>
-
-    <div style="width:1px;height:30px;background:rgba(255,255,255,0.2);"></div>
-
-    <div style="font-size:15px;font-weight:600;color:#fff;">
-      Carrier Ruleset & Vetting Guide
-    </div>
+    <div class="header-divider"></div>
+    <span class="header-tool-name">HV<span style="color:#0069A6">/</span>HR Carrier Guide</span>
   </div>
-
-  <div class="nav-links">
-    <a href="index.html" class="nav-link" id="nav-checker">Vetting checker</a>
-    <a href="alerts.html" class="nav-link" id="nav-alerts">Identity alert guide</a>
-    <a href="hvhr.html" class="nav-link active" id="nav-hvhr">HVHR</a>
-  </div>
-
+  <span style="font-family:var(--mono);font-size:10px;font-weight:500;color:rgba(255,255,255,0.45);letter-spacing:0.05em;white-space:nowrap;">Updated <span id="last-modified"></span></span>
 </div>
+
 <div class="page">
 <div class="page-inner">
 
@@ -543,7 +501,7 @@ body {
 
       <div class="q-row" style="flex-direction:column; align-items:flex-start; gap:10px;">
         <div class="q-label">What commodity is being hauled?
-          <span class="q-sub">Select all that apply — any selection triggers HVHR requirements</span>
+          <span class="q-sub">Select all that apply — any HVHR selection triggers enhanced requirements · red pills are hard exclusions</span>
         </div>
         <div class="commodity-grid">
           <div class="pill" onclick="togglePill(this)">Electronics / Tech</div>
@@ -559,6 +517,31 @@ body {
           <div class="pill" onclick="togglePill(this)">Tires / Industrial</div>
           <div class="pill" onclick="togglePill(this)">General Merchandise</div>
           <div class="pill" onclick="togglePill(this)">Other High-Theft</div>
+        </div>
+        <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.05em;text-transform:uppercase;color:#8B2220;margin-top:10px;margin-bottom:4px;">⛔ Insurance Exclusions — Do Not Book</div>
+        <div class="commodity-grid">
+          <div class="pill excl" onclick="togglePill(this)">Jewelry / Watches</div>
+          <div class="pill excl" onclick="togglePill(this)">Precious Stones</div>
+          <div class="pill excl" onclick="togglePill(this)">Furs</div>
+          <div class="pill excl" onclick="togglePill(this)">Perfumes</div>
+          <div class="pill excl" onclick="togglePill(this)">Tobacco</div>
+          <div class="pill excl" onclick="togglePill(this)">Firearms / Ammunition</div>
+          <div class="pill excl" onclick="togglePill(this)">Explosives</div>
+          <div class="pill excl" onclick="togglePill(this)">Satellites</div>
+          <div class="pill excl" onclick="togglePill(this)">Nuclear Fuel</div>
+          <div class="pill excl" onclick="togglePill(this)">Mobile Phones</div>
+          <div class="pill excl" onclick="togglePill(this)">Microchips / Motherboards</div>
+          <div class="pill excl" onclick="togglePill(this)">Standalone Memory</div>
+          <div class="pill excl" onclick="togglePill(this)">Digital Cameras &amp; Photo Sticks</div>
+          <div class="pill excl" onclick="togglePill(this)">Phone Components &amp; Accessories</div>
+          <div class="pill excl" onclick="togglePill(this)">Rx / Non-OTC Pharmaceuticals</div>
+          <div class="pill excl" onclick="togglePill(this)">Non-OTC Nutraceuticals</div>
+          <div class="pill excl" onclick="togglePill(this)">Narcotics</div>
+          <div class="pill excl" onclick="togglePill(this)">Marijuana / CBD &gt;0.3% THC</div>
+          <div class="pill excl" onclick="togglePill(this)">Live Animals</div>
+          <div class="pill excl" onclick="togglePill(this)">Used Household Goods</div>
+          <div class="pill excl" onclick="togglePill(this)">Personal Effects</div>
+          <div class="pill excl" onclick="togglePill(this)">Arts / Collectibles / Antiques</div>
         </div>
       </div>
 
@@ -737,7 +720,17 @@ function selectEquip(btn, val) {
   document.querySelectorAll('#row-loads .toggle-btn, #row-reefer .toggle-btn, #row-flatbed-cargo .toggle-btn').forEach(b => b.classList.remove('active'));
 }
 
-function togglePill(el) { el.classList.toggle('active'); }
+function togglePill(el) {
+  el.classList.toggle('active');
+  if (el.classList.contains('excl') && el.classList.contains('active')) {
+    const commodity = el.textContent.trim();
+    showVerdict('fail', 'LOAD CANNOT BE BOOKED',
+      `${commodity} is an insurance exclusion. This load cannot be booked without written underwriting approval. Do not proceed.`,
+      [{ type: 'bad', text: `${commodity} — hard insurance exclusion, do not book` }]);
+  } else if (el.classList.contains('excl') && !el.classList.contains('active')) {
+    document.getElementById('verdict').style.display = 'none';
+  }
+}
 
 function isHVHR() {
   if (document.querySelectorAll('.pill.active').length > 0) return true;
@@ -780,6 +773,15 @@ function runCheck() {
   const hvhr = isHVHR();
   const flags = [];
   let failCount = 0, warnCount = 0;
+
+  // Exclusion commodity hard stop — fires before everything else
+  const exclActive = [...document.querySelectorAll('.pill.excl.active')].map(p => p.textContent.trim());
+  if (exclActive.length > 0) {
+    showVerdict('fail', 'LOAD CANNOT BE BOOKED',
+      `${exclActive.join(', ')} — insurance exclusion${exclActive.length > 1 ? 's' : ''}. This load cannot be booked without written underwriting approval. Do not proceed.`,
+      exclActive.map(c => ({ type: 'bad', text: `${c} — hard insurance exclusion, do not book` })));
+    return;
+  }
 
   // $1M hard stop — fires before everything else, no exceptions
   if (getRawValue() >= 1000000) {
@@ -999,4 +1001,3 @@ function closeModalOutside(e) { if (e.target.id === 'modal') closeModal(); }
 </script>
 </body>
 </html>
-
