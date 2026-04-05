@@ -147,7 +147,8 @@
       <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:0.05em;line-height:1.6;">LAST UPDATED<br><span id="mod-date" style="color:rgba(255,255,255,0.5);"></span></div>
     </div>
     <div class="sidebar-actions" style="margin-top:0;padding-top:10px;">
-      <button onclick="askClear()" style="all:unset;display:block;width:100%;padding:11px 12px;border-radius:7px;background:#6c6490;color:#ffffff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;text-align:center;cursor:pointer;box-sizing:border-box">✕ Clear Section</button>
+      <button onclick="askClearAll()" style="all:unset;display:block;width:100%;padding:9px 12px;border-radius:7px;background:rgba(220,38,38,0.15);color:#fca5a5;font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:500;text-align:center;cursor:pointer;box-sizing:border-box;border:1px solid rgba(220,38,38,0.3)">✕ Clear All</button>
+      <button onclick="askClear()" style="all:unset;display:block;width:100%;padding:11px 12px;border-radius:7px;background:#6c6490;color:#ffffff;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:500;text-align:center;cursor:pointer;box-sizing:border-box">✕ Clear Section</button>
       <button onclick="saveSession()" style="all:unset;display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:10px 12px;border-radius:7px;background:rgba(255,255,255,0.1);color:#e8e4d4;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;box-sizing:border-box;border:1px solid rgba(255,255,255,0.2)">
         <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 2h8l2 2v8H2V2z" stroke="#e8e4d4" stroke-width="1.1" fill="none"/><rect x="4" y="8" width="6" height="4" rx="0.5" stroke="#e8e4d4" stroke-width="1.1" fill="none"/><rect x="4" y="2" width="5" height="3" rx="0.5" stroke="#e8e4d4" stroke-width="1.1" fill="none"/></svg>
         Save Session
@@ -194,6 +195,16 @@
         <div class="modal-btns">
           <button class="btn-cancel" onclick="cancelClear()">Cancel</button>
           <button class="btn-confirm" onclick="confirmClear()">Yes, clear it</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-overlay" id="clearAllOverlay">
+      <div class="modal-box">
+        <div class="modal-title">Clear entire form?</div>
+        <div class="modal-msg">This will erase all fields across all 9 sections, including notes, status, and dates. This cannot be undone.</div>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="cancelClearAll()">Cancel</button>
+          <button class="btn-confirm" onclick="confirmClearAll()">Yes, clear everything</button>
         </div>
       </div>
     </div>
@@ -486,6 +497,44 @@ function go(i){
   if(scroll)scroll.scrollTop=0;
 }
 function showToast(msg){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+function askClearAll(){
+  const o=document.getElementById('clearAllOverlay');
+  if(o)o.classList.add('show');
+}
+function cancelClearAll(){
+  const o=document.getElementById('clearAllOverlay');
+  if(o)o.classList.remove('show');
+}
+function confirmClearAll(){
+  // Clear all inputs, selects, textareas, radios across all panels
+  document.querySelectorAll('input:not([type=radio]):not([type=file]),textarea').forEach(el=>{
+    if(el.id==='caseStatus'||el.id==='caseAlertDate'||el.id==='caseFiledDate')return;
+    el.value='';
+  });
+  document.querySelectorAll('input[type=radio]').forEach(el=>el.checked=false);
+  document.querySelectorAll('select').forEach(el=>el.selectedIndex=0);
+  // Clear status bar fields
+  const cs=document.getElementById('caseStatus');if(cs){cs.selectedIndex=0;cs.style.backgroundColor='#F59E0B';cs.style.color='#1A2E44';}
+  const ca=document.getElementById('caseAlertDate');if(ca)ca.value='';
+  const cf=document.getElementById('caseFiledDate');if(cf)cf.value='';
+  // Clear dynamic flag lists
+  const idList=document.getElementById('idAlertList');if(idList)idList.innerHTML='';
+  const fgList=document.getElementById('fgList');if(fgList)fgList.innerHTML='';
+  document.getElementById('idAlertCat')?.classList.remove('visible');
+  document.getElementById('fgCat')?.classList.remove('visible');
+  // Clear CargoNet row
+  const cnRow=document.getElementById('cargoNetNumRow');if(cnRow)cnRow.style.display='none';
+  // Clear notes
+  notes=[];renderNotes();
+  // Reset to section 1
+  go(0);
+  // Clear autosave
+  try{localStorage.removeItem('atg_cti_autosave');}catch(e){}
+  const o=document.getElementById('clearAllOverlay');if(o)o.classList.remove('show');
+  showToast('All fields cleared.');
+  autoSave();
+}
+
 function askClear(){const m=document.getElementById('confirmMsg');if(m)m.textContent='Clear all fields in "'+sectionNames[cur]+'"? This cannot be undone.';const o=document.getElementById('confirmOverlay');if(o)o.classList.add('show')}
 function cancelClear(){const o=document.getElementById('confirmOverlay');if(o)o.classList.remove('show')}
 function confirmClear(){
@@ -684,40 +733,184 @@ function generatePDF(){
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'letter'});
   const PW=215.9,PH=279.4,M=18,CW=PW-M*2;let y=0;
-  const NAVY=[26,26,46],CREAM=[232,228,212],MUTED=[158,154,176],DARK=[22,22,36],SUBTLE=[150,148,162],RULE=[210,208,220],BG=[247,246,251];
-  const newPage=()=>{doc.addPage();y=M;doc.setFillColor(...NAVY);doc.rect(0,0,PW,9,'F');doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);doc.text('CARGO THEFT INCIDENT REPORT  ·  CONFIDENTIAL',M,6.5);const b=val('bol');if(b)doc.text('BOL: '+b,PW-M,6.5,{align:'right'})};
+
+  // ATG Brand palette
+  const NAVY=[26,46,68];         // #1A2E44
+  const TEAL=[0,105,166];        // #0069A6
+  const TEAL_LIGHT=[230,242,249];// #E6F2F9
+  const TEAL_MID=[204,228,241];  // #CCE4F1
+  const WHITE=[255,255,255];
+  const DARK=[26,46,68];         // same as navy for body text
+  const MUTED=[138,175,197];     // #8AAFC5
+  const SUBTLE=[74,100,120];     // #4A6478
+  const RULE=[200,216,228];      // #C8D8E4
+  const BG=[235,240,245];        // #EBF0F5
+  const AMBER=[245,158,11];      // status amber
+  const ORANGE=[234,88,12];      // status orange
+  const RED=[220,38,38];         // status red
+
+  // Status color helper
+  const statusColor=(s)=>{
+    if(s==='Stolen')return RED;
+    if(s==='Missing - Presumed Stolen')return ORANGE;
+    if(s==='Investigating')return AMBER;
+    return TEAL;
+  };
+
+  // Running header for continuation pages
+  const newPage=()=>{
+    doc.addPage();y=M;
+    // Slim navy header bar
+    doc.setFillColor(...NAVY);doc.rect(0,0,PW,10,'F');
+    doc.setFillColor(...TEAL);doc.rect(0,10,PW,1,'F');
+    doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...MUTED);
+    doc.text('ARMSTRONG TRANSPORT GROUP',M,7);
+    doc.setFont('helvetica','normal');
+    doc.text('CARGO THEFT INCIDENT REPORT  ·  CONFIDENTIAL',PW/2,7,{align:'center'});
+    const b=val('bol');if(b)doc.text('BOL: '+b,PW-M,7,{align:'right'});
+    y=18;
+  };
   const need=(h)=>{if(y+h>PH-16)newPage()};
-  doc.setFillColor(...NAVY);doc.rect(0,0,PW,58,'F');
-  doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);doc.text('FREIGHT THEFT INVESTIGATION  ·  CONFIDENTIAL RECORD',M,15);
-  doc.setFontSize(28);doc.setFont('helvetica','bold');doc.setTextColor(...CREAM);doc.text('Cargo Theft Incident Report',M,34);
-  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);doc.text('Generated: '+new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}),M,45);
-  const b=val('bol');if(b){doc.setTextColor(...CREAM);doc.setFontSize(9);doc.text('BOL: '+b,PW-M,45,{align:'right'});}
-  y=66;
-  const sH=(num,title)=>{need(22);doc.setFillColor(...BG);doc.rect(M,y,CW,15,'F');doc.setFillColor(...NAVY);doc.rect(M,y,5,15,'F');doc.setDrawColor(...RULE);doc.setLineWidth(0.25);doc.rect(M,y,CW,15,'S');doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...MUTED);doc.text('SECTION '+num,M+9,y+5.5);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.setTextColor(...DARK);doc.text(title,M+9,y+12);y+=20};
-  const dRow=(pairs)=>{const ts=pairs.reduce((s,p)=>s+(p[2]||1),0);const uW=CW/ts;let mE=0;const sY=y;let xO=0;pairs.forEach(([lbl,v,span])=>{const cW=(span||1)*uW-4;const x=M+xO;doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(...SUBTLE);doc.text(lbl.toUpperCase(),x,sY);if(v){doc.setFontSize(11);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);const lines=doc.splitTextToSize(v,cW);doc.text(lines,x,sY+6);const e=(lines.length-1)*5.5;if(e>mE)mE=e;}doc.setDrawColor(...RULE);doc.setLineWidth(0.4);doc.line(x,sY+8+mE,x+cW,sY+8+mE);xO+=(span||1)*uW});y=sY+mE+16;need(4)};
-  const div=()=>{need(10);y+=3;doc.setDrawColor(...RULE);doc.setLineWidth(0.25);doc.line(M,y,PW-M,y);y+=8};
-  const lT=(label,text)=>{if(!text)return;need(18);doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(...SUBTLE);if(label)doc.text(label.toUpperCase(),M,y);y+=6;doc.setFontSize(11);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);const lines=doc.splitTextToSize(text,CW);lines.forEach(line=>{need(7);doc.text(line,M,y);y+=5.8});y+=5};
-  const dv=val('declaredValue');const declaredDisplay=dv?'$'+dv:'';
-  // Case status bar
+
+  // ── COVER HEADER ──────────────────────────────────────────────────────
+  // Full-width navy block
+  doc.setFillColor(...NAVY);doc.rect(0,0,PW,70,'F');
+  // Teal accent bar at bottom of header
+  doc.setFillColor(...TEAL);doc.rect(0,70,PW,2.5,'F');
+
+  // Armstrong wordmark
+  doc.setFontSize(22);doc.setFont('helvetica','bold');doc.setTextColor(...WHITE);
+  doc.text('ARMSTRONG',M,20);
+  doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+  doc.text('TRANSPORT GROUP',M,26);
+
+  // Vertical rule between logo and title
+  doc.setDrawColor(...MUTED);doc.setLineWidth(0.4);
+  doc.line(M+52,14,M+52,38);
+
+  // Report title
+  doc.setFontSize(18);doc.setFont('helvetica','bold');doc.setTextColor(...WHITE);
+  doc.text('Cargo Theft',M+58,22);
+  doc.setFontSize(18);doc.setFont('helvetica','bold');doc.setTextColor(...MUTED);
+  doc.text('Incident Report',M+58,31);
+
+  // Generated date — bottom left
+  doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+  doc.text('Generated: '+new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}),M,56);
+
+  // BOL — bottom right
+  const b=val('bol');
+  if(b){
+    doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...MUTED);
+    doc.text('BOL / LOAD NO.',PW-M,50,{align:'right'});
+    doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(...WHITE);
+    doc.text(b,PW-M,57,{align:'right'});
+  }
+
+  // CONFIDENTIAL watermark text
+  doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+  doc.text('CONFIDENTIAL RECORD',PW-M,64,{align:'right'});
+
+  y=80;
+
+  // ── STATUS BAR ────────────────────────────────────────────────────────
   const cStatus=val('caseStatus');
   const cAlert=val('caseAlertDate');
   const cFiled=val('caseFiledDate');
-  if(cStatus||cAlert||cFiled){
-    need(16);
-    doc.setFillColor(...BG);doc.rect(M,y,CW,12,'F');
-    doc.setDrawColor(...RULE);doc.setLineWidth(0.25);doc.rect(M,y,CW,12,'S');
-    const pairs=[];
-    if(cStatus)pairs.push(['STATUS',cStatus]);
-    if(cAlert)pairs.push(['ALERT DATE',cAlert]);
-    if(cFiled)pairs.push(['FILED DATE',cFiled]);
-    const pw=CW/pairs.length;
-    pairs.forEach(([lbl,v],i)=>{
-      const x=M+i*pw+6;
-      doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...SUBTLE);doc.text(lbl,x,y+4.5);
-      doc.setFontSize(9);doc.setFont('helvetica','bold');doc.setTextColor(...DARK);doc.text(v,x,y+10);
-    });
-    y+=17;
+
+  // Always render status bar
+  {
+    const barH=18;
+    doc.setFillColor(...NAVY);doc.rect(M,y,CW,barH,'F');
+    doc.setDrawColor(...TEAL);doc.setLineWidth(0.5);doc.rect(M,y,CW,barH,'S');
+
+    // Status badge — always shown, greyed out if not set
+    const sc=cStatus?statusColor(cStatus):MUTED;
+    const statusLabel=cStatus?cStatus.toUpperCase():'NO STATUS SET';
+    const badgeW=Math.min(statusLabel.length*2.3+16,90);
+    doc.setFillColor(...sc);doc.roundedRect(M+5,y+4,badgeW,10,2,2,'F');
+    doc.setFontSize(8);doc.setFont('helvetica','bold');
+    doc.setTextColor(cStatus?255:200,cStatus?255:200,cStatus?255:200);
+    doc.text(statusLabel,M+5+badgeW/2,y+10.5,{align:'center'});
+
+    // Alert Date
+    let dx=M+5+badgeW+14;
+    doc.setFontSize(6.5);doc.setFont('helvetica','bold');doc.setTextColor(...MUTED);
+    doc.text('ALERT DATE',dx,y+6.5);
+    doc.setFontSize(9);doc.setFont('helvetica','bold');
+    doc.setTextColor(...(cAlert?[255,255,255]:MUTED));
+    doc.text(cAlert||'—',dx,y+13.5);
+
+    // Filed Date
+    dx+=52;
+    doc.setFontSize(6.5);doc.setFont('helvetica','bold');doc.setTextColor(...MUTED);
+    doc.text('FILED DATE',dx,y+6.5);
+    doc.setFontSize(9);doc.setFont('helvetica','bold');
+    doc.setTextColor(...(cFiled?[255,255,255]:MUTED));
+    doc.text(cFiled||'—',dx,y+13.5);
+
+    y+=barH+8;
   }
+
+  // ── SECTION HEADER helper ─────────────────────────────────────────────
+  const sH=(num,title)=>{
+    need(24);
+    // Background
+    doc.setFillColor(...BG);doc.rect(M,y,CW,16,'F');
+    // Teal left accent bar
+    doc.setFillColor(...TEAL);doc.rect(M,y,4,16,'F');
+    // Border
+    doc.setDrawColor(...RULE);doc.setLineWidth(0.25);doc.rect(M,y,CW,16,'S');
+    // Section number
+    doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...TEAL);
+    doc.text('SECTION '+num,M+8,y+6);
+    // Section title
+    doc.setFontSize(12);doc.setFont('helvetica','bold');doc.setTextColor(...NAVY);
+    doc.text(title,M+8,y+13);
+    y+=21;
+  };
+
+  // ── DATA ROW helper ───────────────────────────────────────────────────
+  const dRow=(pairs)=>{
+    const ts=pairs.reduce((s,p)=>s+(p[2]||1),0);
+    const uW=CW/ts;let mE=0;const sY=y;let xO=0;
+    pairs.forEach(([lbl,v,span])=>{
+      const cW=(span||1)*uW-4;const x=M+xO;
+      // Label in teal-ish mono style
+      doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...MUTED);
+      if(lbl)doc.text(lbl.toUpperCase(),x,sY);
+      if(v){
+        doc.setFontSize(10.5);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
+        const lines=doc.splitTextToSize(v,cW);
+        doc.text(lines,x,sY+5.5);
+        const e=(lines.length-1)*5.2;if(e>mE)mE=e;
+      }
+      // Underline rule
+      doc.setDrawColor(...RULE);doc.setLineWidth(0.35);
+      doc.line(x,sY+7.5+mE,x+cW,sY+7.5+mE);
+      xO+=(span||1)*uW;
+    });
+    y=sY+mE+15;need(4);
+  };
+
+  // ── DIVIDER ───────────────────────────────────────────────────────────
+  const div=()=>{need(10);y+=2;doc.setDrawColor(...TEAL_MID);doc.setLineWidth(0.4);doc.line(M,y,PW-M,y);y+=7};
+
+  // ── LONG TEXT helper ──────────────────────────────────────────────────
+  const lT=(label,text)=>{
+    if(!text)return;need(18);
+    doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...MUTED);
+    if(label)doc.text(label.toUpperCase(),M,y);
+    y+=5;
+    doc.setFontSize(10.5);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
+    const lines=doc.splitTextToSize(text,CW);
+    lines.forEach(line=>{need(7);doc.text(line,M,y);y+=5.5});
+    y+=4;
+  };
+
+  const dv=val('declaredValue');const declaredDisplay=dv?'$'+dv:'';
+
+  // ── SECTIONS ──────────────────────────────────────────────────────────
   sH(1,'Load Information');
   dRow([['BOL / Load Number',val('bol')],['Pickup Date',val('pickupDate')],['Delivery Date',val('deliveryDate')]]);
   dRow([['Origin',val('origin'),1.5],['Destination',val('destination'),1.5]]);
@@ -726,67 +919,93 @@ function generatePDF(){
   dRow([['Pallets / Pieces / Weight',val('palletsWeight')],['Shipper',val('shipper')]]);
   dRow([['Customer Name',val('customerName')],['Agent or Rep Name',val('agentName')],['Agent / Office',val('agentOffice')]]);
   dRow([['Driver Name (ATG)',val('driverName')],['Driver Phone (ATG)',val('driverPhone')]]);
-  if(val('driverName2')||val('driverPhone2'))dRow([['2nd Driver Name',val('driverName2')],['2nd Driver Phone',val('driverPhone2')]]);div();
+  if(val('driverName2')||val('driverPhone2'))dRow([['2nd Driver Name',val('driverName2')],['2nd Driver Phone',val('driverPhone2')]]);
+  div();
+
   sH(2,'Carrier Information');
   dRow([['Carrier Name',val('carrierName'),3]]);
   dRow([['MC Number',val('mcNumber')],['DOT Number',val('dotNumber')]]);
   dRow([['Loads in Past 6 Months',val('loadsCount')],['Last Load',val('lastLoad')],['Carrier Onboarded Date',val('onboardDate')]]);
   dRow([['Active ELD',getRadio('eld')],['Dispatcher Phone Used',val('dispPhone')],['Dispatcher Email Used',val('dispEmail')]]);
-  dRow([['Secure Ratecon',getRadio('secureRatecon')]]);div();
+  dRow([['Secure Ratecon',getRadio('secureRatecon')]]);
+  div();
+
   sH(3,'Flags & Concerns');
-  // Identity Alerts
   const idTypes=getFlagTypes('idAlertList');
   const idAlertBase=getRadio('idAlert')||'';
   if(idAlertBase){
-    if(idTypes.length===0){dRow([['Identity Alerts',idAlertBase,3]]);}
-    else{
-      dRow([['Identity Alerts',idAlertBase,3]]);
-      idTypes.forEach((r,i)=>{
-        const label=i===0?'Alert Type':'';
-        dRow([[label,r.type+(r.date?' — '+r.date:''),3]]);
-      });
-    }
+    dRow([['Identity Alerts',idAlertBase,3]]);
+    idTypes.forEach((r,i)=>{dRow([[i===0?'Alert Type':'',r.type+(r.date?' — '+r.date:''),3]]);});
   }
-  // FreightGuard
   const fgTypes=getFlagTypes('fgList');
   const fgBase=getRadio('freightGuard')||'';
   if(fgBase){
-    if(fgTypes.length===0){dRow([['FreightGuard Reports',fgBase,3]]);}
-    else{
-      dRow([['FreightGuard Reports',fgBase,3]]);
-      fgTypes.forEach((r,i)=>{
-        const label=i===0?'Report Category':'';
-        dRow([[label,r.type+(r.date?' — '+r.date:''),3]]);
-      });
-    }
+    dRow([['FreightGuard Reports',fgBase,3]]);
+    fgTypes.forEach((r,i)=>{dRow([[i===0?'Report Category':'',r.type+(r.date?' — '+r.date:''),3]]);});
   }
-  // WatchDog & VIDTA
-  [['WatchDog Reports','watchdog','watchdogDate'],['VIDTA Reports','vidta','vidtaDate']].forEach(([lbl,rn,di])=>{const rv=getRadio(rn),dv2=val(di);dRow([[lbl,(rv||'')+(dv2?' — Date: '+dv2:''),3]])});div();
+  [['WatchDog Reports','watchdog','watchdogDate'],['VIDTA Reports','vidta','vidtaDate']].forEach(([lbl,rn,di])=>{
+    const rv=getRadio(rn),dv2=val(di);
+    if(rv)dRow([[lbl,rv+(dv2?' — Date: '+dv2:''),3]]);
+  });
+  div();
+
   sH(4,'Reporting');
   const cnNum=val('cargoNetNum');
   const cnVal=getRadio('cargonet')+(cnNum?' — Report #: '+cnNum:'');
   dRow([['Reported to CargoNet?',cnVal],['Highway Report Filed?',getRadio('highway')]]);
-  dRow([['WatchDog Report Filed?',getRadio('wdFiled')],['Carrier411 Report Filed?',getRadio('carrier411')]]);div();
+  dRow([['WatchDog Report Filed?',getRadio('wdFiled')],['Carrier411 Report Filed?',getRadio('carrier411')]]);
+  div();
+
   sH(5,'Law Enforcement Involvement');
   dRow([['Reported to Law Enforcement?',getRadio('lawEnf')],['Police Report Number',val('policeRptNo')]]);
   dRow([['Department Name',val('deptName'),3]]);
-  dRow([['Officer Name',val('officerName')],['Officer Contact',val('officerContact')]]);div();
+  dRow([['Officer Name',val('officerName')],['Officer Contact',val('officerContact')]]);
+  div();
+
   sH(6,'Insurance & Factoring');
   dRow([['Insurance Broker',val('insBroker')],['Underwriter',val('underwriter')]]);
   dRow([['Previous Broker',val('prevBroker')],['Previous Underwriter',val('prevUnderwriter')]]);
   const fnot=getRadio('factNotified')+(val('factNotifiedDate')?' — Date: '+val('factNotifiedDate'):'');
-  dRow([['Change Date',val('changeDate')],['Factoring Company',val('factoring')],['Factoring Co. Notified?',fnot]]);div();
+  dRow([['Change Date',val('changeDate')],['Factoring Company',val('factoring')],['Factoring Co. Notified?',fnot]]);
+  div();
+
   sH(7,'Incident Overview');
   dRow([['Theft Classification',getRadio('theftClass')],['Estimated Incident Location',val('incidentLoc'),2]]);
-  dRow([['Load Posted to Loadboard?',getRadio('loadboard')],['Tracking Enabled?',getRadio('tracking')]]);div();
+  dRow([['Load Posted to Loadboard?',getRadio('loadboard')],['Tracking Enabled?',getRadio('tracking')]]);
+  div();
+
   if(val('frontEmails')){sH(8,'Front Emails');lT('Emails Identified',val('frontEmails'));div();}
+
   if(notes.length>0){
     sH(9,'Comments / Notes');
-    [...notes].reverse().forEach((n,i)=>{need(22);if(i>0){y+=3;doc.setDrawColor(...RULE);doc.setLineWidth(0.2);doc.line(M,y,PW-M,y);y+=7;}doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(...SUBTLE);doc.text(n.ts.toUpperCase(),M,y);y+=6;doc.setFontSize(11);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);const lines=doc.splitTextToSize(n.text,CW);lines.forEach(line=>{need(7);doc.text(line,M,y);y+=5.8});});
+    [...notes].reverse().forEach((n,i)=>{
+      need(24);
+      if(i>0){y+=2;doc.setDrawColor(...TEAL_MID);doc.setLineWidth(0.3);doc.line(M,y,PW-M,y);y+=6;}
+      // Timestamp pill
+      doc.setFillColor(...TEAL_LIGHT);doc.roundedRect(M,y,CW,7,1.5,1.5,'F');
+      doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...TEAL);
+      doc.text(n.ts.toUpperCase(),M+4,y+5);
+      y+=10;
+      doc.setFontSize(10.5);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
+      const lines=doc.splitTextToSize(n.text,CW);
+      lines.forEach(line=>{need(7);doc.text(line,M,y);y+=5.5});
+    });
   }
+
+  // ── FOOTER on every page ─────────────────────────────────────────────
   const pages=doc.internal.getNumberOfPages();
-  for(let i=1;i<=pages;i++){doc.setPage(i);doc.setFillColor(...BG);doc.rect(0,PH-11,PW,11,'F');doc.setDrawColor(...RULE);doc.setLineWidth(0.25);doc.line(0,PH-11,PW,PH-11);doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(...SUBTLE);doc.text('CONFIDENTIAL — FOR AUTHORIZED USE ONLY',M,PH-4.5);doc.text('Page '+i+' of '+pages,PW-M,PH-4.5,{align:'right'});}
-  doc.save('cargo-theft-'+(val('bol')||'report')+'.pdf');
+  for(let i=1;i<=pages;i++){
+    doc.setPage(i);
+    // Footer bar
+    doc.setFillColor(...NAVY);doc.rect(0,PH-12,PW,12,'F');
+    doc.setFillColor(...TEAL);doc.rect(0,PH-12,PW,1,'F');
+    doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+    doc.text('CONFIDENTIAL — FOR AUTHORIZED USE ONLY',M,PH-5);
+    doc.text('Armstrong Transport Group',PW/2,PH-5,{align:'center'});
+    doc.text('Page '+i+' of '+pages,PW-M,PH-5,{align:'right'});
+  }
+
+  doc.save('cti-'+(val('bol')||'report')+'.pdf');
 }
 
 // ── FIELD IDs for save/load ────────────────────────────────────────────────
