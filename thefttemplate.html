@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cargo Theft Investigation Report</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'DM Sans',sans-serif;background:#f4f3f0;min-height:100vh;display:flex}
+  .layout{display:grid;grid-template-columns:240px 1fr;width:100%;min-height:100vh}
+  .sidebar{background:#1a1a2e;padding:28px 18px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh;overflow-y:auto}
+  .sidebar-title{font-family:'DM Serif Display',serif;font-size:17px;font-weight:400;color:#e8e4d4;margin-bottom:4px;line-height:1.3}
+  .sidebar-sub{font-size:10px;color:#9e9ab0;letter-spacing:0.5px;margin-bottom:20px}
+  .nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;cursor:pointer;transition:background 0.15s;border:none;background:transparent;width:100%;text-align:left}
+  .nav-item:hover{background:rgba(255,255,255,0.07)}
+  .nav-item.active{background:rgba(255,255,255,0.13)}
+  .nav-num{font-size:10px;font-weight:500;color:#6b678a;min-width:18px}
+  .nav-label{font-size:12px;color:#c8c4dc;line-height:1.2}
+  .nav-item.active .nav-num{color:#a09ccc}
+  .nav-item.active .nav-label{color:#e8e4d4}
+  .sidebar-actions{margin-top:auto;padding-top:16px;display:flex;flex-direction:column;gap:8px;border-top:1px solid rgba(255,255,255,0.2)}
+  .progress-bar{height:2px;background:rgba(255,255,255,0.08);border-radius:2px;margin-bottom:22px;overflow:hidden}
+  .progress-fill{height:100%;background:#7F77DD;border-radius:2px;transition:width 0.3s}
+  .main{background:#f8f7fc;overflow-y:auto}
+  .panel{display:none;padding:0 0 60px}
+  .panel.active{display:block}
+  .panel-head{background:#1a1a2e;padding:22px 28px 20px;margin-bottom:0}
+  .panel-head-num{font-size:11px;font-weight:500;color:#9e9ab0;letter-spacing:1.5px;margin-bottom:5px}
+  .panel-head-title{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:#e8e4d4}
+  .panel-body{padding:20px 24px 28px;display:flex;flex-direction:column;gap:16px}
+  .field-group{background:#ffffff;border:1px solid #e4e2ee;border-radius:10px;padding:18px 18px 14px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+  .field-group-title{font-size:9px;font-weight:500;letter-spacing:1.6px;text-transform:uppercase;color:#9e9ab0;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #eeecf6}
+  .row{display:grid;gap:12px;margin-bottom:12px}
+  .row:last-child{margin-bottom:0}
+  .row.c2{grid-template-columns:1fr 1fr}
+  .row.c3{grid-template-columns:1fr 1fr 1fr}
+  .row.c1{grid-template-columns:1fr}
+  .field{display:flex;flex-direction:column;gap:5px}
+  label{font-size:10px;font-weight:500;color:#7c7a8e;letter-spacing:0.8px;text-transform:uppercase}
+  input,select,textarea{
+    font-family:'DM Sans',sans-serif;font-size:14px;color:#1a1a2e;
+    background:#faf9fd;border:1.5px solid #dddae8;border-radius:8px;
+    padding:10px 12px;width:100%;outline:none;transition:border-color 0.15s,box-shadow 0.15s,background 0.15s;
+  }
+  input:hover,select:hover,textarea:hover{border-color:#b8b4d4;background:#fff}
+  input:focus,select:focus,textarea:focus{border-color:#7F77DD;box-shadow:0 0 0 3px rgba(127,119,221,0.15);background:#fff}
+  input::placeholder,textarea::placeholder{color:#c0bdcf;font-size:13px}
+  textarea{resize:vertical;min-height:90px;line-height:1.6}
+  select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%239e9ab0'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px;cursor:pointer}
+  .radio-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:9px 12px;background:#faf9fd;border:1.5px solid #dddae8;border-radius:8px;min-height:42px}
+  .radio-option{display:flex;align-items:center;gap:5px;cursor:pointer;padding:3px 8px;border-radius:5px;transition:background 0.1s}
+  .radio-option:hover{background:#f0eef8}
+  .radio-option input[type=radio]{width:14px;height:14px;accent-color:#7F77DD;flex-shrink:0;cursor:pointer}
+  .radio-option span{font-size:13px;color:#1a1a2e;font-weight:400;white-space:nowrap}
+  .radio-sep{width:1px;height:16px;background:#e4e2ee;margin:0 2px}
+  .flag-wrap{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start}
+  .flag-category{display:none;margin-top:8px}
+  .flag-category.visible{display:block}
+  .flag-category select{font-size:13px}
+  .flag-category-label{font-size:9px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:#9e9ab0;margin-bottom:6px;display:block}
+  .flag-type-list{display:flex;flex-direction:column;gap:6px}
+  .flag-type-row{display:flex;align-items:center;gap:8px}
+  .flag-type-row select{flex:1;font-size:13px}
+  .flag-type-date{width:140px;flex-shrink:0;font-size:12px!important;padding:8px 9px!important}
+  .flag-type-remove{all:unset;font-size:16px;color:#bbb;cursor:pointer;line-height:1;padding:0 4px;flex-shrink:0}
+  .flag-type-remove:hover{color:#c0392b}
+  .flag-add-btn{all:unset;display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;font-weight:500;color:#7F77DD;cursor:pointer;letter-spacing:0.2px}
+  .flag-add-btn:hover{color:#534AB7}
+  .flag-info{font-size:11px;color:#7c7a8e;line-height:1.5;margin-top:6px;padding:8px 10px;background:#f5f4fc;border-radius:6px;border-left:3px solid #7F77DD}
+  .flag-date{display:flex;align-items:center;gap:8px}
+  .flag-date span{font-size:11px;color:#9e9ab0;white-space:nowrap;font-weight:500}
+  .flag-date input{width:150px}
+  .currency-wrap{position:relative}
+  .currency-wrap input{padding-left:24px}
+  .currency-prefix{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;color:#9e9ab0;pointer-events:none;font-weight:500}
+  .note-input-wrap{display:flex;flex-direction:column;gap:10px}
+  .note-add-btn{align-self:flex-end;padding:10px 20px;border-radius:8px;background:#1a1a2e;color:#e8e4d4;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;border:none;transition:background 0.15s}
+  .note-add-btn:hover{background:#2d2d4e}
+  .notes-list{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+  .note-entry{background:#fff;border:1px solid #e4e2ee;border-radius:9px;padding:13px 15px;display:flex;flex-direction:column;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
+  .note-entry-header{display:flex;align-items:center;justify-content:space-between}
+  .note-ts{font-size:10px;font-weight:500;color:#9e9ab0;letter-spacing:0.5px;text-transform:uppercase}
+  .note-del{font-size:11px;color:#c0392b;cursor:pointer;padding:3px 8px;border-radius:5px;background:rgba(192,57,43,0.08);border:none;font-family:'DM Sans',sans-serif;font-weight:500}
+  .note-del:hover{background:rgba(192,57,43,0.16)}
+  .note-edit{font-size:11px;color:#534AB7;cursor:pointer;padding:3px 8px;border-radius:5px;background:rgba(83,74,183,0.08);border:none;font-family:'DM Sans',sans-serif;font-weight:500;margin-right:4px}
+  .note-edit:hover{background:rgba(83,74,183,0.16)}
+  .note-text{font-size:14px;color:#1a1a2e;line-height:1.6;white-space:pre-wrap;word-break:break-word}
+  .note-edit-area{width:100%;font-family:'DM Sans',sans-serif;font-size:14px;color:#1a1a2e;background:#faf9fd;border:1.5px solid #7F77DD;border-radius:8px;padding:10px 12px;resize:vertical;min-height:80px;line-height:1.6;outline:none;box-shadow:0 0 0 3px rgba(127,119,221,0.12)}
+  .note-edit-actions{display:flex;gap:8px;margin-top:6px}
+  .note-save-btn{font-size:12px;font-weight:500;color:#fff;background:#7F77DD;border:none;border-radius:6px;padding:6px 14px;cursor:pointer;font-family:'DM Sans',sans-serif}
+  .note-save-btn:hover{background:#534AB7}
+  .note-cancel-btn{font-size:12px;font-weight:500;color:#666;background:#f0eff7;border:1px solid #dddae8;border-radius:6px;padding:6px 14px;cursor:pointer;font-family:'DM Sans',sans-serif}
+  .empty-notes{font-size:13px;color:#9e9ab0;font-style:italic;padding:16px 0;text-align:center}
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,10,20,0.5);z-index:100;align-items:center;justify-content:center}
+  .modal-overlay.show{display:flex}
+  .modal-box{background:#fff;border-radius:12px;padding:28px 24px;width:300px;box-shadow:0 8px 40px rgba(0,0,0,0.18);border:1px solid #e4e2ee}
+  .modal-title{font-size:16px;font-weight:500;color:#1a1a2e;margin-bottom:8px}
+  .modal-msg{font-size:13px;color:#666;margin-bottom:22px;line-height:1.5}
+  .modal-btns{display:flex;gap:10px}
+  .btn-cancel{flex:1;padding:10px;border-radius:8px;background:#f0eff7;color:#444;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;border:1px solid #dddae8;cursor:pointer}
+  .btn-confirm{flex:1;padding:10px;border-radius:8px;background:#c0392b;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;border:none;cursor:pointer}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a2e;color:#e8e4d4;font-size:13px;padding:10px 20px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity 0.3s;white-space:nowrap;z-index:200}
+  .toast.show{opacity:1}
+  @media(max-width:700px){.layout{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.row.c2,.row.c3{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-title">Cargo Theft<br>Investigation</div>
+    <div class="sidebar-sub">CONFIDENTIAL RECORD</div>
+    <div class="progress-bar"><div class="progress-fill" id="prog" style="width:11%"></div></div>
+    <button class="nav-item active" onclick="go(0)" id="n0"><span class="nav-num">1</span><span class="nav-label">Load Information</span></button>
+    <button class="nav-item" onclick="go(1)" id="n1"><span class="nav-num">2</span><span class="nav-label">Carrier Information</span></button>
+    <button class="nav-item" onclick="go(2)" id="n2"><span class="nav-num">3</span><span class="nav-label">Flags &amp; Concerns</span></button>
+    <button class="nav-item" onclick="go(3)" id="n3"><span class="nav-num">4</span><span class="nav-label">Reporting</span></button>
+    <button class="nav-item" onclick="go(4)" id="n4"><span class="nav-num">5</span><span class="nav-label">Law Enforcement</span></button>
+    <button class="nav-item" onclick="go(5)" id="n5"><span class="nav-num">6</span><span class="nav-label">Insurance &amp; Factoring</span></button>
+    <button class="nav-item" onclick="go(6)" id="n6"><span class="nav-num">7</span><span class="nav-label">Incident Overview</span></button>
+    <button class="nav-item" onclick="go(7)" id="n7"><span class="nav-num">8</span><span class="nav-label">Front Emails</span></button>
+    <button class="nav-item" onclick="go(8)" id="n8"><span class="nav-num">9</span><span class="nav-label">Comments / Notes</span></button>
+    <div class="sidebar-actions">
+      <button onclick="askClear()" style="all:unset;display:block;width:100%;padding:11px 12px;border-radius:7px;background:#6c6490;color:#ffffff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;text-align:center;cursor:pointer;box-sizing:border-box">✕ Clear Section</button>
+      <button onclick="saveSession()" style="all:unset;display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:10px 12px;border-radius:7px;background:rgba(255,255,255,0.1);color:#e8e4d4;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;box-sizing:border-box;border:1px solid rgba(255,255,255,0.2)">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 2h8l2 2v8H2V2z" stroke="#e8e4d4" stroke-width="1.1" fill="none"/><rect x="4" y="8" width="6" height="4" rx="0.5" stroke="#e8e4d4" stroke-width="1.1" fill="none"/><rect x="4" y="2" width="5" height="3" rx="0.5" stroke="#e8e4d4" stroke-width="1.1" fill="none"/></svg>
+        Save Session
+      </button>
+      <label style="all:unset;display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:10px 12px;border-radius:7px;background:rgba(255,255,255,0.06);color:#c8c4dc;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;box-sizing:border-box;border:1px solid rgba(255,255,255,0.12)">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3" stroke="#c8c4dc" stroke-width="1.2" stroke-linecap="round"/><path d="M2 10v2h10v-2" stroke="#c8c4dc" stroke-width="1.1" stroke-linecap="round"/></svg>
+        Load Session
+        <input type="file" accept=".json" onchange="loadSession(event)" style="display:none">
+      </label>
+      <button onclick="generatePDF()" style="all:unset;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:12px;border-radius:7px;background:#f0e84a;color:#1a1a2e;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;box-sizing:border-box">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><path d="M2 2h7l3 3v8H2V2z" stroke="#1a1a2e" stroke-width="1.2" fill="none"/><path d="M9 2v3h3" stroke="#1a1a2e" stroke-width="1.2" fill="none"/><path d="M4 7h6M4 9.5h4" stroke="#1a1a2e" stroke-width="1" stroke-linecap="round"/></svg>
+        Download PDF
+      </button>
+    </div>
+  </div>
+
+  <div class="main" id="mainScroll">
+    <div class="modal-overlay" id="confirmOverlay">
+      <div class="modal-box">
+        <div class="modal-title">Clear this section?</div>
+        <div class="modal-msg" id="confirmMsg"></div>
+        <div class="modal-btns">
+          <button class="btn-cancel" onclick="cancelClear()">Cancel</button>
+          <button class="btn-confirm" onclick="confirmClear()">Yes, clear it</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <div class="panel active" id="p0">
+      <div class="panel-head"><div class="panel-head-num">SECTION 1</div><div class="panel-head-title">Load Information</div></div>
+      <div class="panel-body">
+        <div class="field-group">
+          <div class="field-group-title">Shipment Details</div>
+          <div class="row c3">
+            <div class="field"><label>BOL / Load Number</label><input id="bol" type="text" placeholder="e.g. 4180580"></div>
+            <div class="field"><label>Pickup Date</label><input id="pickupDate" type="date"></div>
+            <div class="field"><label>Delivery Date</label><input id="deliveryDate" type="date"></div>
+          </div>
+          <div class="row c2">
+            <div class="field"><label>Origin</label><input id="origin" type="text" placeholder="City, State"></div>
+            <div class="field"><label>Destination</label><input id="destination" type="text" placeholder="City, State"></div>
+          </div>
+          <div class="row c2">
+            <div class="field"><label>Declared Value</label>
+              <div class="currency-wrap"><span class="currency-prefix">$</span><input id="declaredValue" type="text" placeholder="0.00" oninput="formatCurrency(this)"></div>
+            </div>
+            <div class="field"><label>Additional Insurance Purchased?</label>
+              <div class="radio-row">
+                <label class="radio-option"><input type="radio" name="addIns" value="Yes"><span>Yes</span></label>
+                <div class="radio-sep"></div>
+                <label class="radio-option"><input type="radio" name="addIns" value="No"><span>No</span></label>
+                <div class="radio-sep"></div>
+                <label class="radio-option"><input type="radio" name="addIns" value="High-Value / High-Risk"><span>High-Value / High-Risk</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="row c2">
+            <div class="field"><label>Commodity</label><input id="commodity" type="text" placeholder="Describe cargo"></div>
+            <div class="field"><label>Equipment Type</label>
+              <select id="equipType">
+                <option value="">— Select —</option>
+                <option>Dry Van</option><option>Reefer</option><option>Flatbed</option>
+                <option>Step Deck</option><option>Conestoga</option><option>RGN</option><option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="row c2">
+            <div class="field"><label>Pallets / Pieces / Weight</label><input id="palletsWeight" type="text" placeholder="e.g. 24 pallets / 18,000 lbs"></div>
+            <div class="field"><label>Shipper</label><input id="shipper" type="text"></div>
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="field-group-title">Customer &amp; Agent</div>
+          <div class="row c3">
+            <div class="field"><label>Customer Name</label><input id="customerName" type="text"></div>
+            <div class="field"><label>Agent or Rep Name</label><input id="agentName" type="text"></div>
+            <div class="field"><label>Agent / Office</label><input id="agentOffice" type="text"></div>
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="field-group-title">Driver (ATG)</div>
+          <div class="row c2">
+            <div class="field"><label>Driver Name</label><input id="driverName" type="text"></div>
+            <div class="field"><label>Driver Phone</label><input id="driverPhone" type="text" placeholder="(000) 000-0000"></div>
+          </div>
+          <div class="row c2">
+            <div class="field"><label>2nd Driver Name</label><input id="driverName2" type="text"></div>
+            <div class="field"><label>2nd Driver Phone</label><input id="driverPhone2" type="text" placeholder="(000) 000-0000"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="panel" id="p1">
+      <div class="panel-head"><div class="panel-head-num">SECTION 2</div><div class="panel-head-title">Carrier Information</div></div>
+      <div class="panel-body">
+        <div class="field-group">
+          <div class="field-group-title">Carrier Identity</div>
+          <div class="row c1">
+            <div class="field"><label>Carrier Name</label><input id="carrierName" type="text" placeholder="Full legal carrier name"></div>
+          </div>
+          <div class="row c2">
+            <div class="field"><label>MC Number</label><input id="mcNumber" type="text" placeholder="MC-"></div>
+            <div class="field"><label>DOT Number</label><input id="dotNumber" type="text" placeholder="DOT-"></div>
+          </div>
+          <div class="row c3">
+            <div class="field"><label>Loads in Past 6 Months</label><input id="loadsCount" type="text"></div>
+            <div class="field"><label>Last Load Date</label><input id="lastLoad" type="date"></div>
+            <div class="field"><label>Carrier Onboarded Date</label><input id="onboardDate" type="date"></div>
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="field-group-title">Dispatcher &amp; Operations</div>
+          <div class="row c3">
+            <div class="field"><label>Active ELD</label>
+              <div class="radio-row">
+                <label class="radio-option"><input type="radio" name="eld" value="Yes"><span>Yes</span></label>
+                <div class="radio-sep"></div>
+                <label class="radio-option"><input type="radio" name="eld" value="No"><span>No</span></label>
+                <div class="radio-sep"></div>
+                <label class="radio-option"><input type="radio" name="eld" value="Unknown"><span>Unknown</span></label>
+              </div>
+            </div>
+            <div class="field"><label>Dispatcher Phone Used</label><input id="dispPhone" type="text" placeholder="(000) 000-0000"></div>
+            <div class="field"><label>Dispatcher Email Used</label><input id="dispEmail" type="email" placeholder="email@domain.com"></div>
+          </div>
+          <div class="row c1">
+            <div class="field"><label>Secure Ratecon</label>
+              <div class="radio-row" style="width:fit-content">
+                <label class="radio-option"><input type="radio" name="secureRatecon" value="Yes"><span>Yes</span></label>
+                <div class="radio-sep"></div>
+                <label class="radio-option"><input type="radio" name="secureRatecon" value="No"><span>No</span></label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="panel" id="p2">
+      <div class="panel-head"><div class="panel-head-num">SECTION 3</div><div class="panel-head-title">Flags &amp; Concerns</div></div>
+      <div class="panel-body">
+        <div class="field-group">
+          <div class="field-group-title">Alert History</div>
+          <div class="row c1" style="gap:14px">
+            <div class="field">
+              <label>Identity Alerts</label>
+              <div class="flag-wrap">
+                <div class="radio-row">
+                  <label class="radio-option"><input type="radio" name="idAlert" value="None" onchange="toggleFlagCat('idAlertCat','idAlert')"><span>None</span></label>
+                  <div class="radio-sep"></div>
+                  <label class="radio-option"><input type="radio" name="idAlert" value="Yes" onchange="toggleFlagCat('idAlertCat','idAlert')"><span>Yes</span></label>
+                </div>
+              </div>
+              <div class="flag-category" id="idAlertCat">
+                <span class="flag-category-label">Alert Type</span>
+                <div class="flag-type-list" id="idAlertList"></div>
+                <button class="flag-add-btn" onclick="addFlagType('idAlertList','idAlertOpts')">+ Add alert type</button>
+              </div>
+            </div>
+            <div class="field">
+              <label>FreightGuard Reports</label>
+              <div class="flag-wrap">
+                <div class="radio-row">
+                  <label class="radio-option"><input type="radio" name="freightGuard" value="None" onchange="toggleFlagCat('fgCat','freightGuard')"><span>None</span></label>
+                  <div class="radio-sep"></div>
+                  <label class="radio-option"><input type="radio" name="freightGuard" value="Yes" onchange="toggleFlagCat('fgCat','freightGuard')"><span>Yes</span></label>
+                </div>
+              </div>
+              <div class="flag-category" id="fgCat">
+                <span class="flag-category-label">Report Category</span>
+                <div class="flag-type-list" id="fgList"></div>
+                <button class="flag-add-btn" onclick="addFlagType('fgList','fgOpts')">+ Add report category</button>
+              </div>
+            </div>
+            <div class="field"><label>WatchDog Reports</label><div class="flag-wrap"><div class="radio-row"><label class="radio-option"><input type="radio" name="watchdog" value="None"><span>None</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="watchdog" value="Yes"><span>Yes</span></label></div><div class="flag-date"><span>Date:</span><input type="date" id="watchdogDate"></div></div></div>
+            <div class="field"><label>VIDTA Reports</label><div class="flag-wrap"><div class="radio-row"><label class="radio-option"><input type="radio" name="vidta" value="None"><span>None</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="vidta" value="Yes"><span>Yes</span></label></div><div class="flag-date"><span>Date:</span><input type="date" id="vidtaDate"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="panel" id="p3">
+      <div class="panel-head"><div class="panel-head-num">SECTION 4</div><div class="panel-head-title">Reporting</div></div>
+      <div class="panel-body">
+        <div class="field-group">
+          <div class="field-group-title">Reports Filed</div>
+          <div class="row c2">
+            <div class="field"><label>Reported to CargoNet?</label><div class="radio-row"><label class="radio-option"><input type="radio" name="cargonet" value="Yes"><span>Yes</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="cargonet" value="No"><span>No</span></label></div></div>
+            <div class="field"><label>Highway Report Filed?</label><div class="radio-row"><label class="radio-option"><input type="radio" name="highway" value="Yes"><span>Yes</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="highway" value="No"><span>No</span></label></div></div>
+          </div>
+          <div class="row c2">
+            <div class="field"><label>WatchDog Report Filed?</label><div class="radio-row"><label class="radio-option"><input type="radio" name="wdFiled" value="Yes"><span>Yes</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="wdFiled" value="No"><span>No</span></label></div></div>
+            <div class="field"><label>Carrier411 Report Filed?</label><div class="radio-row"><label class="radio-option"><input type="radio" name="carrier411" value="Yes"><span>Yes</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="carrier411" value="No"><span>No</span></label></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <div class="panel" id="p4">
+      <div class="panel-head"><div class="panel-head-num">SECTION 5</div><div class="panel-head-title">Law Enforcement Involvement</div></div>
+      <div class="panel-body">
+        <div class="field-group">
+          <div class="field-group-title">Law Enforcement Contact</div>
+          <div class="row c2">
+            <div class="field"><label>Reported to Law Enforcement?</label><div class="radio-row"><label class="radio-option"><input type="radio" name="lawEnf" value="Yes"><span>Yes</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="lawEnf" value="No"><span>No</span></label></div></div>
+            <div class="field"><label>Police Report Number</label><input id="policeRptNo" type="text" placeholder="Report #"></div>
+          </div>
+          <div class="row c1">
+            <div class="field"><label>Department Name</label><input id="deptName" type="text" placeholder="e.g. Atlanta Police Department"></div>
+          </div>
+          <div class="row c2">
+            <div class="field"><label>Officer Name</label><input id="officerName" type="text" placeholder="Officer / Detective name"></div>
+            <div class="field"><label>Officer Contact</label><input id="officerContact" type="text" placeholder="Phone or email"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="panel" id="p5">
+      <div class="panel-head"><div class="panel-head-num">SECTION 6</div><div class="panel-head-title">Insurance &amp; Factoring</div></div>
+      <div class="panel-body">
+        <div class="field-group">
+          <div class="field-group-title">Insurance</div>
+          <div class="row c2"><div class="field"><label>Insurance Broker</label><input id="insBroker" type="text"></div><div class="field"><label>Underwriter</label><input id="underwriter" type="text"></div></div>
+          <div class="row c2"><div class="field"><label>Previous Broker</label><input id="prevBroker" type="text"></div><div class="field"><label>Previous Underwriter</label><input id="prevUnderwriter" type="text"></div></div>
+          <div class="row c1"><div class="field"><label>Change Date</label><input id="changeDate" type="date" style="max-width:200px"></div></div>
+        </div>
+        <div class="field-group">
+          <div class="field-group-title">Factoring</div>
+          <div class="row c1"><div class="field"><label>Factoring Company</label><input id="factoring" type="text"></div></div>
+          <div class="row c1"><div class="field"><label>Factoring Company Notified?</label><div class="flag-wrap"><div class="radio-row"><label class="radio-option"><input type="radio" name="factNotified" value="None"><span>None</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="factNotified" value="Yes"><span>Yes</span></label></div><div class="flag-date"><span>Date:</span><input type="date" id="factNotifiedDate"></div></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 7 -->
+    <div class="panel" id="p6">
+      <div class="panel-head"><div class="panel-head-num">SECTION 7</div><div class="panel-head-title">Incident Overview</div></div>
+      <div class="panel-body">
+        <div class="field-group">
+          <div class="field-group-title">Incident Details</div>
+          <div class="row c2">
+            <div class="field"><label>Theft Classification</label><div class="radio-row"><label class="radio-option"><input type="radio" name="theftClass" value="Strategic Theft"><span>Strategic Theft</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="theftClass" value="Standard Theft"><span>Standard Theft</span></label></div></div>
+            <div class="field"><label>Estimated Incident Location</label><input id="incidentLoc" type="text" placeholder="City, State or highway"></div>
+          </div>
+          <div class="row c2">
+            <div class="field"><label>Load Posted to Loadboard?</label><div class="radio-row"><label class="radio-option"><input type="radio" name="loadboard" value="Yes"><span>Yes</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="loadboard" value="No"><span>No</span></label></div></div>
+            <div class="field"><label>Tracking Enabled?</label><div class="radio-row"><label class="radio-option"><input type="radio" name="tracking" value="Yes"><span>Yes</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="tracking" value="No"><span>No</span></label></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 8 -->
+    <div class="panel" id="p7">
+      <div class="panel-head"><div class="panel-head-num">SECTION 8</div><div class="panel-head-title">Front Emails</div></div>
+      <div class="panel-body">
+        <div class="field-group">
+          <div class="field-group-title">Identified Front Emails</div>
+          <div class="field"><textarea id="frontEmails" style="min-height:160px" placeholder="e.g. dispatch@fake-carrier.com — used to impersonate carrier…"></textarea></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 9 -->
+    <div class="panel" id="p8">
+      <div class="panel-head"><div class="panel-head-num">SECTION 9</div><div class="panel-head-title">Comments / Notes</div></div>
+      <div class="panel-body">
+        <div class="field-group">
+          <div class="field-group-title">Add Entry</div>
+          <div class="note-input-wrap">
+            <textarea id="noteInput" placeholder="Type a note and click Add Entry…"></textarea>
+            <button class="note-add-btn" onclick="addNote()">+ Add Entry</button>
+          </div>
+        </div>
+        <div class="notes-list" id="notesList">
+          <div class="empty-notes">No entries yet. Add your first note above.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let cur=0;const total=9;
+const sectionNames=['Load Information','Carrier Information','Flags & Concerns','Reporting','Law Enforcement','Insurance & Factoring','Incident Overview','Front Emails','Comments / Notes'];
+let notes=[];
+
+function go(i){
+  const prev=document.getElementById('p'+cur);
+  const prevNav=document.getElementById('n'+cur);
+  if(prev)prev.classList.remove('active');
+  if(prevNav)prevNav.classList.remove('active');
+  cur=i;
+  const next=document.getElementById('p'+cur);
+  const nextNav=document.getElementById('n'+cur);
+  if(next)next.classList.add('active');
+  if(nextNav)nextNav.classList.add('active');
+  const prog=document.getElementById('prog');
+  if(prog)prog.style.width=Math.round((i+1)/total*100)+'%';
+  const scroll=document.getElementById('mainScroll');
+  if(scroll)scroll.scrollTop=0;
+}
+function showToast(msg){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+function askClear(){const m=document.getElementById('confirmMsg');if(m)m.textContent='Clear all fields in "'+sectionNames[cur]+'"? This cannot be undone.';const o=document.getElementById('confirmOverlay');if(o)o.classList.add('show')}
+function cancelClear(){const o=document.getElementById('confirmOverlay');if(o)o.classList.remove('show')}
+function confirmClear(){
+  const panel=document.getElementById('p'+cur);
+  if(panel){
+    panel.querySelectorAll('input:not([type=radio]),textarea').forEach(el=>el.value='');
+    panel.querySelectorAll('input[type=radio]').forEach(el=>el.checked=false);
+    panel.querySelectorAll('select').forEach(el=>el.selectedIndex=0);
+  }
+  if(cur===2){
+    const idList=document.getElementById('idAlertList');if(idList)idList.innerHTML='';
+    const fgList=document.getElementById('fgList');if(fgList)fgList.innerHTML='';
+    document.getElementById('idAlertCat')?.classList.remove('visible');
+    document.getElementById('fgCat')?.classList.remove('visible');
+  }
+  if(cur===8){notes=[];renderNotes();}
+  const o=document.getElementById('confirmOverlay');if(o)o.classList.remove('show');
+  showToast('Section cleared.');
+}
+function formatCurrency(el){let raw=el.value.replace(/[^0-9.]/g,'');const parts=raw.split('.');parts[0]=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');if(parts.length>2)parts.splice(2);if(parts[1]!==undefined)parts[1]=parts[1].slice(0,2);el.value=parts.join('.')}
+function fmtTs(){const now=new Date();return now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' at '+now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true})}
+function addNote(){const ta=document.getElementById('noteInput');if(!ta)return;const txt=ta.value.trim();if(!txt){showToast('Please type a note first.');return;}notes.unshift({id:Date.now(),ts:fmtTs(),text:txt});ta.value='';renderNotes()}
+function deleteNote(id){notes=notes.filter(n=>n.id!==id);renderNotes();showToast('Entry deleted.')}
+function renderNotes(){
+  const list=document.getElementById('notesList');
+  if(!list)return;
+  if(notes.length===0){
+    list.innerHTML='<div class="empty-notes">No entries yet. Add your first note above.</div>';
+    return;
+  }
+  list.innerHTML=notes.map(n=>`
+    <div class="note-entry" id="note-${n.id}">
+      <div class="note-entry-header">
+        <span class="note-ts">${n.ts}</span>
+        <div>
+          <button class="note-edit" onclick="startEdit(${n.id})">✎ Edit</button>
+          <button class="note-del" onclick="deleteNote(${n.id})">✕ Delete</button>
+        </div>
+      </div>
+      <div class="note-text" id="note-text-${n.id}">${n.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+    </div>
+  `).join('');
+}
+
+function startEdit(id){
+  const note=notes.find(n=>n.id===id);
+  if(!note)return;
+  const textEl=document.getElementById('note-text-'+id);
+  const entry=document.getElementById('note-'+id);
+  if(!textEl||!entry)return;
+  // Replace text div with textarea + save/cancel
+  textEl.style.display='none';
+  // Remove any existing edit area
+  const existing=entry.querySelector('.note-edit-area-wrap');
+  if(existing)existing.remove();
+  const wrap=document.createElement('div');
+  wrap.className='note-edit-area-wrap';
+  wrap.innerHTML=`
+    <textarea class="note-edit-area" id="note-edit-ta-${id}">${note.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>
+    <div class="note-edit-actions">
+      <button class="note-save-btn" onclick="saveEdit(${id})">Save changes</button>
+      <button class="note-cancel-btn" onclick="cancelEdit(${id})">Cancel</button>
+    </div>
+  `;
+  entry.appendChild(wrap);
+  // Disable edit button while editing
+  const editBtn=entry.querySelector('.note-edit');
+  if(editBtn)editBtn.disabled=true;
+  // Focus textarea at end
+  const ta=document.getElementById('note-edit-ta-'+id);
+  if(ta){ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);}
+}
+
+function saveEdit(id){
+  const ta=document.getElementById('note-edit-ta-'+id);
+  if(!ta)return;
+  const newText=ta.value.trim();
+  if(!newText){showToast('Note cannot be empty.');return;}
+  const note=notes.find(n=>n.id===id);
+  if(note){
+    note.text=newText;
+    note.edited=fmtTs();
+  }
+  renderNotes();
+  autoSave();
+  showToast('Note updated.');
+}
+
+function cancelEdit(id){
+  const entry=document.getElementById('note-'+id);
+  if(!entry)return;
+  const wrap=entry.querySelector('.note-edit-area-wrap');
+  if(wrap)wrap.remove();
+  const textEl=document.getElementById('note-text-'+id);
+  if(textEl)textEl.style.display='';
+  const editBtn=entry.querySelector('.note-edit');
+  if(editBtn)editBtn.disabled=false;
+}
+function getRadio(name){const el=document.querySelector(`input[name="${name}"]:checked`);return el?el.value:''}
+function val(id){return(document.getElementById(id)||{}).value||''}
+
+const FLAG_OPTS={
+  idAlertOpts:['Double Brokering','Identity Theft','Hostage Load','Stolen Assets','Trailer Misuse','Back Solicitation','Unresolved Insurance Claims','Change in Ownership','Pending Investigation','Bankruptcy Filing','Other'],
+  fgOpts:['Unauthorized Re-Brokering of Shipment','Held Load Hostage','Theft or Unjustified Loss of Freight','Unresolved Claim Issues','Fraudulent Activity','Unethical or Deceptive Business Practices','No Show and No Call','Cancelled After Accepting Load','Back-Solicited Shipper','In-Transit Agreement Modification','Repeated Pickup or Delivery Service Failures','Persistent Cancelling']
+};
+
+function makeFlagSelect(listId, optsKey){
+  const opts=FLAG_OPTS[optsKey]||[];
+  const sel=document.createElement('select');
+  sel.innerHTML='<option value="">— Select —</option>'+opts.map(o=>`<option>${o}</option>`).join('');
+  sel.onchange=autoSave;
+  return sel;
+}
+
+function addFlagType(listId, optsKey, dateVal){
+  const list=document.getElementById(listId);
+  if(!list)return;
+  const row=document.createElement('div');
+  row.className='flag-type-row';
+  const sel=makeFlagSelect(listId, optsKey);
+  const dateIn=document.createElement('input');
+  dateIn.type='date';
+  dateIn.className='flag-type-date';
+  dateIn.title='Date for this alert';
+  if(dateVal)dateIn.value=dateVal;
+  dateIn.onchange=autoSave;
+  const rm=document.createElement('button');
+  rm.className='flag-type-remove';
+  rm.textContent='×';
+  rm.title='Remove';
+  rm.onclick=()=>{row.remove();autoSave();};
+  row.appendChild(sel);
+  row.appendChild(dateIn);
+  row.appendChild(rm);
+  list.appendChild(row);
+}
+
+function getFlagTypes(listId){
+  const list=document.getElementById(listId);
+  if(!list)return[];
+  return Array.from(list.querySelectorAll('.flag-type-row')).map(row=>{
+    const sel=row.querySelector('select');
+    const dt=row.querySelector('input[type=date]');
+    return{type:sel?sel.value:'',date:dt?dt.value:''};
+  }).filter(r=>r.type);
+}
+
+function setFlagTypes(listId, optsKey, values){
+  const list=document.getElementById(listId);
+  if(!list)return;
+  list.innerHTML='';
+  (values||[]).forEach(v=>{
+    const entry=typeof v==='object'?v:{type:v,date:''};
+    addFlagType(listId,optsKey,entry.date);
+    const rows=list.querySelectorAll('.flag-type-row');
+    const lastRow=rows[rows.length-1];
+    if(lastRow){const sel=lastRow.querySelector('select');if(sel)sel.value=entry.type;}
+  });
+}
+
+function toggleFlagCat(catId, radioName){
+  const el=document.getElementById(catId);
+  if(!el)return;
+  const checked=document.querySelector(`input[name="${radioName}"]:checked`);
+  if(checked&&checked.value==='Yes'){
+    el.classList.add('visible');
+    const listId=catId==='idAlertCat'?'idAlertList':'fgList';
+    const optsKey=catId==='idAlertCat'?'idAlertOpts':'fgOpts';
+    const list=document.getElementById(listId);
+    if(list&&list.children.length===0)addFlagType(listId,optsKey);
+  } else {
+    el.classList.remove('visible');
+  }
+}
+
+function generatePDF(){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'letter'});
+  const PW=215.9,PH=279.4,M=18,CW=PW-M*2;let y=0;
+  const NAVY=[26,26,46],CREAM=[232,228,212],MUTED=[158,154,176],DARK=[22,22,36],SUBTLE=[150,148,162],RULE=[210,208,220],BG=[247,246,251];
+  const newPage=()=>{doc.addPage();y=M;doc.setFillColor(...NAVY);doc.rect(0,0,PW,9,'F');doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);doc.text('CARGO THEFT INCIDENT REPORT  ·  CONFIDENTIAL',M,6.5);const b=val('bol');if(b)doc.text('BOL: '+b,PW-M,6.5,{align:'right'})};
+  const need=(h)=>{if(y+h>PH-16)newPage()};
+  doc.setFillColor(...NAVY);doc.rect(0,0,PW,58,'F');
+  doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);doc.text('FREIGHT THEFT INVESTIGATION  ·  CONFIDENTIAL RECORD',M,15);
+  doc.setFontSize(28);doc.setFont('helvetica','bold');doc.setTextColor(...CREAM);doc.text('Cargo Theft Incident Report',M,34);
+  doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);doc.text('Generated: '+new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}),M,45);
+  const b=val('bol');if(b){doc.setTextColor(...CREAM);doc.setFontSize(9);doc.text('BOL: '+b,PW-M,45,{align:'right'});}
+  y=66;
+  const sH=(num,title)=>{need(22);doc.setFillColor(...BG);doc.rect(M,y,CW,15,'F');doc.setFillColor(...NAVY);doc.rect(M,y,5,15,'F');doc.setDrawColor(...RULE);doc.setLineWidth(0.25);doc.rect(M,y,CW,15,'S');doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...MUTED);doc.text('SECTION '+num,M+9,y+5.5);doc.setFontSize(12);doc.setFont('helvetica','bold');doc.setTextColor(...DARK);doc.text(title,M+9,y+12);y+=20};
+  const dRow=(pairs)=>{const ts=pairs.reduce((s,p)=>s+(p[2]||1),0);const uW=CW/ts;let mE=0;const sY=y;let xO=0;pairs.forEach(([lbl,v,span])=>{const cW=(span||1)*uW-4;const x=M+xO;doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(...SUBTLE);doc.text(lbl.toUpperCase(),x,sY);if(v){doc.setFontSize(11);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);const lines=doc.splitTextToSize(v,cW);doc.text(lines,x,sY+6);const e=(lines.length-1)*5.5;if(e>mE)mE=e;}doc.setDrawColor(...RULE);doc.setLineWidth(0.4);doc.line(x,sY+8+mE,x+cW,sY+8+mE);xO+=(span||1)*uW});y=sY+mE+16;need(4)};
+  const div=()=>{need(10);y+=3;doc.setDrawColor(...RULE);doc.setLineWidth(0.25);doc.line(M,y,PW-M,y);y+=8};
+  const lT=(label,text)=>{if(!text)return;need(18);doc.setFontSize(7.5);doc.setFont('helvetica','bold');doc.setTextColor(...SUBTLE);if(label)doc.text(label.toUpperCase(),M,y);y+=6;doc.setFontSize(11);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);const lines=doc.splitTextToSize(text,CW);lines.forEach(line=>{need(7);doc.text(line,M,y);y+=5.8});y+=5};
+  const dv=val('declaredValue');const declaredDisplay=dv?'$'+dv:'';
+  sH(1,'Load Information');
+  dRow([['BOL / Load Number',val('bol')],['Pickup Date',val('pickupDate')],['Delivery Date',val('deliveryDate')]]);
+  dRow([['Origin',val('origin'),1.5],['Destination',val('destination'),1.5]]);
+  dRow([['Declared Value',declaredDisplay],['Additional Insurance Purchased?',getRadio('addIns'),2]]);
+  dRow([['Commodity',val('commodity')],['Equipment Type',val('equipType')]]);
+  dRow([['Pallets / Pieces / Weight',val('palletsWeight')],['Shipper',val('shipper')]]);
+  dRow([['Customer Name',val('customerName')],['Agent or Rep Name',val('agentName')],['Agent / Office',val('agentOffice')]]);
+  dRow([['Driver Name (ATG)',val('driverName')],['Driver Phone (ATG)',val('driverPhone')]]);
+  if(val('driverName2')||val('driverPhone2'))dRow([['2nd Driver Name',val('driverName2')],['2nd Driver Phone',val('driverPhone2')]]);div();
+  sH(2,'Carrier Information');
+  dRow([['Carrier Name',val('carrierName'),3]]);
+  dRow([['MC Number',val('mcNumber')],['DOT Number',val('dotNumber')]]);
+  dRow([['Loads in Past 6 Months',val('loadsCount')],['Last Load',val('lastLoad')],['Carrier Onboarded Date',val('onboardDate')]]);
+  dRow([['Active ELD',getRadio('eld')],['Dispatcher Phone Used',val('dispPhone')],['Dispatcher Email Used',val('dispEmail')]]);
+  dRow([['Secure Ratecon',getRadio('secureRatecon')]]);div();
+  sH(3,'Flags & Concerns');
+  // Identity Alerts
+  const idTypes=getFlagTypes('idAlertList');
+  const idAlertBase=getRadio('idAlert')||'';
+  if(idAlertBase){
+    if(idTypes.length===0){dRow([['Identity Alerts',idAlertBase,3]]);}
+    else{
+      dRow([['Identity Alerts',idAlertBase,3]]);
+      idTypes.forEach((r,i)=>{
+        const label=i===0?'Alert Type':'';
+        dRow([[label,r.type+(r.date?' — '+r.date:''),3]]);
+      });
+    }
+  }
+  // FreightGuard
+  const fgTypes=getFlagTypes('fgList');
+  const fgBase=getRadio('freightGuard')||'';
+  if(fgBase){
+    if(fgTypes.length===0){dRow([['FreightGuard Reports',fgBase,3]]);}
+    else{
+      dRow([['FreightGuard Reports',fgBase,3]]);
+      fgTypes.forEach((r,i)=>{
+        const label=i===0?'Report Category':'';
+        dRow([[label,r.type+(r.date?' — '+r.date:''),3]]);
+      });
+    }
+  }
+  // WatchDog & VIDTA
+  [['WatchDog Reports','watchdog','watchdogDate'],['VIDTA Reports','vidta','vidtaDate']].forEach(([lbl,rn,di])=>{const rv=getRadio(rn),dv2=val(di);dRow([[lbl,(rv||'')+(dv2?' — Date: '+dv2:''),3]])});div();
+  sH(4,'Reporting');
+  dRow([['Reported to CargoNet?',getRadio('cargonet')],['Highway Report Filed?',getRadio('highway')]]);
+  dRow([['WatchDog Report Filed?',getRadio('wdFiled')],['Carrier411 Report Filed?',getRadio('carrier411')]]);div();
+  sH(5,'Law Enforcement Involvement');
+  dRow([['Reported to Law Enforcement?',getRadio('lawEnf')],['Police Report Number',val('policeRptNo')]]);
+  dRow([['Department Name',val('deptName'),3]]);
+  dRow([['Officer Name',val('officerName')],['Officer Contact',val('officerContact')]]);div();
+  sH(6,'Insurance & Factoring');
+  dRow([['Insurance Broker',val('insBroker')],['Underwriter',val('underwriter')]]);
+  dRow([['Previous Broker',val('prevBroker')],['Previous Underwriter',val('prevUnderwriter')]]);
+  const fnot=getRadio('factNotified')+(val('factNotifiedDate')?' — Date: '+val('factNotifiedDate'):'');
+  dRow([['Change Date',val('changeDate')],['Factoring Company',val('factoring')],['Factoring Co. Notified?',fnot]]);div();
+  sH(7,'Incident Overview');
+  dRow([['Theft Classification',getRadio('theftClass')],['Estimated Incident Location',val('incidentLoc'),2]]);
+  dRow([['Load Posted to Loadboard?',getRadio('loadboard')],['Tracking Enabled?',getRadio('tracking')]]);div();
+  if(val('frontEmails')){sH(8,'Front Emails');lT('Emails Identified',val('frontEmails'));div();}
+  if(notes.length>0){
+    sH(9,'Comments / Notes');
+    [...notes].reverse().forEach((n,i)=>{need(22);if(i>0){y+=3;doc.setDrawColor(...RULE);doc.setLineWidth(0.2);doc.line(M,y,PW-M,y);y+=7;}doc.setFontSize(8);doc.setFont('helvetica','bold');doc.setTextColor(...SUBTLE);doc.text(n.ts.toUpperCase(),M,y);y+=6;doc.setFontSize(11);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);const lines=doc.splitTextToSize(n.text,CW);lines.forEach(line=>{need(7);doc.text(line,M,y);y+=5.8});});
+  }
+  const pages=doc.internal.getNumberOfPages();
+  for(let i=1;i<=pages;i++){doc.setPage(i);doc.setFillColor(...BG);doc.rect(0,PH-11,PW,11,'F');doc.setDrawColor(...RULE);doc.setLineWidth(0.25);doc.line(0,PH-11,PW,PH-11);doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(...SUBTLE);doc.text('CONFIDENTIAL — FOR AUTHORIZED USE ONLY',M,PH-4.5);doc.text('Page '+i+' of '+pages,PW-M,PH-4.5,{align:'right'});}
+  doc.save('cargo-theft-'+(val('bol')||'report')+'.pdf');
+}
+
+// ── FIELD IDs for save/load ────────────────────────────────────────────────
+const ALL_FIELDS = [
+  'bol','pickupDate','deliveryDate','origin','destination','declaredValue',
+  'commodity','equipType','palletsWeight','shipper','customerName','agentName',
+  'agentOffice','driverName','driverPhone','driverName2','driverPhone2',
+  'carrierName','mcNumber','dotNumber','loadsCount','lastLoad','onboardDate',
+  'dispPhone','dispEmail',
+  'watchdogDate','vidtaDate',
+  'policeRptNo','deptName','officerName','officerContact',
+  'insBroker','underwriter','prevBroker','prevUnderwriter','changeDate',
+  'factoring','factNotifiedDate',
+  'incidentLoc','frontEmails','noteInput',
+  'changeDate'
+];
+const ALL_RADIOS = [
+  'addIns','eld','secureRatecon','idAlert','freightGuard','watchdog','vidta',
+  'cargonet','highway','wdFiled','carrier411','lawEnf','factNotified',
+  'theftClass','loadboard','tracking'
+];
+
+function collectFormData(){
+  const data={fields:{},radios:{},notes:notes,ts:new Date().toISOString(),idAlertTypes:getFlagTypes('idAlertList'),fgTypes:getFlagTypes('fgList')};
+  ALL_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el)data.fields[id]=el.value||'';});
+  ALL_RADIOS.forEach(name=>{const el=document.querySelector(`input[name="${name}"]:checked`);data.radios[name]=el?el.value:'';});
+  return data;
+}
+
+function restoreFormData(data){
+  if(!data)return;
+  if(data.fields){Object.entries(data.fields).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v;});}
+  if(data.radios){Object.entries(data.radios).forEach(([name,v])=>{if(!v)return;const el=document.querySelector(`input[name="${name}"][value="${v}"]`);if(el)el.checked=true;});}
+  if(data.notes&&Array.isArray(data.notes)){notes=data.notes;renderNotes();}
+  // Restore dynamic flag type rows
+  if(data.idAlertTypes&&data.idAlertTypes.length){setFlagTypes('idAlertList','idAlertOpts',data.idAlertTypes);document.getElementById('idAlertCat')?.classList.add('visible');}
+  if(data.fgTypes&&data.fgTypes.length){setFlagTypes('fgList','fgOpts',data.fgTypes);document.getElementById('fgCat')?.classList.add('visible');}
+  // Restore dropdown visibility based on radio state
+  toggleFlagCat('idAlertCat','idAlert');
+  toggleFlagCat('fgCat','freightGuard');
+}
+
+function autoSave(){
+  try{localStorage.setItem('atg_cti_autosave',JSON.stringify(collectFormData()));}catch(e){}
+}
+
+function saveSession(){
+  const data=collectFormData();
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  const bol=document.getElementById('bol')?.value||'session';
+  a.download='cti-'+bol.replace(/[^a-z0-9]/gi,'-')+'-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('Session saved!');
+}
+
+function loadSession(evt){
+  const file=evt.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      restoreFormData(data);
+      autoSave();
+      showToast('Session loaded!');
+    }catch(err){showToast('Error: invalid session file.');}
+  };
+  reader.readAsText(file);
+  evt.target.value='';
+}
+
+// Auto-save on any input change
+document.addEventListener('change',autoSave);
+document.addEventListener('input',autoSave);
+
+// Restore autosave on page load
+window.addEventListener('DOMContentLoaded',()=>{
+  try{
+    const saved=localStorage.getItem('atg_cti_autosave');
+    if(saved){
+      const data=JSON.parse(saved);
+      restoreFormData(data);
+      const ts=data.ts?new Date(data.ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):'';
+      if(ts)showToast('Auto-save restored from '+ts);
+    }
+  }catch(e){}
+});
+
+
+</script>
+</body>
+</html>
