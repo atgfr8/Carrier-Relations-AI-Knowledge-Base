@@ -310,6 +310,11 @@
   .subcats-table thead th:nth-child(4) { width: 15%; }
   .subcats-table thead th:nth-child(5) { width: 27%; }
   .subcats-table thead th:nth-child(6) { width: 28%; }
+  .subcats-table.no-subcat thead th:nth-child(1) { width: 10%; }
+  .subcats-table.no-subcat thead th:nth-child(2) { width: 12%; }
+  .subcats-table.no-subcat thead th:nth-child(3) { width: 18%; }
+  .subcats-table.no-subcat thead th:nth-child(4) { width: 30%; }
+  .subcats-table.no-subcat thead th:nth-child(5) { width: 30%; }
   .subcats-label {
     font-family: 'IBM Plex Mono', monospace;
     font-size: 10px;
@@ -337,8 +342,13 @@
 <div class="page">
 
   <div class="doc-header">
-    <div class="doc-title">Load Lock Alert System <span class="draft-stamp">DRAFT</span></div>
-    <div class="doc-meta">Planning & Decision Framework &nbsp;·&nbsp; Started April 2026 &nbsp;·&nbsp; In progress</div>
+    <div style="display:flex; align-items:flex-start; justify-content:space-between;">
+      <div>
+        <div class="doc-title">Load Lock Alert System <span class="draft-stamp">DRAFT</span></div>
+        <div class="doc-meta">Planning & Decision Framework &nbsp;·&nbsp; Started April 2026 &nbsp;·&nbsp; In progress</div>
+      </div>
+      <button onclick="toggleAllCards(this)" style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; color:#1a5276; background:#fff; border:1.5px solid #1a5276; padding:6px 14px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-top:4px;">Collapse All</button>
+    </div>
   </div>
 
   <!-- ── SECTION 1 ── -->
@@ -382,7 +392,7 @@
         <span class="alert-block-name">Recent Identity Alert</span>
         <span class="tier tier-hard">Hard No</span>
         <span class="phase-tag">Phase 1</span>
-        <span class="alert-toggle-icon">−</span>
+        <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button><span class="alert-toggle-icon">−</span>
       </div>
       <div class="alert-block-body">
       <div class="alert-block-def">
@@ -402,12 +412,12 @@
       <table class="decision-table subcats-table">
         <thead><tr><th>Sub-Category</th><th>Block or Override?</th><th>Who Can Override?</th><th>Notification Recipients</th><th>Notification Message</th><th>Override Message</th></tr></thead>
         <tbody>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Stolen Assets</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Stolen Assets identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load. This action is logged under your credentials.</td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td></tr>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Pending Investigation</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Pending Investigation identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load. This action is logged under your credentials.</td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td></tr>
+          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Stolen Assets</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Stolen Assets identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load.</td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td></tr>
+          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Pending Investigation</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Pending Investigation identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load.</td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td></tr>
           <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Hostage Load</td><td><span class="tier tier-soft">Override</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td></tr>
           <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Victim of Identity Theft</td><td><span class="tier tier-soft">Override</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active VIDTA alert. Before proceeding, review the VIDTA report in Highway and confirm the contact information you are working with is not tied to any identity theft report. Proceeding without review means you assume full responsibility for any resulting loss or damages.</td><td>I understand and have reviewed the VIDTA report in Highway and accept responsibility for proceeding, confirming that the individual, email address, and phone number I am working with are not referenced in any related identity theft report.</td></tr>
           <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Double Brokering</td><td><span class="tier tier-soft">Override</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td></tr>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Change of Ownership</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Change of Ownership identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load. This action is logged under your credentials.</td><td>N/A — no override</td></tr>
+          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Change of Ownership</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Change of Ownership identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load.</td><td>N/A — no override</td></tr>
         </tbody>
       </table>
     </div><!-- end alert-block-body -->
@@ -419,7 +429,7 @@
         <span class="alert-block-name">Identity Alert on Active Rate Confirmation</span>
         <span class="tier tier-hard">Hard No</span>
         <span class="phase-tag">Phase 1</span>
-        <span class="alert-toggle-icon">−</span>
+        <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button><span class="alert-toggle-icon">−</span>
       </div>
       <div class="alert-block-body">
       <div class="alert-block-def">
@@ -439,12 +449,12 @@
       <table class="decision-table subcats-table">
         <thead><tr><th>Sub-Category</th><th>Block or Override?</th><th>Who Can Override?</th><th>Notification Recipients</th><th>Notification Message</th><th>Override Message</th></tr></thead>
         <tbody>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Stolen Assets</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Stolen Assets identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load. This action is logged under your credentials.</td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td></tr>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Pending Investigation</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Pending Investigation identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load. This action is logged under your credentials.</td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td></tr>
+          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Stolen Assets</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Stolen Assets identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load.</td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td></tr>
+          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Pending Investigation</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Pending Investigation identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load.</td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td></tr>
           <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Hostage Load</td><td><span class="tier tier-soft">Override</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td></tr>
           <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Victim of Identity Theft</td><td><span class="tier tier-soft">Override</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active VIDTA alert. Before proceeding, review the VIDTA report in Highway and confirm the contact information you are working with is not tied to any identity theft report. Proceeding without review means you assume full responsibility for any resulting loss or damages.</td><td>I understand and have reviewed the VIDTA report in Highway and accept responsibility for proceeding, confirming that the individual, email address, and phone number I am working with are not referenced in any related identity theft report.</td></tr>
           <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Double Brokering</td><td><span class="tier tier-soft">Override</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td></tr>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Change of Ownership</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Change of Ownership identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load. This action is logged under your credentials.</td><td>N/A — no override</td></tr>
+          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Change of Ownership</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Change of Ownership identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load.</td><td>N/A — no override</td></tr>
         </tbody>
       </table>
     </div><!-- end alert-block-body -->
@@ -456,7 +466,7 @@
         <span class="alert-block-name">Identity Alert on Non-Active Load</span>
         <span class="tier tier-post">Notification Only</span>
         <span class="phase-tag">Phase 1</span>
-        <span class="alert-toggle-icon">−</span>
+        <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button><span class="alert-toggle-icon">−</span>
       </div>
       <div class="alert-block-body">
       <div class="alert-block-def">
@@ -473,6 +483,71 @@
         </tbody>
       </table>
     </div><!-- end alert-block-body -->
+    </div>
+
+    <div class="group-label">Additional Alerts</div>
+
+    <!-- ── Out Of Range ── -->
+    <div class="alert-block">
+      <div class="alert-block-header" onclick="toggleAlert(this)">
+        <span class="alert-block-name">Out Of Range</span>
+        <span class="tier tier-soft">Soft Block / Review</span>
+        <span class="phase-tag">Phase 2</span>
+        <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button><span class="alert-toggle-icon">−</span>
+      </div>
+      <div class="alert-block-body">
+      <div class="alert-block-def">
+        The carrier's closest power unit is # miles from the origin for a load pickup in # hours, which exceeds the minimum travel distance threshold. <em>Action: Contact the carrier and ask which VIN is picking up your load. Search for the provided VIN in Highway's Equipment Search portal and determine the carrier association.</em>
+      </div>
+      <table class="decision-table subcats-table no-subcat">
+        <thead><tr><th>Block or Override?</th><th>Who Can Override?</th><th>Notification Recipients</th><th>Notification Message</th><th>Override Message</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tier tier-soft">Override</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To</td><td>This carrier's nearest power unit is outside the minimum distance threshold for this load's pickup. Contact the carrier to confirm which VIN is picking up your load and verify through Highway's Equipment Search portal before proceeding.</td><td>I understand this carrier is outside the acceptable range for this load's pickup location and accept responsibility for proceeding without confirmed vehicle assignment.</td></tr>
+        </tbody>
+      </table>
+      </div><!-- end alert-block-body -->
+    </div>
+
+    <!-- ── Overbooked Carrier ── -->
+    <div class="alert-block">
+      <div class="alert-block-header" onclick="toggleAlert(this)">
+        <span class="alert-block-name">Overbooked Carrier</span>
+        <span class="tier tier-warn">Warning</span>
+        <span class="phase-tag">Phase 2</span>
+        <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button><span class="alert-toggle-icon">−</span>
+      </div>
+      <div class="alert-block-body">
+      <div class="alert-block-def">
+        The carrier has # loads (seen with other Load Lock participants) with a scheduled pickup in the next 24 hours, and only has # trucks observed. <em>Action: Check the Length of Haul of the current shipment and the difference between PU and Load Count. If the difference is material and the shipment has more than 200 miles, consider removing the carrier from the load. Otherwise, contact the carrier to understand their local/regional operations to determine risk.</em>
+      </div>
+      <table class="decision-table subcats-table no-subcat">
+        <thead><tr><th>Block or Override?</th><th>Who Can Override?</th><th>Notification Recipients</th><th>Notification Message</th><th>Override Message</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tier tier-soft">Override</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To</td><td>This carrier has more loads scheduled in the next 24 hours than observed trucks. Review the length of haul and load count before proceeding. If the difference is material and the shipment exceeds 200 miles, consider removing this carrier.</td><td>I understand this carrier is overbooked relative to their observed truck count and accept responsibility for any service failure or cargo risk resulting from proceeding with this carrier.</td></tr>
+        </tbody>
+      </table>
+      </div><!-- end alert-block-body -->
+    </div>
+
+    <!-- ── High Risk Area ── -->
+    <div class="alert-block">
+      <div class="alert-block-header" onclick="toggleAlert(this)">
+        <span class="alert-block-name">High Risk Area</span>
+        <span class="tier tier-soft">Soft Block / Review</span>
+        <span class="phase-tag">Phase 2</span>
+        <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button><span class="alert-toggle-icon">−</span>
+      </div>
+      <div class="alert-block-body">
+      <div class="alert-block-def">
+        The load has a stop in {zip code} which is a high risk area for strategic cargo theft and this carrier has never been observed in that {state name}. <em>Action: Review Carrier Network Map in the Carrier Profile and consider removing the carrier from the load.</em>
+      </div>
+      <table class="decision-table subcats-table no-subcat">
+        <thead><tr><th>Block or Override?</th><th>Who Can Override?</th><th>Notification Recipients</th><th>Notification Message</th><th>Override Message</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tier tier-soft">Override</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To</td><td>This load has a stop in a high risk area for strategic cargo theft and this carrier has not been previously observed in that state. Review the Carrier Network Map in the carrier profile before proceeding.</td><td>I understand this load stops in a high risk cargo theft area and that this carrier has no observed history in that region. I accept responsibility for any cargo loss or theft resulting from proceeding with this carrier.</td></tr>
+        </tbody>
+      </table>
+      </div><!-- end alert-block-body -->
     </div>
 
     <div class="group-label">To Be Phased In — Additional Alerts</div>
@@ -534,8 +609,31 @@
   function toggleAlert(header) {
     const body = header.nextElementSibling;
     const icon = header.querySelector('.alert-toggle-icon');
+    const btn = header.querySelector('button');
     const collapsed = body.classList.toggle('collapsed');
     icon.textContent = collapsed ? '+' : '−';
+    if (btn) btn.textContent = collapsed ? 'Expand' : 'Collapse';
+  }
+  function toggleAlertCard(btn) {
+    const header = btn.closest('.alert-block-header');
+    const body = header.nextElementSibling;
+    const icon = header.querySelector('.alert-toggle-icon');
+    const collapsed = body.classList.toggle('collapsed');
+    icon.textContent = collapsed ? '+' : '−';
+    btn.textContent = collapsed ? 'Expand' : 'Collapse';
+  }
+  function toggleAllCards(btn) {
+    const isCollapsing = btn.textContent.trim() === 'Collapse All';
+    document.querySelectorAll('.alert-block-body').forEach(body => {
+      body.classList.toggle('collapsed', isCollapsing);
+    });
+    document.querySelectorAll('.alert-toggle-icon').forEach(icon => {
+      icon.textContent = isCollapsing ? '+' : '−';
+    });
+    document.querySelectorAll('.alert-block-header button').forEach(b => {
+      b.textContent = isCollapsing ? 'Expand' : 'Collapse';
+    });
+    btn.textContent = isCollapsing ? 'Expand All' : 'Collapse All';
   }
 </script>
 </body>
