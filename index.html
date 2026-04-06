@@ -697,7 +697,7 @@
 
   <div class="nav-links">
     <a href="index.html" class="nav-link active">Identity Alert</a>
-    <a href="alerts.html" class="nav-link">Identity alert guide</a>
+    <a href="alerts.html" class="nav-link">Carrier Vetting Checker</a>
     <a href="hvhr.html" class="nav-link">HVHR</a>
   </div>
 
@@ -706,41 +706,6 @@
 
 <div class="container">
 
-   <!-- CHECKER SCREEN -->
-  <div class="screen active" id="screen-checker">
-    <div class="page-title">Carrier vetting checker</div>
-    <div class="page-sub">Select any rules that are <strong>failing</strong> for this carrier. Guidance will appear below.</div>
-    <div class="caveat">&#9432;&nbsp; This tool is intended as a guide to help evaluate eligibility based on current policy. Results may not account for every situation, and may contain errors. All results must be reviewed and confirmed by a qualified team member. No override should be granted or denied without human review.</div>
-    <div class="legend">
-      <div class="leg"><div class="leg-dot" style="background:var(--hard-dot)"></div>Hard no</div>
-      <div class="leg"><div class="leg-dot" style="background:var(--escalate-dot)"></div>Escalate / Conditional</div>
-      <div class="leg"><div class="leg-dot" style="background:var(--coi-dot)"></div>COI required</div>
-      <div class="leg"><div class="leg-dot" style="background:var(--refer-dot)"></div>Refer to alert guide</div>
-      <div class="leg"><div class="leg-dot" style="background:var(--eld-dot)"></div>Refer to ELD guide</div>
-      <div class="leg"><div class="leg-dot" style="background:var(--text-3)"></div>Use setting</div>
-    </div>
-    <div style="margin-bottom:12px;">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--atg-teal);margin-bottom:2px;">Interstate Carrier</div>
-      <div style="font-size:20px;font-weight:600;color:var(--atg-navy);letter-spacing:-0.01em;font-family:'IBM Plex Sans',sans-serif;">Classification Rules</div>
-      <div style="height:2px;width:40px;background:var(--atg-teal);margin-top:6px;border-radius:99px;"></div>
-    </div>
-    <div class="grid" id="tile-grid"></div>
-    <div style="margin-top:28px;margin-bottom:12px;">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--atg-teal);margin-bottom:2px;">Refrigerated Freight</div>
-      <div style="font-size:20px;font-weight:600;color:var(--atg-navy);letter-spacing:-0.01em;font-family:'IBM Plex Sans',sans-serif;">Classification Rules</div>
-      <div style="height:2px;width:40px;background:var(--atg-teal);margin-top:6px;border-radius:99px;"></div>
-    </div>
-    <div class="grid" id="reefer-grid" style="margin-bottom:20px;"></div>
-    <div style="margin-top:28px;margin-bottom:12px;">
-      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--atg-teal);margin-bottom:2px;">Other</div>
-      <div style="font-size:20px;font-weight:600;color:var(--atg-navy);letter-spacing:-0.01em;font-family:'IBM Plex Sans',sans-serif;">Additional Rules</div>
-      <div style="height:2px;width:40px;background:var(--atg-teal);margin-top:6px;border-radius:99px;"></div>
-    </div>
-    <div class="grid" id="other-grid" style="margin-bottom:20px;"></div>
-    <div class="results-area" id="results-area"></div>
-  </div>
-  </div>
-</div>
 <!-- ALERT DETAIL -->
 <div class="screen" id="screen-alert-detail">
   <div id="alert-detail-content"></div>
