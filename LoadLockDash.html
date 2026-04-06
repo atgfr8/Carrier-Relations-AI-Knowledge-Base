@@ -485,14 +485,12 @@
     </div><!-- end alert-block-body -->
     </div>
 
-    <div class="group-label">Additional Alerts</div>
 
-    <!-- ── Out Of Range ── -->
     <div class="alert-block">
       <div class="alert-block-header" onclick="toggleAlert(this)">
         <span class="alert-block-name">Out Of Range</span>
         <span class="tier tier-soft">Soft Block / Review</span>
-        <span class="phase-tag">Phase 2</span>
+        <span class="phase-tag">Phase 1</span>
         <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button><span class="alert-toggle-icon">−</span>
       </div>
       <div class="alert-block-body">
@@ -502,7 +500,7 @@
       <table class="decision-table subcats-table no-subcat">
         <thead><tr><th>Block or Override?</th><th>Who Can Override?</th><th>Notification Recipients</th><th>Notification Message</th><th>Override Message</th></tr></thead>
         <tbody>
-          <tr><td><span class="tier tier-soft">Override Eligible</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To</td><td>This carrier's nearest power unit is outside the minimum distance threshold for this load's pickup. Contact the carrier to confirm which VIN is picking up your load and verify through Highway's Equipment Search portal before proceeding.</td><td>I understand this carrier is outside the acceptable range for this load's pickup location and accept responsibility for proceeding without confirmed vehicle assignment.</td></tr>
+          <tr><td><span class="tier tier-soft">Override Eligible</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To</td><td>This carrier's nearest power unit is outside the minimum distance threshold for this load's pickup. Contact the carrier to confirm which VIN is picking up your load and verify through Highway's Equipment Search portal before proceeding.</td><td>I understand this carrier may be outside the acceptable range for this load's pickup location and accept responsibility for proceeding without confirmed vehicle assignment.</td></tr>
         </tbody>
       </table>
       </div><!-- end alert-block-body -->
@@ -513,7 +511,7 @@
       <div class="alert-block-header" onclick="toggleAlert(this)">
         <span class="alert-block-name">Overbooked Carrier</span>
         <span class="tier tier-warn">Warning</span>
-        <span class="phase-tag">Phase 2</span>
+        <span class="phase-tag">Phase 1</span>
         <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button><span class="alert-toggle-icon">−</span>
       </div>
       <div class="alert-block-body">
@@ -534,7 +532,7 @@
       <div class="alert-block-header" onclick="toggleAlert(this)">
         <span class="alert-block-name">High Risk Area</span>
         <span class="tier tier-soft">Soft Block / Review</span>
-        <span class="phase-tag">Phase 2</span>
+        <span class="phase-tag">Phase 1</span>
         <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button><span class="alert-toggle-icon">−</span>
       </div>
       <div class="alert-block-body">
@@ -545,6 +543,28 @@
         <thead><tr><th>Block or Override?</th><th>Who Can Override?</th><th>Notification Recipients</th><th>Notification Message</th><th>Override Message</th></tr></thead>
         <tbody>
           <tr><td><span class="tier tier-soft">Override Eligible</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To</td><td>This load has a stop in a high risk area for strategic cargo theft and this carrier has not been previously observed in that state. Review the Carrier Network Map in the carrier profile before proceeding.</td><td>I understand this load stops in a high risk cargo theft area and that this carrier has no observed history in that region. I accept responsibility for any cargo loss or theft resulting from proceeding with this carrier.</td></tr>
+        </tbody>
+      </table>
+      </div><!-- end alert-block-body -->
+    </div>
+
+    <!-- ── Fraudulent Phone Number ── -->
+    <div class="alert-block">
+      <div class="alert-block-header" onclick="toggleAlert(this)">
+        <span class="alert-block-name">Fraudulent Phone Number</span>
+        <span class="tier tier-hard">Hard No</span>
+        <span class="phase-tag">Phase 1</span>
+        <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button>
+        <span class="alert-toggle-icon">−</span>
+      </div>
+      <div class="alert-block-body">
+      <div class="alert-block-def">
+        The driver phone number (XXX) XXX-XXXX has been reported for fraud. <em>Action: Perform a contact search with the fraudulent phone number and review the associated identity alert details. Determine risk level and consider taking the carrier off shipment.</em>
+      </div>
+      <table class="decision-table subcats-table no-subcat">
+        <thead><tr><th>Block or Override?</th><th>Who Can Override?</th><th>Notification Recipients</th><th>Notification Message</th><th>Override Message</th></tr></thead>
+        <tbody>
+          <tr><td><span style="color:#c0392b; font-weight:600;">TBD</span></td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td></tr>
         </tbody>
       </table>
       </div><!-- end alert-block-body -->
@@ -562,19 +582,15 @@
       </thead>
       <tbody>
         <tr><td class="alert-name">Fraudulent Email / Domain</td><td>Email/domain reported for fraud</td><td><span class="tier tier-hard">Hard No</span></td></tr>
-        <tr><td class="alert-name">Fraudulent Phone Number</td><td>Driver phone reported for fraud</td><td><span class="tier tier-hard">Hard No</span></td></tr>
         <tr><td class="alert-name">Email / Domain Spoofing</td><td>Email appears to spoof carrier's known contact info</td><td><span class="tier tier-hard">Hard No</span></td></tr>
         <tr><td class="alert-name">Provided Vehicle Not Found</td><td>Assigned VIN not found with that carrier</td><td><span class="tier tier-hard">Hard No</span></td></tr>
         <tr><td class="alert-name">Cargo Exclusion</td><td>Carrier's policy excludes the commodity being hauled</td><td><span class="tier tier-soft">Soft Block / Review</span></td></tr>
-        <tr><td class="alert-name">High Risk Area</td><td>Load stops in high-risk zip; carrier not observed in state</td><td><span class="tier tier-soft">Soft Block / Review</span></td></tr>
-        <tr><td class="alert-name">Out Of Range</td><td>Carrier's nearest truck too far from pickup origin</td><td><span class="tier tier-soft">Soft Block / Review</span></td></tr>
         <tr><td class="alert-name">Failing Broker Requirements</td><td>Carrier is failing internal rules</td><td><span class="tier tier-soft">Soft Block / Review</span></td></tr>
         <tr><td class="alert-name">Dormant Vehicle Assigned</td><td>Assigned truck hasn't moved in 14+ days</td><td><span class="tier tier-soft">Soft Block / Review</span></td></tr>
         <tr><td class="alert-name">Potentially Uninsured Vehicle Assigned</td><td>Vehicle missing from carrier's COI</td><td><span class="tier tier-soft">Soft Block / Review</span></td></tr>
         <tr><td class="alert-name">Vehicle Not Nearby</td><td>No vehicles within 200mi of pickup</td><td><span class="tier tier-soft">Soft Block / Review</span></td></tr>
         <tr><td class="alert-name">Vehicle Assignment Required</td><td>Carrier assigned after pickup window; no vehicle linked</td><td><span class="tier tier-soft">Soft Block / Review</span></td></tr>
         <tr><td class="alert-name">Dispatch Service Email / Domain</td><td>Contact email belongs to a 3rd-party dispatcher</td><td><span class="tier tier-warn">Warning</span></td></tr>
-        <tr><td class="alert-name">Overbooked Carrier</td><td>Carrier has more loads than trucks in 24hrs</td><td><span class="tier tier-warn">Warning</span></td></tr>
         <tr><td class="alert-name">VoIP Phone Number</td><td>Driver phone is a VoIP number</td><td><span class="tier tier-warn">Warning</span></td></tr>
         <tr><td class="alert-name">Carrier Assigned ELD Exempt Vehicle</td><td>Validated ELD-exempt truck assigned to load</td><td><span class="tier tier-warn">Warning</span></td></tr>
         <tr><td class="alert-name">Revoked ELD</td><td>ELD connection lost mid-transit</td><td><span class="tier tier-notif">Immediate Notification</span></td></tr>
