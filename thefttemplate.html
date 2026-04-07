@@ -1304,8 +1304,8 @@ function generatePDF(){
   dRow([['BOL / Load Number',val('bol')],['Pickup Date',val('pickupDate')],['Delivery Date',val('deliveryDate')]]);
   dRow([['Origin',val('origin'),1.5],['Destination',val('destination'),1.5]]);
   const hvChecked=document.getElementById('addInsHV')?.checked;
-  const addInsDisplay=(getRadio('addIns')||'')+(hvChecked?' — High-Value / High-Risk':'');
-  dRow([['Declared Value',declaredDisplay],['Additional Insurance Purchased?',addInsDisplay,2]]);
+  const addInsVal=getRadio('addIns')||'';
+  dRow([['Declared Value',declaredDisplay],['Additional Insurance Purchased?',addInsVal,1],['High-Value / High-Risk',hvChecked?'Yes':'No',1]]);
   dRow([['Commodity',val('commodity')],['Equipment Type',val('equipType')]]);
   dRow([['Pallets / Pieces / Weight',val('palletsWeight')],['Shipper',val('shipper')]]);
   dRow([['Customer Name',val('customerName')],['Agent or Rep Name',val('agentName')],['Agent / Office',val('agentOffice')]]);
