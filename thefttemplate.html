@@ -118,6 +118,11 @@
   .modal-btns{display:flex;gap:10px}
   .btn-cancel{flex:1;padding:10px;border-radius:6px;background:var(--atg-teal-light);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:500;border:1px solid var(--atg-teal-mid);cursor:pointer}
   .btn-confirm{flex:1;padding:10px;border-radius:8px;background:#c0392b;color:#fff;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;border:none;cursor:pointer}
+  .info-check-row{display:flex;align-items:flex-start;gap:10px;cursor:pointer;padding:6px 10px;border-radius:6px;transition:background 0.1s;font-size:13px;color:var(--text)}
+  .info-check-row:hover{background:var(--atg-teal-light)}
+  .info-check-row input[type=checkbox]{width:15px;height:15px;accent-color:var(--atg-teal);flex-shrink:0;margin-top:2px;cursor:pointer}
+  .info-check-row input[type=checkbox]:checked+.info-check-label{color:var(--atg-teal);text-decoration:line-through;opacity:0.7}
+  .info-check-label{line-height:1.5}
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--atg-navy);color:#ffffff;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:10px 20px;border-radius:6px;border-top:2px solid var(--atg-teal);opacity:0;pointer-events:none;transition:opacity 0.3s;white-space:nowrap;z-index:200}
   .toast.show{opacity:1}
   @media(max-width:700px){.layout{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.row.c2,.row.c3{grid-template-columns:1fr}}
@@ -143,6 +148,8 @@
     <button class="nav-item" onclick="go(6)" id="n6"><span class="nav-num">7</span><span class="nav-label">Incident Overview</span></button>
     <button class="nav-item" onclick="go(7)" id="n7"><span class="nav-num">8</span><span class="nav-label">Front Emails</span></button>
     <button class="nav-item" onclick="go(8)" id="n8"><span class="nav-num">9</span><span class="nav-label">Comments / Notes</span></button>
+    <div style="height:1px;background:rgba(255,255,255,0.08);margin:8px 0;"></div>
+    <button class="nav-item" onclick="go(9)" id="n9" style="position:relative;"><span class="nav-num" style="color:#F59E0B;">i</span><span class="nav-label" style="color:#fcd34d;">Info Request</span><span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(245,158,11,0.6);letter-spacing:0.5px;">INTERNAL</span></button>
     <div style="margin-top:auto;padding-bottom:10px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
       <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(255,255,255,0.3);letter-spacing:0.05em;line-height:1.6;">LAST UPDATED<br><span id="mod-date" style="color:rgba(255,255,255,0.5);"></span></div>
     </div>
@@ -361,6 +368,7 @@
             </div>
             <div class="field"><label>WatchDog Reports</label><div class="flag-wrap"><div class="radio-row"><label class="radio-option"><input type="radio" name="watchdog" value="None"><span>None</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="watchdog" value="Yes"><span>Yes</span></label></div><div class="flag-date"><span>Date:</span><input type="date" id="watchdogDate"></div></div></div>
             <div class="field"><label>VIDTA Reports</label><div class="flag-wrap"><div class="radio-row"><label class="radio-option"><input type="radio" name="vidta" value="None"><span>None</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="vidta" value="Yes"><span>Yes</span></label></div><div class="flag-date"><span>Date:</span><input type="date" id="vidtaDate"></div></div></div>
+            <div class="field"><label>Load Lock Alerts</label><div class="flag-wrap"><div class="radio-row"><label class="radio-option"><input type="radio" name="loadLock" value="None"><span>None</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="loadLock" value="Yes"><span>Yes</span></label></div><div class="flag-date"><span>Date:</span><input type="date" id="loadLockDate"></div></div></div>
           </div>
         </div>
       </div>
@@ -471,14 +479,105 @@
         </div>
       </div>
     </div>
+
+    <!-- Section 10: Info Request (Internal only — not exported to PDF) -->
+    <div class="panel" id="p9">
+      <div class="panel-head" style="background:linear-gradient(135deg,#1A2E44 0%,#7C4000 100%);border-bottom:2px solid #F59E0B;">
+        <div>
+          <div class="panel-head-num" style="color:rgba(245,158,11,0.7);">INTERNAL USE ONLY · NOT INCLUDED IN PDF</div>
+          <div class="panel-head-title">Information Request</div>
+        </div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:rgba(245,158,11,0.6);text-align:right;line-height:1.6;">INTERNAL<br>RECORD</div>
+      </div>
+      <div class="panel-body">
+
+        <!-- A: From Agent / Internal -->
+        <div class="field-group" style="border-left:3px solid var(--atg-teal);">
+          <div class="field-group-title">A — What We Need From the Agent / Internal Team</div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:flex-start;gap:10px;padding:6px 10px;border-radius:6px;">
+              <div style="display:flex;flex-direction:column;gap:6px;flex:1;">
+                <label class="info-check-row" style="padding:0;"><input type="checkbox" id="ic_ratecon" onchange="handleRateconChange(this)" ><span class="info-check-label">Signed rate confirmation</span></label>
+                <label class="info-check-row" style="padding:0;margin-left:4px;"><input type="checkbox" id="ic_ratecon_na" onchange="handleRateconNaChange(this)"><span class="info-check-label" style="font-size:12px;color:var(--text-3);">N/A — rate confirmation sent via Secure Rate Confirmation</span></label>
+              </div>
+            </div>
+            <label class="info-check-row"><input type="checkbox" id="ic_emails_pdf" onchange="autoSave()"><span class="info-check-label">All emails between ATG and the motor carrier (PDF)</span></label>
+            <label class="info-check-row"><input type="checkbox" id="ic_email_list" onchange="autoSave()"><span class="info-check-label">List of every email address the rate confirmation was sent to</span></label>
+            <div style="padding-left:4px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--atg-teal);margin-bottom:8px;">Carrier Verification Details</div>
+              <label class="info-check-row"><input type="checkbox" id="ic_called" onchange="autoSave()"><span class="info-check-label">Was the carrier called?</span></label>
+              <div class="row c1" style="margin-top:8px;margin-left:28px;">
+                <div class="field"><label>Phone number used</label><input type="text" id="ic_phone_used" placeholder="Enter phone number" oninput="autoSave()"></div>
+              </div>
+            </div>
+            <div style="padding-left:4px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--atg-teal);margin-bottom:8px;">Text Message Confirmation</div>
+              <label class="info-check-row"><input type="checkbox" id="ic_texts_nonverified" onchange="autoSave()"><span class="info-check-label">Any texts sent to non-verified contacts?</span></label>
+            </div>
+            <label class="info-check-row"><input type="checkbox" id="ic_bol_signed" onchange="autoSave()"><span class="info-check-label">Signed BOL from the shipping location</span></label>
+            <label class="info-check-row"><input type="checkbox" id="ic_invoice" onchange="autoSave()"><span class="info-check-label">Original commercial invoice</span></label>
+            <label class="info-check-row"><input type="checkbox" id="ic_police" onchange="autoSave()"><span class="info-check-label">Police report status <span style="font-size:11px;color:var(--text-3);">(Must be filed by shipper, cargo owner, or trailer owner)</span></span></label>
+          </div>
+          <div class="row c1" style="margin-top:12px;">
+            <div class="field"><label>Internal Notes</label><textarea id="ic_internal_notes" placeholder="Additional internal notes…" style="min-height:60px;" oninput="autoSave()"></textarea></div>
+          </div>
+        </div>
+
+        <!-- B: From Shipper -->
+        <div class="field-group" style="border-left:3px solid #F59E0B;">
+          <div class="field-group-title">B — What We Need You to Request From the Shipper</div>
+          <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:#F59E0B;margin-bottom:10px;">Photos &amp; Visual Evidence</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+            <label class="info-check-row"><input type="checkbox" id="ic_dl" onchange="autoSave()"><span class="info-check-label">Driver's license of the pickup driver</span></label>
+            <label class="info-check-row"><input type="checkbox" id="ic_truck_photo" onchange="autoSave()"><span class="info-check-label">Photo of the truck showing company name and markings</span></label>
+            <label class="info-check-row"><input type="checkbox" id="ic_tractor_photos" onchange="autoSave()"><span class="info-check-label">Photos of tractor and trailer at pickup</span></label>
+            <label class="info-check-row"><input type="checkbox" id="ic_plates" onchange="autoSave()"><span class="info-check-label">License plate number(s)</span></label>
+            <div class="row c1" style="margin-left:28px;">
+              <div class="field"><label>Plate number(s)</label><input type="text" id="ic_plate_nums" placeholder="Enter plate number(s)" oninput="autoSave()"></div>
+            </div>
+            <label class="info-check-row"><input type="checkbox" id="ic_vin" onchange="autoSave()"><span class="info-check-label">VIN number(s)</span></label>
+            <div class="row c1" style="margin-left:28px;">
+              <div class="field"><label>VIN number(s)</label><input type="text" id="ic_vin_nums" placeholder="Enter VIN(s)" oninput="autoSave()"></div>
+            </div>
+            <label class="info-check-row"><input type="checkbox" id="ic_surveillance" onchange="autoSave()"><span class="info-check-label">Surveillance footage (yard, dock, gate)</span></label>
+          </div>
+          <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:6px;padding:10px 12px;margin-bottom:12px;">
+            <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;color:#F59E0B;margin-bottom:6px;">NOTE</div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.6;">Identify whether photos were provided by the <strong>carrier</strong> or the <strong>shipper</strong>.</div>
+            <div class="row c1" style="margin-top:8px;">
+              <div class="field"><label>Photo source note</label><input type="text" id="ic_photo_source" placeholder="e.g. Photos provided by shipper" oninput="autoSave()"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- C: Documentation & Verification -->
+        <div class="field-group" style="border-left:3px solid var(--atg-teal);">
+          <div class="field-group-title">C — Documentation &amp; Verification</div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
+            <label class="info-check-row"><input type="checkbox" id="ic_checkin" onchange="autoSave()"><span class="info-check-label">Driver check-in sheet</span></label>
+            <label class="info-check-row"><input type="checkbox" id="ic_carrier_details" onchange="autoSave()"><span class="info-check-label">Name, MC#, and DOT# of the carrier that picked up</span></label>
+            <label class="info-check-row"><input type="checkbox" id="ic_loading_desc" onchange="autoSave()"><span class="info-check-label">Description of the loading process</span></label>
+            <div style="padding-left:4px;">
+              <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--atg-teal);margin-bottom:8px;">Verification Confirmation</div>
+              <label class="info-check-row"><input type="checkbox" id="ic_trucks_verified" onchange="autoSave()"><span class="info-check-label">Whether trucks are verified before loading</span></label>
+              <label class="info-check-row" style="margin-top:8px;"><input type="checkbox" id="ic_verify_how" onchange="autoSave()"><span class="info-check-label">How verification is performed</span></label>
+            </div>
+          </div>
+          <div class="row c1">
+            <div class="field"><label>Verification process notes</label><textarea id="ic_verify_notes" placeholder="Describe verification process…" style="min-height:60px;" oninput="autoSave()"></textarea></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-let cur=0;const total=9;
-const sectionNames=['Load Information','Carrier Information','Flags & Concerns','Reporting','Law Enforcement','Insurance & Factoring','Incident Overview','Front Emails','Comments / Notes'];
+let cur=0;const total=10;
+const sectionNames=['Load Information','Carrier Information','Flags & Concerns','Reporting','Law Enforcement','Insurance & Factoring','Incident Overview','Front Emails','Comments / Notes','Info Request (Internal)'];
 let notes=[];
 
 function go(i){
@@ -532,6 +631,8 @@ function confirmClearAll(){
   try{localStorage.removeItem('atg_cti_autosave');}catch(e){}
   const o=document.getElementById('clearAllOverlay');if(o)o.classList.remove('show');
   showToast('All fields cleared.');
+  // Clear info request checkboxes
+  INFO_CHECKBOXES.forEach(id=>{const el=document.getElementById(id);if(el)el.checked=false;});
   autoSave();
 }
 
@@ -693,6 +794,21 @@ function setFlagTypes(listId, optsKey, values){
     const lastRow=rows[rows.length-1];
     if(lastRow){const sel=lastRow.querySelector('select');if(sel)sel.value=entry.type;}
   });
+}
+
+function handleRateconChange(el){
+  if(el.checked){
+    const na=document.getElementById('ic_ratecon_na');
+    if(na)na.checked=false;
+  }
+  autoSave();
+}
+function handleRateconNaChange(el){
+  if(el.checked){
+    const rc=document.getElementById('ic_ratecon');
+    if(rc)rc.checked=false;
+  }
+  autoSave();
 }
 
 function toggleCargoNetNum(){
@@ -943,7 +1059,7 @@ function generatePDF(){
     dRow([['FreightGuard Reports',fgBase,3]]);
     fgTypes.forEach((r,i)=>{dRow([[i===0?'Report Category':'',r.type+(r.date?' — '+r.date:''),3]]);});
   }
-  [['WatchDog Reports','watchdog','watchdogDate'],['VIDTA Reports','vidta','vidtaDate']].forEach(([lbl,rn,di])=>{
+  [['WatchDog Reports','watchdog','watchdogDate'],['VIDTA Reports','vidta','vidtaDate'],['Load Lock Alerts','loadLock','loadLockDate']].forEach(([lbl,rn,di])=>{
     const rv=getRadio(rn),dv2=val(di);
     if(rv)dRow([[lbl,rv+(dv2?' — Date: '+dv2:''),3]]);
   });
@@ -1016,7 +1132,7 @@ const ALL_FIELDS = [
   'agentOffice','driverName','driverPhone','driverName2','driverPhone2',
   'carrierName','mcNumber','dotNumber','loadsCount','lastLoad','onboardDate',
   'dispPhone','dispEmail',
-  'watchdogDate','vidtaDate',
+  'watchdogDate','vidtaDate','loadLockDate',
   'policeRptNo','deptName','officerName','officerContact',
   'insBroker','underwriter','prevBroker','prevUnderwriter','changeDate',
   'factoring','factNotifiedDate',
@@ -1024,15 +1140,18 @@ const ALL_FIELDS = [
   'changeDate'
 ];
 const ALL_RADIOS = [
-  'addIns','eld','secureRatecon','idAlert','freightGuard','watchdog','vidta',
+  'addIns','eld','secureRatecon','idAlert','freightGuard','watchdog','vidta','loadLock',
   'cargonet','highway','wdFiled','carrier411','lawEnf','factNotified',
   'theftClass','loadboard','tracking'
 ];
 
+const INFO_CHECKBOXES=['ic_ratecon','ic_ratecon_na','ic_emails_pdf','ic_email_list','ic_called','ic_texts_nonverified','ic_bol_signed','ic_invoice','ic_police','ic_dl','ic_truck_photo','ic_tractor_photos','ic_plates','ic_vin','ic_surveillance','ic_checkin','ic_carrier_details','ic_loading_desc','ic_trucks_verified','ic_verify_how'];
+
 function collectFormData(){
-  const data={fields:{},radios:{},notes:notes,ts:new Date().toISOString(),idAlertTypes:getFlagTypes('idAlertList'),fgTypes:getFlagTypes('fgList')};
+  const data={fields:{},radios:{},checkboxes:{},notes:notes,ts:new Date().toISOString(),idAlertTypes:getFlagTypes('idAlertList'),fgTypes:getFlagTypes('fgList')};
   ALL_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el)data.fields[id]=el.value||'';});
   ALL_RADIOS.forEach(name=>{const el=document.querySelector(`input[name="${name}"]:checked`);data.radios[name]=el?el.value:'';});
+  INFO_CHECKBOXES.forEach(id=>{const el=document.getElementById(id);if(el)data.checkboxes[id]=el.checked;});
   return data;
 }
 
@@ -1041,6 +1160,7 @@ function restoreFormData(data){
   if(data.fields){Object.entries(data.fields).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v;});}
   if(data.radios){Object.entries(data.radios).forEach(([name,v])=>{if(!v)return;const el=document.querySelector(`input[name="${name}"][value="${v}"]`);if(el)el.checked=true;});}
   if(data.notes&&Array.isArray(data.notes)){notes=data.notes;renderNotes();}
+  if(data.checkboxes){Object.entries(data.checkboxes).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.checked=!!v;});}
   // Restore dynamic flag type rows
   if(data.idAlertTypes&&data.idAlertTypes.length){setFlagTypes('idAlertList','idAlertOpts',data.idAlertTypes);document.getElementById('idAlertCat')?.classList.add('visible');}
   if(data.fgTypes&&data.fgTypes.length){setFlagTypes('fgList','fgOpts',data.fgTypes);document.getElementById('fgCat')?.classList.add('visible');}
