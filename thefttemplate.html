@@ -99,6 +99,7 @@
   .note-entry{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:13px 15px;display:flex;flex-direction:column;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,0.04)}
   .note-entry-header{display:flex;align-items:center;justify-content:space-between}
   .note-ts{font-size:10px;font-weight:500;color:#9e9ab0;letter-spacing:0.5px;text-transform:uppercase}
+  .note-source-badge{display:inline-flex;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;padding:2px 8px;border-radius:3px;margin-right:6px}
   .note-del{font-size:11px;color:#c0392b;cursor:pointer;padding:3px 8px;border-radius:5px;background:rgba(192,57,43,0.08);border:none;font-family:'DM Sans',sans-serif;font-weight:500}
   .note-del:hover{background:rgba(192,57,43,0.16)}
   .note-edit{font-size:11px;color:var(--atg-teal);cursor:pointer;padding:3px 8px;border-radius:5px;background:var(--atg-teal-light);border:none;font-family:'IBM Plex Sans',sans-serif;font-weight:500;margin-right:4px}
@@ -128,6 +129,7 @@
   .ic-btn.ic-yes.active{background:#0069A6;color:#fff;border-color:#0069A6}
   .ic-btn.ic-no.active{background:#DC2626;color:#fff;border-color:#DC2626}
   .ic-btn.ic-nr.active{background:#7C4000;color:#fff;border-color:#7C4000}
+  .ic-btn.ic-partial.active{background:#0E5C38;color:#fff;border-color:#0E5C38}
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--atg-navy);color:#ffffff;font-family:'IBM Plex Mono',monospace;font-size:12px;padding:10px 20px;border-radius:6px;border-top:2px solid var(--atg-teal);opacity:0;pointer-events:none;transition:opacity 0.3s;white-space:nowrap;z-index:200}
   .toast.show{opacity:1}
   @media(max-width:700px){.layout{grid-template-columns:1fr}.sidebar{position:relative;height:auto}.row.c2,.row.c3{grid-template-columns:1fr}}
@@ -499,6 +501,15 @@
         <div class="field-group">
           <div class="field-group-title">Add Entry</div>
           <div class="note-input-wrap">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <label style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--atg-teal);white-space:nowrap;">Source</label>
+              <select id="noteSource" style="font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--text);background:var(--surface);border:1.5px solid var(--border);border-radius:6px;padding:6px 28px 6px 10px;outline:none;appearance:none;background-image:url('data:image/svg+xml,%3Csvg width='9' height='5' viewBox='0 0 9 5' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l4.5 5L9 0z' fill='%23888'/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 9px center;cursor:pointer;width:auto;">
+                <option value="Internal">Internal</option>
+                <option value="Agent">Agent</option>
+                <option value="CargoNet">CargoNet</option>
+                <option value="Highway">Highway</option>
+              </select>
+            </div>
             <textarea id="noteInput" placeholder="Type a note and click Add Entry…"></textarea>
             <button class="note-add-btn" onclick="addNote()">+ Add Entry</button>
           </div>
@@ -529,7 +540,7 @@
               <div class="ic-options">
                 <button class="ic-btn ic-yes" onclick="setIC('ic_ratecon','yes',this)">Yes</button>
                 <button class="ic-btn ic-no" onclick="setIC('ic_ratecon','no',this)">No</button>
-                <button class="ic-btn ic-nr" onclick="setIC('ic_ratecon','nr',this)">Not Received</button>
+                <button class="ic-btn ic-nr" onclick="setIC('ic_ratecon','nr',this)">N/A</button>
               </div>
             </div>
             <div class="ic-row">
@@ -537,15 +548,20 @@
               <div class="ic-options">
                 <button class="ic-btn ic-yes" onclick="setIC('ic_emails_pdf','yes',this)">Yes</button>
                 <button class="ic-btn ic-no" onclick="setIC('ic_emails_pdf','no',this)">No</button>
+                <button class="ic-btn ic-partial" onclick="setIC('ic_emails_pdf','partial',this)">Partial</button>
                 <button class="ic-btn ic-nr" onclick="setIC('ic_emails_pdf','nr',this)">Not Received</button>
               </div>
             </div>
-            <div class="ic-row">
-              <span class="ic-label">List of every email address the rate confirmation was sent to</span>
+            <div class="ic-row" style="flex-wrap:wrap;gap:8px;">
+              <span class="ic-label" style="flex:1;min-width:200px;">List of every email address the rate confirmation was sent to</span>
               <div class="ic-options">
-                <button class="ic-btn ic-yes" onclick="setIC('ic_email_list','yes',this)">Yes</button>
-                <button class="ic-btn ic-no" onclick="setIC('ic_email_list','no',this)">No</button>
-                <button class="ic-btn ic-nr" onclick="setIC('ic_email_list','nr',this)">Not Received</button>
+                <button class="ic-btn ic-yes" onclick="setIC('ic_email_list','yes',this);toggleEmailList()">Yes</button>
+                <button class="ic-btn ic-no" onclick="setIC('ic_email_list','no',this);toggleEmailList()">No</button>
+                <button class="ic-btn ic-nr" onclick="setIC('ic_email_list','nr',this);toggleEmailList()">Not Received</button>
+              </div>
+              <div id="emailListFields" style="display:none;width:100%;margin-top:6px;display:none;">
+                <div id="emailListContainer" style="display:flex;flex-direction:column;gap:6px;margin-bottom:6px;"></div>
+                <button onclick="addEmailField()" style="all:unset;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;color:var(--atg-teal);cursor:pointer;letter-spacing:0.2px;">+ Add email address</button>
               </div>
             </div>
             <div style="margin:4px 0 2px;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--atg-teal);">Carrier Verification</div>
@@ -590,7 +606,7 @@
               <div class="ic-options">
                 <button class="ic-btn ic-yes" onclick="setIC('ic_police','yes',this)">Yes</button>
                 <button class="ic-btn ic-no" onclick="setIC('ic_police','no',this)">No</button>
-                <button class="ic-btn ic-nr" onclick="setIC('ic_police','nr',this)">Not Received</button>
+                <button class="ic-btn ic-nr" onclick="setIC('ic_police','nr',this)">Requested, Not Received</button>
               </div>
             </div>
           </div>
@@ -786,6 +802,9 @@ function confirmClearAll(){
   showToast('All fields cleared.');
   // Clear info request status fields
   INFO_STATUS_FIELDS.forEach(id=>{icState[id]='';renderIC(id);});
+  emailAddresses=[];
+  const ec=document.getElementById('emailListContainer');if(ec)ec.innerHTML='';
+  const ef=document.getElementById('emailListFields');if(ef)ef.style.display='none';
   autoSave();
 }
 
@@ -812,7 +831,13 @@ function confirmClear(){
 }
 function formatCurrency(el){let raw=el.value.replace(/[^0-9.]/g,'');const parts=raw.split('.');parts[0]=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');if(parts.length>2)parts.splice(2);if(parts[1]!==undefined)parts[1]=parts[1].slice(0,2);el.value=parts.join('.')}
 function fmtTs(){const now=new Date();return now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' at '+now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true})}
-function addNote(){const ta=document.getElementById('noteInput');if(!ta)return;const txt=ta.value.trim();if(!txt){showToast('Please type a note first.');return;}notes.unshift({id:Date.now(),ts:fmtTs(),text:txt});ta.value='';renderNotes()}
+function addNote(){
+  const ta=document.getElementById('noteInput');if(!ta)return;
+  const txt=ta.value.trim();if(!txt){showToast('Please type a note first.');return;}
+  const src=document.getElementById('noteSource')?.value||'Internal';
+  notes.unshift({id:Date.now(),ts:fmtTs(),text:txt,source:src});
+  ta.value='';renderNotes();autoSave();
+}
 function deleteNote(id){notes=notes.filter(n=>n.id!==id);renderNotes();showToast('Entry deleted.')}
 function renderNotes(){
   const list=document.getElementById('notesList');
@@ -821,10 +846,22 @@ function renderNotes(){
     list.innerHTML='<div class="empty-notes">No entries yet. Add your first note above.</div>';
     return;
   }
-  list.innerHTML=notes.map(n=>`
+  const srcStyles={
+    Internal:{bg:'var(--atg-navy)',color:'#ffffff'},
+    Agent:{bg:'var(--atg-teal)',color:'#ffffff'},
+    CargoNet:{bg:'#7C4000',color:'#ffffff'},
+    Highway:{bg:'#0E5C38',color:'#ffffff'}
+  };
+  list.innerHTML=notes.map(n=>{
+    const src=n.source||'Internal';
+    const s=srcStyles[src]||srcStyles.Internal;
+    return `
     <div class="note-entry" id="note-${n.id}">
       <div class="note-entry-header">
-        <span class="note-ts">${n.ts}</span>
+        <div style="display:flex;align-items:center;gap:0;">
+          <span class="note-source-badge" style="background:${s.bg};color:${s.color};">${src}</span>
+          <span class="note-ts">${n.ts}${n.edited?' · edited':''}</span>
+        </div>
         <div>
           <button class="note-edit" onclick="startEdit(${n.id})">✎ Edit</button>
           <button class="note-del" onclick="deleteNote(${n.id})">✕ Delete</button>
@@ -832,7 +869,7 @@ function renderNotes(){
       </div>
       <div class="note-text" id="note-text-${n.id}">${n.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
     </div>
-  `).join('');
+  `}).join('');
 }
 
 function startEdit(id){
@@ -954,6 +991,50 @@ function setFlagTypes(listId, optsKey, values){
 
 const icState={};
 
+let emailAddresses=[];
+
+function toggleEmailList(){
+  const el=document.getElementById('emailListFields');
+  if(!el)return;
+  const isYes=icState['ic_email_list']==='yes';
+  el.style.display=isYes?'block':'none';
+  if(isYes&&emailAddresses.length===0)addEmailField();
+}
+
+function addEmailField(value=''){
+  const container=document.getElementById('emailListContainer');
+  if(!container)return;
+  const idx=emailAddresses.length;
+  emailAddresses.push(value);
+  const wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;gap:8px;align-items:center;';
+  wrap.innerHTML=`<input type="email" data-idx="${idx}" placeholder="email@domain.com" value="${value}" style="flex:1;font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--text);background:var(--surface);border:1.5px solid var(--border);border-radius:6px;padding:7px 10px;outline:none;" oninput="updateEmailAddr(${idx},this.value)">
+    <button onclick="removeEmailField(this,${idx})" style="all:unset;font-size:16px;color:#bbb;cursor:pointer;padding:0 4px;line-height:1;" title="Remove">×</button>`;
+  container.appendChild(wrap);
+  wrap.querySelector('input').focus();
+}
+
+function updateEmailAddr(idx,val){
+  emailAddresses[idx]=val;
+  autoSave();
+}
+
+function removeEmailField(btn,idx){
+  const wrap=btn.parentElement;
+  wrap.remove();
+  emailAddresses[idx]='';
+  autoSave();
+}
+
+function getEmailAddresses(){return emailAddresses.filter(e=>e.trim());}
+
+function setEmailAddresses(arr){
+  emailAddresses=[];
+  const container=document.getElementById('emailListContainer');
+  if(container)container.innerHTML='';
+  (arr||[]).forEach(v=>addEmailField(v));
+}
+
 function setIC(id,val,btn){
   icState[id]=icState[id]===val?'':val;
   renderIC(id);
@@ -963,9 +1044,13 @@ function setIC(id,val,btn){
 function renderIC(id){
   const row=document.querySelector(`.ic-row [onclick*="'${id}'"]`)?.closest('.ic-row');
   if(!row)return;
+  const v=icState[id]||'';
   row.querySelectorAll('.ic-btn').forEach(b=>{
     b.classList.remove('active');
-    if((b.classList.contains('ic-yes')&&icState[id]==='yes')||(b.classList.contains('ic-no')&&icState[id]==='no')||(b.classList.contains('ic-nr')&&icState[id]==='nr'))
+    if((b.classList.contains('ic-yes')&&v==='yes')||
+       (b.classList.contains('ic-no')&&v==='no')||
+       (b.classList.contains('ic-nr')&&v==='nr')||
+       (b.classList.contains('ic-partial')&&v==='partial'))
       b.classList.add('active');
   });
 }
@@ -1047,45 +1132,47 @@ function generatePDF(){
   const need=(h)=>{if(y+h>PH-16)newPage()};
 
   // ── COVER HEADER ──────────────────────────────────────────────────────
-  // Full-width navy block
-  doc.setFillColor(...NAVY);doc.rect(0,0,PW,70,'F');
-  // Teal accent bar at bottom of header
-  doc.setFillColor(...TEAL);doc.rect(0,70,PW,2.5,'F');
+  const HDR=48; // total header height
+  // Navy background
+  doc.setFillColor(...NAVY);doc.rect(0,0,PW,HDR,'F');
+  // Teal bottom accent
+  doc.setFillColor(...TEAL);doc.rect(0,HDR,PW,2,'F');
 
-  // Armstrong wordmark
-  doc.setFontSize(22);doc.setFont('helvetica','bold');doc.setTextColor(...WHITE);
-  doc.text('ARMSTRONG',M,20);
-  doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
-  doc.text('TRANSPORT GROUP',M,26);
+  // Vertical center of header
+  const mid=HDR/2;
 
-  // Vertical rule between logo and title
+  // Left side — Armstrong wordmark, vertically centered
+  doc.setFontSize(16);doc.setFont('helvetica','bold');doc.setTextColor(...WHITE);
+  doc.text('ARMSTRONG',M,mid-2);
+  doc.setFontSize(6);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+  doc.text('TRANSPORT GROUP',M,mid+4.5);
+
+  // Vertical divider
   doc.setDrawColor(...MUTED);doc.setLineWidth(0.4);
-  doc.line(M+52,14,M+52,38);
+  doc.line(M+44,mid-10,M+44,mid+10);
 
-  // Report title
-  doc.setFontSize(18);doc.setFont('helvetica','bold');doc.setTextColor(...WHITE);
-  doc.text('Cargo Theft',M+58,22);
-  doc.setFontSize(18);doc.setFont('helvetica','bold');doc.setTextColor(...MUTED);
-  doc.text('Incident Report',M+58,31);
+  // Center — Report title, vertically centered
+  const titleX=PW/2;
+  doc.setFontSize(14);doc.setFont('helvetica','bold');doc.setTextColor(...WHITE);
+  doc.text('Cargo Theft Incident Report',titleX,mid-1,{align:'center'});
+  doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+  doc.text('CONFIDENTIAL RECORD',titleX,mid+6,{align:'center'});
 
-  // Generated date — bottom left
-  doc.setFontSize(7.5);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
-  doc.text('Generated: '+new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}),M,56);
-
-  // BOL — bottom right
+  // Right side — BOL + generated date, vertically centered
   const b=val('bol');
   if(b){
-    doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...MUTED);
-    doc.text('BOL / LOAD NO.',PW-M,50,{align:'right'});
-    doc.setFontSize(11);doc.setFont('helvetica','bold');doc.setTextColor(...WHITE);
-    doc.text(b,PW-M,57,{align:'right'});
+    doc.setFontSize(6.5);doc.setFont('helvetica','bold');doc.setTextColor(...MUTED);
+    doc.text('BOL / LOAD NO.',PW-M,mid-3,{align:'right'});
+    doc.setFontSize(10);doc.setFont('helvetica','bold');doc.setTextColor(...WHITE);
+    doc.text(b,PW-M,mid+4,{align:'right'});
+  } else {
+    doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+    doc.text(new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),PW-M,mid+2,{align:'right'});
   }
+  doc.setFontSize(6.5);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+  doc.text('Generated '+new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),PW-M,b?mid+10:mid+8,{align:'right'});
 
-  // CONFIDENTIAL watermark text
-  doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
-  doc.text('CONFIDENTIAL RECORD',PW-M,64,{align:'right'});
-
-  y=80;
+  y=HDR+2+8; // teal bar + gap
 
   // ── STATUS BAR ────────────────────────────────────────────────────────
   const cStatus=val('caseStatus');
@@ -1261,14 +1348,20 @@ function generatePDF(){
 
   if(notes.length>0){
     sH(9,'Comments / Notes');
+    const pdfSrcColors={Internal:NAVY,Agent:TEAL,CargoNet:[124,64,0],Highway:[14,92,56]};
     [...notes].reverse().forEach((n,i)=>{
       need(24);
       if(i>0){y+=2;doc.setDrawColor(...TEAL_MID);doc.setLineWidth(0.3);doc.line(M,y,PW-M,y);y+=6;}
-      // Timestamp pill
-      doc.setFillColor(...TEAL_LIGHT);doc.roundedRect(M,y,CW,7,1.5,1.5,'F');
-      doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...TEAL);
-      doc.text(n.ts.toUpperCase(),M+4,y+5);
-      y+=10;
+      // Source badge + timestamp on same line
+      const src=n.source||'Internal';
+      const sc=pdfSrcColors[src]||NAVY;
+      const badgeW=src.length*2.8+8;
+      doc.setFillColor(...sc);doc.roundedRect(M,y,badgeW,6,1,1,'F');
+      doc.setFontSize(6.5);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+      doc.text(src.toUpperCase(),M+badgeW/2,y+4.3,{align:'center'});
+      doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+      doc.text(n.ts.toUpperCase()+(n.edited?' · EDITED':''),M+badgeW+4,y+4.3);
+      y+=9;
       doc.setFontSize(10.5);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
       const lines=doc.splitTextToSize(n.text,CW);
       lines.forEach(line=>{need(7);doc.text(line,M,y);y+=5.5});
@@ -1327,6 +1420,7 @@ function restoreFormData(data){
   if(data.fields){Object.entries(data.fields).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v;});}
   if(data.radios){Object.entries(data.radios).forEach(([name,v])=>{if(!v)return;const el=document.querySelector(`input[name="${name}"][value="${v}"]`);if(el)el.checked=true;});}
   if(data.notes&&Array.isArray(data.notes)){notes=data.notes;renderNotes();}
+  if(data.emailAddresses&&Array.isArray(data.emailAddresses)){setEmailAddresses(data.emailAddresses);if(data.emailAddresses.length>0){const el=document.getElementById('emailListFields');if(el)el.style.display='block';}}
   if(data.checkboxes){Object.entries(data.checkboxes).forEach(([id,v])=>{if(INFO_STATUS_FIELDS.includes(id)){icState[id]=v;renderIC(id);}});}
   // Restore dynamic flag type rows
   if(data.idAlertTypes&&data.idAlertTypes.length){setFlagTypes('idAlertList','idAlertOpts',data.idAlertTypes);document.getElementById('idAlertCat')?.classList.add('visible');}
