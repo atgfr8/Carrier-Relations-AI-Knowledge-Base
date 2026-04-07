@@ -1426,6 +1426,59 @@ function generatePDF(){
     });
   }
 
+  // ── PHOTOS & MEDIA ───────────────────────────────────────────────────
+  const activePhotos=photos.filter(p=>p.dataUrl);
+  if(activePhotos.length>0){
+    sH(10,'Photos & Media');
+    // Two columns: each image ~half width with caption below
+    const imgW=(CW-8)/2;
+    const imgH=60; // mm height per image
+    let col=0;
+    let rowY=y;
+    for(let pi=0;pi<activePhotos.length;pi++){
+      const p=activePhotos[pi];
+      const x=M+(col*(imgW+8));
+      // Check if we need a new page for a new row
+      if(col===0)need(imgH+20);
+      if(col===0)rowY=y;
+      // Draw image border box
+      doc.setDrawColor(...RULE);doc.setLineWidth(0.3);
+      doc.rect(x,rowY,imgW,imgH,'S');
+      // Embed image
+      try{
+        // Determine format from dataUrl
+        const fmt=p.dataUrl.startsWith('data:image/png')?'PNG':
+                  p.dataUrl.startsWith('data:image/gif')?'GIF':'JPEG';
+        doc.addImage(p.dataUrl,fmt,x,rowY,imgW,imgH,'','FAST');
+      }catch(e){
+        // Fallback: grey box with filename if image fails
+        doc.setFillColor(240,240,245);doc.rect(x,rowY,imgW,imgH,'F');
+        doc.setFontSize(8);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+        doc.text(p.name||'Image',x+imgW/2,rowY+imgH/2,{align:'center'});
+      }
+      // Caption below image
+      if(p.caption){
+        doc.setFontSize(7.5);doc.setFont('helvetica','italic');doc.setTextColor(...SUBTLE);
+        const capLines=doc.splitTextToSize(p.caption,imgW);
+        doc.text(capLines,x,rowY+imgH+5);
+      }
+      col++;
+      if(col===2){
+        // Move to next row
+        const capH=activePhotos[pi].caption?7:0;
+        y=rowY+imgH+capH+12;
+        col=0;
+      }
+    }
+    // If odd number, advance y past the last row
+    if(col===1){
+      const lastP=activePhotos[activePhotos.length-1];
+      const capH=lastP.caption?7:0;
+      y=rowY+imgH+capH+12;
+    }
+    div();
+  }
+
   // ── FOOTER on every page ─────────────────────────────────────────────
   const pages=doc.internal.getNumberOfPages();
   for(let i=1;i<=pages;i++){
