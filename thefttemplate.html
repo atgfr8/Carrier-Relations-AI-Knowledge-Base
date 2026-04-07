@@ -182,9 +182,9 @@
 
   <div class="main" id="mainScroll">
     <div style="position:sticky;top:0;z-index:10;background:var(--atg-navy);border-bottom:2px solid var(--atg-teal);padding:9px 22px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
-      <div id="sidebarBolWrap" style="display:flex;flex-direction:column;justify-content:center;">
+      <div id="sidebarBolWrap" style="display:none;flex-direction:column;justify-content:center;">
         <div style="font-family:'IBM Plex Mono',monospace;font-size:8px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:rgba(255,255,255,0.4);">BOL / Load No.</div>
-        <div id="sidebarBolNum" style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500;color:#ffffff;letter-spacing:0.5px;min-width:80px;">—</div>
+        <div id="sidebarBolNum" style="font-family:'IBM Plex Mono',monospace;font-size:15px;font-weight:500;color:#ffffff;letter-spacing:0.5px;"></div>
       </div>
       <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
         <div style="display:flex;align-items:center;gap:8px;">
@@ -237,7 +237,7 @@
           <div class="row c3">
             <div class="field">
               <label>BOL / Load Number</label>
-              <input id="bol" type="text" placeholder="e.g. 4180580" oninput="autoSave()" style="font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;letter-spacing:1px;color:var(--atg-navy);border:2.5px solid var(--atg-teal);background:var(--atg-teal-light);padding:10px 12px;">
+              <input id="bol" type="text" placeholder="e.g. 4180580" oninput="autoSave();updateSidebarBol()" style="font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;letter-spacing:1px;color:var(--atg-navy);border:2.5px solid var(--atg-teal);background:var(--atg-teal-light);padding:10px 12px;">
             </div>
             <div class="field"><label>Pickup Date</label><input id="pickupDate" type="date"></div>
             <div class="field"><label>Delivery Date</label><input id="deliveryDate" type="date"></div>
@@ -1082,8 +1082,10 @@ function toggleCargoNetNum(){
 
 function updateSidebarBol(){
   const v=(document.getElementById('bol')?.value||'').trim();
+  const wrap=document.getElementById('sidebarBolWrap');
   const num=document.getElementById('sidebarBolNum');
-  if(num)num.textContent=v||'—';
+  if(wrap)wrap.style.display=v?'flex':'none';
+  if(num)num.textContent=v;
   document.title=v?'CTI — '+v:'Cargo Theft Investigation Report';
 }
 
