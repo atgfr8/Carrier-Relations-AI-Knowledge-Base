@@ -228,7 +228,10 @@
         <div class="field-group">
           <div class="field-group-title">Shipment Details</div>
           <div class="row c3">
-            <div class="field"><label>BOL / Load Number</label><input id="bol" type="text" placeholder="e.g. 4180580"></div>
+            <div class="field">
+              <label>BOL / Load Number</label>
+              <input id="bol" type="text" placeholder="e.g. 4180580" oninput="autoSave()" style="font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:600;letter-spacing:1px;color:var(--atg-navy);border:2.5px solid var(--atg-teal);background:var(--atg-teal-light);padding:10px 12px;">
+            </div>
             <div class="field"><label>Pickup Date</label><input id="pickupDate" type="date"></div>
             <div class="field"><label>Delivery Date</label><input id="deliveryDate" type="date"></div>
           </div>
@@ -379,7 +382,22 @@
             </div>
             <div class="field"><label>WatchDog Reports</label><div class="flag-wrap"><div class="radio-row"><label class="radio-option"><input type="radio" name="watchdog" value="None"><span>None</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="watchdog" value="Yes"><span>Yes</span></label></div><div class="flag-date"><span>Date:</span><input type="date" id="watchdogDate"></div></div></div>
             <div class="field"><label>VIDTA Reports</label><div class="flag-wrap"><div class="radio-row"><label class="radio-option"><input type="radio" name="vidta" value="None"><span>None</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="vidta" value="Yes"><span>Yes</span></label></div><div class="flag-date"><span>Date:</span><input type="date" id="vidtaDate"></div></div></div>
-            <div class="field"><label>Load Lock Alerts</label><div class="flag-wrap"><div class="radio-row"><label class="radio-option"><input type="radio" name="loadLock" value="None"><span>None</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="loadLock" value="Yes"><span>Yes</span></label></div><div class="flag-date"><span>Date:</span><input type="date" id="loadLockDate"></div></div></div>
+            <div class="field">
+              <label>Load Lock Alerts</label>
+              <div class="flag-wrap">
+                <div class="radio-row">
+                  <label class="radio-option"><input type="radio" name="loadLock" value="None" onchange="toggleFlagCat('loadLockCat','loadLock')"><span>None</span></label>
+                  <div class="radio-sep"></div>
+                  <label class="radio-option"><input type="radio" name="loadLock" value="Yes" onchange="toggleFlagCat('loadLockCat','loadLock')"><span>Yes</span></label>
+                </div>
+                <div class="flag-date"><span>Date:</span><input type="date" id="loadLockDate"></div>
+              </div>
+              <div class="flag-category" id="loadLockCat">
+                <span class="flag-category-label">Alert Type</span>
+                <div class="flag-type-list" id="loadLockList"></div>
+                <button class="flag-add-btn" onclick="addFlagType('loadLockList','loadLockOpts')">+ Add alert type</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -752,8 +770,10 @@ function confirmClearAll(){
   // Clear dynamic flag lists
   const idList=document.getElementById('idAlertList');if(idList)idList.innerHTML='';
   const fgList=document.getElementById('fgList');if(fgList)fgList.innerHTML='';
+  const llList=document.getElementById('loadLockList');if(llList)llList.innerHTML='';
   document.getElementById('idAlertCat')?.classList.remove('visible');
   document.getElementById('fgCat')?.classList.remove('visible');
+  document.getElementById('loadLockCat')?.classList.remove('visible');
   // Clear CargoNet row
   const cnRow=document.getElementById('cargoNetNumRow');if(cnRow)cnRow.style.display='none';
   // Clear notes
@@ -783,6 +803,8 @@ function confirmClear(){
     const fgList=document.getElementById('fgList');if(fgList)fgList.innerHTML='';
     document.getElementById('idAlertCat')?.classList.remove('visible');
     document.getElementById('fgCat')?.classList.remove('visible');
+    document.getElementById('loadLockCat')?.classList.remove('visible');
+    const llList=document.getElementById('loadLockList');if(llList)llList.innerHTML='';
   }
   if(cur===8){notes=[];renderNotes();}
   const o=document.getElementById('confirmOverlay');if(o)o.classList.remove('show');
@@ -872,7 +894,8 @@ function val(id){return(document.getElementById(id)||{}).value||''}
 
 const FLAG_OPTS={
   idAlertOpts:['Double Brokering','Identity Theft','Hostage Load','Stolen Assets','Trailer Misuse','Back Solicitation','Unresolved Insurance Claims','Change in Ownership','Pending Investigation','Bankruptcy Filing','Other'],
-  fgOpts:['Unauthorized Re-Brokering of Shipment','Held Load Hostage','Theft or Unjustified Loss of Freight','Unresolved Claim Issues','Fraudulent Activity','Unethical or Deceptive Business Practices','No Show and No Call','Cancelled After Accepting Load','Back-Solicited Shipper','In-Transit Agreement Modification','Repeated Pickup or Delivery Service Failures','Persistent Cancelling']
+  fgOpts:['Unauthorized Re-Brokering of Shipment','Held Load Hostage','Theft or Unjustified Loss of Freight','Unresolved Claim Issues','Fraudulent Activity','Unethical or Deceptive Business Practices','No Show and No Call','Cancelled After Accepting Load','Back-Solicited Shipper','In-Transit Agreement Modification','Repeated Pickup or Delivery Service Failures','Persistent Cancelling'],
+  loadLockOpts:['Out of Range','Overbooked Carrier','Recent Identity Alert']
 };
 
 function makeFlagSelect(listId, optsKey){
@@ -972,10 +995,9 @@ function toggleFlagCat(catId, radioName){
   const checked=document.querySelector(`input[name="${radioName}"]:checked`);
   if(checked&&checked.value==='Yes'){
     el.classList.add('visible');
-    const listId=catId==='idAlertCat'?'idAlertList':'fgList';
-    const optsKey=catId==='idAlertCat'?'idAlertOpts':'fgOpts';
-    const list=document.getElementById(listId);
-    if(list&&list.children.length===0)addFlagType(listId,optsKey);
+    const listMap={idAlertCat:['idAlertList','idAlertOpts'],fgCat:['fgList','fgOpts'],loadLockCat:['loadLockList','loadLockOpts']};
+    const [listId,optsKey]=listMap[catId]||[];
+    if(listId&&optsKey){const list=document.getElementById(listId);if(list&&list.children.length===0)addFlagType(listId,optsKey);}
   } else {
     el.classList.remove('visible');
   }
@@ -1197,10 +1219,17 @@ function generatePDF(){
     dRow([['FreightGuard Reports',fgBase,3]]);
     fgTypes.forEach((r,i)=>{dRow([[i===0?'Report Category':'',r.type+(r.date?' — '+r.date:''),3]]);});
   }
-  [['WatchDog Reports','watchdog','watchdogDate'],['VIDTA Reports','vidta','vidtaDate'],['Load Lock Alerts','loadLock','loadLockDate']].forEach(([lbl,rn,di])=>{
+  [['WatchDog Reports','watchdog','watchdogDate'],['VIDTA Reports','vidta','vidtaDate']].forEach(([lbl,rn,di])=>{
     const rv=getRadio(rn),dv2=val(di);
     if(rv)dRow([[lbl,rv+(dv2?' — Date: '+dv2:''),3]]);
   });
+  const llBase=getRadio('loadLock');
+  if(llBase){
+    const llTypes=getFlagTypes('loadLockList');
+    const llDate=val('loadLockDate');
+    dRow([['Load Lock Alerts',llBase+(llDate?' — Date: '+llDate:''),3]]);
+    llTypes.forEach((r,i)=>{dRow([[i===0?'Alert Type':'',r.type+(r.date?' — '+r.date:''),3]]);});
+  }
   div();
 
   sH(4,'Reporting');
@@ -1286,7 +1315,7 @@ const ALL_RADIOS = [
 const INFO_STATUS_FIELDS=['ic_ratecon','ic_emails_pdf','ic_email_list','ic_called','ic_texts_nonverified','ic_bol_signed','ic_invoice','ic_police','ic_dl','ic_truck_photo','ic_tractor_photos','ic_plates','ic_vin','ic_surveillance','ic_checkin','ic_carrier_details','ic_loading_desc','ic_trucks_verified','ic_verify_how'];
 
 function collectFormData(){
-  const data={fields:{},radios:{},checkboxes:{},notes:notes,ts:new Date().toISOString(),idAlertTypes:getFlagTypes('idAlertList'),fgTypes:getFlagTypes('fgList')};
+  const data={fields:{},radios:{},checkboxes:{},notes:notes,ts:new Date().toISOString(),idAlertTypes:getFlagTypes('idAlertList'),fgTypes:getFlagTypes('fgList'),loadLockTypes:getFlagTypes('loadLockList'),loadLockTypes:getFlagTypes('loadLockList')};
   ALL_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el)data.fields[id]=el.value||'';});
   ALL_RADIOS.forEach(name=>{const el=document.querySelector(`input[name="${name}"]:checked`);data.radios[name]=el?el.value:'';});
   INFO_STATUS_FIELDS.forEach(id=>{data.checkboxes[id]=icState[id]||'';});
@@ -1302,9 +1331,12 @@ function restoreFormData(data){
   // Restore dynamic flag type rows
   if(data.idAlertTypes&&data.idAlertTypes.length){setFlagTypes('idAlertList','idAlertOpts',data.idAlertTypes);document.getElementById('idAlertCat')?.classList.add('visible');}
   if(data.fgTypes&&data.fgTypes.length){setFlagTypes('fgList','fgOpts',data.fgTypes);document.getElementById('fgCat')?.classList.add('visible');}
+  if(data.loadLockTypes&&data.loadLockTypes.length){setFlagTypes('loadLockList','loadLockOpts',data.loadLockTypes);document.getElementById('loadLockCat')?.classList.add('visible');}
+  if(data.loadLockTypes&&data.loadLockTypes.length){setFlagTypes('loadLockList','loadLockOpts',data.loadLockTypes);document.getElementById('loadLockCat')?.classList.add('visible');}
   // Restore dropdown visibility based on radio state
   toggleFlagCat('idAlertCat','idAlert');
   toggleFlagCat('fgCat','freightGuard');
+  toggleFlagCat('loadLockCat','loadLock');
   updateStatusBadge();
   toggleCargoNetNum();
 }
