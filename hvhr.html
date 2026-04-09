@@ -516,6 +516,8 @@ body {
           <div class="pill" onclick="togglePill(this)">Precious Metals</div>
           <div class="pill" onclick="togglePill(this)">Tires / Industrial</div>
           <div class="pill" onclick="togglePill(this)">General Merchandise</div>
+          <div class="pill" onclick="togglePill(this)">Solar Panels</div>
+          <div class="pill" onclick="togglePill(this)">Energy Drinks</div>
           <div class="pill" onclick="togglePill(this)">Other High-Theft</div>
         </div>
         <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.05em;text-transform:uppercase;color:#8B2220;margin-top:10px;margin-bottom:4px;">⛔ Insurance Exclusions — Do Not Book</div>
@@ -858,6 +860,12 @@ function runCheck() {
   }
   if (activePills.some(p => p.includes('Precious Metals') || p.includes('Copper'))) {
     warnCount++; flags.push({ type: 'warn', text: 'Metals: high intrinsic value — elevated risk of theft or diversion, limit stop exposure' });
+  }
+  if (activePills.some(p => p.includes('Solar'))) {
+    warnCount++; flags.push({ type: 'warn', text: 'Solar Panels: frequently targeted — verify carrier identity and confirm secure routing' });
+  }
+  if (activePills.some(p => p.includes('Energy Drinks'))) {
+    warnCount++; flags.push({ type: 'warn', text: 'Energy Drinks: high-theft commodity — confirm secure facility for any stops or layovers' });
   }
   // Authority — hard stop
   if (state.auth === 'yes') {
