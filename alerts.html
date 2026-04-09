@@ -7,35 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  .nav-links {
-  display: flex;
-  gap: 0;
-}
-
-.nav-link {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  font-weight: 500;
-  padding: 10px 16px;
-  text-decoration: none;
-
-  color: rgba(255,255,255,0.7);
-  background: transparent;
-  border-bottom: 3px solid transparent;
-
-  transition: all 0.2s ease;
-}
-
-.nav-link:hover {
-  color: #ffffff;
-  background: rgba(255,255,255,0.05);
-}
-
-.nav-link.active {
-  color: #ffffff;
-  border-bottom: 3px solid var(--atg-teal);
-  background: rgba(255,255,255,0.05);
-}
   :root {
     --atg-teal: #0069A6;
     --atg-teal-dark: #004F7C;
@@ -636,30 +607,21 @@
 <body>
 
 <div class="header">
-
   <div class="header-brand">
     <div style="line-height:1.25;">
-      <div style="font-size:18px;font-weight:700;letter-spacing:2px;color:#fff;text-transform:uppercase;">
-        Armstrong
-      </div>
-      <div style="font-size:8px;letter-spacing:4px;color:rgba(255,255,255,0.6);text-transform:uppercase;">
-        Transport Group
-      </div>
+      <div style="font-family:'IBM Plex Sans',sans-serif;font-size:18px;font-weight:700;letter-spacing:2.5px;color:#ffffff;text-transform:uppercase;">Armstrong</div>
+      <div style="font-family:'IBM Plex Sans',sans-serif;font-size:8px;font-weight:400;letter-spacing:4.5px;color:rgba(255,255,255,0.6);text-transform:uppercase;">Transport Group</div>
     </div>
-
-    <div style="width:1px;height:30px;background:rgba(255,255,255,0.2);"></div>
-
-    <div style="font-size:15px;font-weight:600;color:#fff;">
-      Carrier Ruleset & Vetting Guide
-    </div>
+    <div style="width:1px;height:30px;background:rgba(255,255,255,0.2);flex-shrink:0;"></div>
+    <div style="font-family:'IBM Plex Sans',sans-serif;font-size:15px;font-weight:600;color:#ffffff;letter-spacing:0.5px;">Carrier Ruleset & Vetting Guide</div>
   </div>
-
-  <div class="nav-links">
-    <a href="index.html" class="nav-link active">Identity Alert Guide</a>
-    <a href="alerts.html" class="nav-link">Carrier vetting checker</a>
-    <a href="hvhr.html" class="nav-link">HVHR</a>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div id="last-modified" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.04em;text-align:right;line-height:1.4;">UPDATED<br><span id="mod-date"></span></div>
+    <nav class="header-nav">
+      <button id="nav-checker" onclick="switchMode('checker')">Vetting checker</button>
+      <button id="nav-alerts" onclick="switchMode('alerts')">Identity alert guide</button>
+    </nav>
   </div>
-
 </div>
 
 <div class="container">
@@ -755,7 +717,7 @@ const rules=[
 
 const alerts=[
   {id:'double',name:"Double brokering",tier:"conditional",desc:"The carrier booked a load and brokered it to another carrier without the shipper or broker's knowledge.",script:"We've identified a double brokering alert on this carrier's Highway profile. This is a hard stop — we're not able to move forward with this carrier on this load.",action:"Carrier is ineligible for use at this time. No exceptions.",flow:null},
-  {id:'identity-theft',name:"Identity theft",tier:"conditional",desc:"A carrier's identity was used by another person or company without their permission — the carrier is typically the victim.",script:"There's an identity theft alert on this carrier's profile — this typically means they were a victim. Before we proceed, let's verify we're communicating with the actual carrier using FMCSA contact info, not the load tender.",action:"Verify contact info independently using FMCSA. Document confirmation before proceeding.",flow:null},
+  {id:'identity-theft',name:"Identity theft",tier:"conditional",desc:"A carrier's identity was used by another person or company without their permission — the carrier is typically the victim.",script:"There's an identity theft alert on this carrier's profile — this typically means they were a victim. Before we proceed, let's verify we're communicating with the actual carrier using FMCSA contact info, not the load tender.",action:"Verify contact info independently using FMCSA. Document confirmation before proceeding.",actionSteps:"Review the VIDTA report in Highway. Confirm that the information in the report — including name, email, phone number, and any other relevant details — does not match the contact you are currently working with. If any details match, stop immediately and escalate to a manager.",policy:"If a VIDTA (Victim of Identity Theft Alert) is present within the past two quarters, an \"I Understand\" acknowledgment is required. This prompts the agent to review the VIDTA report in Highway and proceed with informed responsibility. This increases visibility and accountability while minimizing booking or activation delays.",flow:null},
   {id:'hostage',name:"Hostage load",tier:"hard",desc:"The carrier refused to release freight upon demand or exerted unauthorized control over freight.",script:"This carrier has one or more hostage load reports on file. Given the nature of this alert, we are unable to move forward — carrier is ineligible for use at this time.",action:"Carrier is ineligible for use at this time. No exceptions.",flow:null},
   {id:'stolen',name:"Stolen assets",tier:"hard",desc:"The carrier stole equipment or cargo from a broker or shipper.",script:"We're seeing one or more stolen asset alerts on this carrier. Unfortunately we're unable to use them for this load — carrier is ineligible for use at this time.",action:"Carrier is ineligible for use at this time. No exceptions.",flow:null},
   {id:'trailer',name:"Trailer misuse",tier:"info",desc:"The carrier misused a trailer by overloading it, damaging it, or using it for unintended purposes.",flow:'trailer'},
@@ -1075,6 +1037,8 @@ function showAlertDetail(id){
     else if(t==='soft') html+=`<div class="outcome outcome-soft"><div class="outcome-title ot-soft">Verify before proceeding.</div><div class="outcome-body ob-soft">${a.action}</div></div>`;
     const sc=t==='hard'?'hard':t==='soft'?'soft':'review';
     html+=`<div class="slabel">Suggested response</div><div class="detail-script ${sc}">"${a.script}"</div>`;
+    if(a.actionSteps) html+=`<div class="slabel" style="margin-top:12px;">Action</div><div class="co-note" style="border-left-color:var(--atg-teal);color:var(--coi-text);">${a.actionSteps}</div>`;
+    if(a.policy) html+=`<div class="slabel" style="margin-top:12px;">Policy</div><div class="co-note" style="border-left-color:var(--atg-teal);color:var(--coi-text);">${a.policy}</div>`;
   }
 
   
