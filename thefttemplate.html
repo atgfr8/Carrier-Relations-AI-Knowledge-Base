@@ -155,8 +155,8 @@
     <button class="nav-item" onclick="go(5)" id="n5"><span class="nav-num">6</span><span class="nav-label">Insurance &amp; Factoring</span></button>
     <button class="nav-item" onclick="go(6)" id="n6"><span class="nav-num">7</span><span class="nav-label">Incident Overview</span></button>
     <button class="nav-item" onclick="go(7)" id="n7"><span class="nav-num">8</span><span class="nav-label">Front Emails</span></button>
-    <button class="nav-item" onclick="go(8)" id="n8"><span class="nav-num">9</span><span class="nav-label">Comments / Notes</span></button>
-    <button class="nav-item" onclick="go(9)" id="n9"><span class="nav-num">10</span><span class="nav-label">Photos &amp; Media</span></button>
+    <button class="nav-item" onclick="go(8)" id="n8"><span class="nav-num">9</span><span class="nav-label">Photos &amp; Media</span></button>
+    <button class="nav-item" onclick="go(9)" id="n9"><span class="nav-num">10</span><span class="nav-label">Comments / Notes</span></button>
     <div style="height:1px;background:rgba(255,255,255,0.08);margin:8px 0;"></div>
     <button class="nav-item" onclick="go(10)" id="n10" style="position:relative;"><span class="nav-num" style="color:#F59E0B;">i</span><span class="nav-label" style="color:#fcd34d;">Info Request</span><span style="position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:'IBM Plex Mono',monospace;font-size:8px;color:rgba(245,158,11,0.6);letter-spacing:0.5px;">INTERNAL</span></button>
     <div style="margin-top:auto;padding-bottom:10px;border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;">
@@ -498,41 +498,21 @@
       <div class="panel-head"><div class="panel-head-num">SECTION 8</div><div class="panel-head-title">Front Emails</div></div>
       <div class="panel-body">
         <div class="field-group">
-          <div class="field-group-title">Identified Front Emails</div>
-          <div class="field"><textarea id="frontEmails" style="min-height:160px" placeholder="e.g. dispatch@fake-carrier.com — used to impersonate carrier…"></textarea></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Section 9 -->
-    <div class="panel" id="p8">
-      <div class="panel-head"><div class="panel-head-num">SECTION 9</div><div class="panel-head-title">Comments / Notes</div></div>
-      <div class="panel-body">
-        <div class="field-group">
-          <div class="field-group-title">Add Entry</div>
+          <div class="field-group-title">Add Email Entry</div>
           <div class="note-input-wrap">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-              <label style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--atg-teal);white-space:nowrap;">Source</label>
-              <select id="noteSource" style="font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--text);background:var(--surface);border:1.5px solid var(--border);border-radius:6px;padding:6px 28px 6px 10px;outline:none;appearance:none;background-image:url('data:image/svg+xml,%3Csvg width='9' height='5' viewBox='0 0 9 5' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l4.5 5L9 0z' fill='%23888'/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 9px center;cursor:pointer;width:auto;">
-                <option value="Internal">Internal</option>
-                <option value="Agent">Agent</option>
-                <option value="CargoNet">CargoNet</option>
-                <option value="Highway">Highway</option>
-              </select>
-            </div>
-            <textarea id="noteInput" placeholder="Type a note and click Add Entry…"></textarea>
-            <button class="note-add-btn" onclick="addNote()">+ Add Entry</button>
+            <textarea id="feInput" placeholder="e.g. dispatch@fake-carrier.com — used to impersonate carrier…"></textarea>
+            <button class="note-add-btn" onclick="addFrontEmail()">+ Add Entry</button>
           </div>
         </div>
-        <div class="notes-list" id="notesList">
-          <div class="empty-notes">No entries yet. Add your first note above.</div>
+        <div class="notes-list" id="feList">
+          <div class="empty-notes">No entries yet. Add your first front email above.</div>
         </div>
       </div>
     </div>
 
-    <!-- Section 10: Photos & Media -->
-    <div class="panel" id="p9">
-      <div class="panel-head"><div class="panel-head-num">SECTION 10</div><div class="panel-head-title">Photos &amp; Media</div></div>
+    <!-- Section 9: Photos & Media -->
+    <div class="panel" id="p8">
+      <div class="panel-head"><div class="panel-head-num">SECTION 9</div><div class="panel-head-title">Photos &amp; Media</div></div>
       <div class="panel-body">
         <div class="field-group">
           <div class="field-group-title">Upload or Paste Images</div>
@@ -552,6 +532,32 @@
             </div>
             <div id="photoGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;"></div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 10: Comments / Notes -->
+    <div class="panel" id="p9">
+      <div class="panel-head"><div class="panel-head-num">SECTION 10</div><div class="panel-head-title">Comments / Notes</div></div>
+      <div class="panel-body">
+        <div class="field-group">
+          <div class="field-group-title">Add Entry</div>
+          <div class="note-input-wrap">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+              <label style="font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--atg-teal);white-space:nowrap;">Source</label>
+              <select id="noteSource" style="font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--text);background:var(--surface);border:1.5px solid var(--border);border-radius:6px;padding:6px 28px 6px 10px;outline:none;appearance:none;background-image:url('data:image/svg+xml,%3Csvg width='9' height='5' viewBox='0 0 9 5' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0l4.5 5L9 0z' fill='%23888'/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 9px center;cursor:pointer;width:auto;">
+                <option value="Internal">Internal</option>
+                <option value="Agent">Agent</option>
+                <option value="CargoNet">CargoNet</option>
+                <option value="Highway">Highway</option>
+              </select>
+            </div>
+            <textarea id="noteInput" placeholder="Type a note and click Add Entry…"></textarea>
+            <button class="note-add-btn" onclick="addNote()">+ Add Entry</button>
+          </div>
+        </div>
+        <div class="notes-list" id="notesList">
+          <div class="empty-notes">No entries yet. Add your first note above.</div>
         </div>
       </div>
     </div>
@@ -780,7 +786,7 @@
 
 <script>
 let cur=0;const total=11;
-const sectionNames=['Load Information','Carrier Information','Flags & Concerns','Reporting','Law Enforcement','Insurance & Factoring','Incident Overview','Front Emails','Comments / Notes','Photos & Media','Info Request (Internal)'];
+const sectionNames=['Load Information','Carrier Information','Flags & Concerns','Reporting','Law Enforcement','Insurance & Factoring','Incident Overview','Front Emails','Photos & Media','Comments / Notes','Info Request (Internal)'];
 let notes=[];
 
 function go(i){
@@ -830,6 +836,7 @@ function confirmClearAll(){
   const cnRow=document.getElementById('cargoNetNumRow');if(cnRow)cnRow.style.display='none';
   // Clear notes
   notes=[];renderNotes();
+  frontEmails=[];renderFrontEmails();
   photos=[];renderPhotoGallery();
   // Reset to section 1
   go(0);
@@ -864,11 +871,99 @@ function confirmClear(){
     document.getElementById('loadLockCat')?.classList.remove('visible');
     const llList=document.getElementById('loadLockList');if(llList)llList.innerHTML='';
   }
-  if(cur===8){notes=[];renderNotes();}
+  if(cur===9){notes=[];renderNotes();}
   const o=document.getElementById('confirmOverlay');if(o)o.classList.remove('show');
   showToast('Section cleared.');
 }
 function formatCurrency(el){let raw=el.value.replace(/[^0-9.]/g,'');const parts=raw.split('.');parts[0]=parts[0].replace(/\B(?=(\d{3})+(?!\d))/g,',');if(parts.length>2)parts.splice(2);if(parts[1]!==undefined)parts[1]=parts[1].slice(0,2);el.value=parts.join('.')}
+let frontEmails=[];
+
+function addFrontEmail(){
+  const ta=document.getElementById('feInput');
+  if(!ta)return;
+  const txt=ta.value.trim();
+  if(!txt){showToast('Please enter an email entry first.');return;}
+  frontEmails.unshift({id:Date.now(),ts:fmtTs(),text:txt});
+  ta.value='';
+  renderFrontEmails();
+  autoSave();
+}
+
+function deleteFrontEmail(id){
+  frontEmails=frontEmails.filter(e=>e.id!==id);
+  renderFrontEmails();
+  autoSave();
+  showToast('Entry deleted.');
+}
+
+function startEditFE(id){
+  const entry=frontEmails.find(e=>e.id===id);
+  if(!entry)return;
+  const textEl=document.getElementById('fe-text-'+id);
+  const row=document.getElementById('fe-'+id);
+  if(!textEl||!row)return;
+  textEl.style.display='none';
+  const existing=row.querySelector('.note-edit-area-wrap');
+  if(existing)existing.remove();
+  const wrap=document.createElement('div');
+  wrap.className='note-edit-area-wrap';
+  wrap.innerHTML=`
+    <textarea class="note-edit-area" id="fe-edit-ta-${id}">${entry.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>
+    <div class="note-edit-actions">
+      <button class="note-save-btn" onclick="saveEditFE(${id})">Save changes</button>
+      <button class="note-cancel-btn" onclick="cancelEditFE(${id})">Cancel</button>
+    </div>`;
+  row.appendChild(wrap);
+  const editBtn=row.querySelector('.note-edit');
+  if(editBtn)editBtn.disabled=true;
+  const ta=document.getElementById('fe-edit-ta-'+id);
+  if(ta){ta.focus();ta.setSelectionRange(ta.value.length,ta.value.length);}
+}
+
+function saveEditFE(id){
+  const ta=document.getElementById('fe-edit-ta-'+id);
+  if(!ta)return;
+  const newText=ta.value.trim();
+  if(!newText){showToast('Entry cannot be empty.');return;}
+  const entry=frontEmails.find(e=>e.id===id);
+  if(entry){entry.text=newText;entry.edited=fmtTs();}
+  renderFrontEmails();
+  autoSave();
+  showToast('Entry updated.');
+}
+
+function cancelEditFE(id){
+  const row=document.getElementById('fe-'+id);
+  if(!row)return;
+  const wrap=row.querySelector('.note-edit-area-wrap');
+  if(wrap)wrap.remove();
+  const textEl=document.getElementById('fe-text-'+id);
+  if(textEl)textEl.style.display='';
+  const editBtn=row.querySelector('.note-edit');
+  if(editBtn)editBtn.disabled=false;
+}
+
+function renderFrontEmails(){
+  const list=document.getElementById('feList');
+  if(!list)return;
+  if(frontEmails.length===0){
+    list.innerHTML='<div class="empty-notes">No entries yet. Add your first front email above.</div>';
+    return;
+  }
+  list.innerHTML=frontEmails.map(e=>`
+    <div class="note-entry" id="fe-${e.id}">
+      <div class="note-entry-header">
+        <span class="note-ts">${e.ts}${e.edited?' · edited':''}</span>
+        <div>
+          <button class="note-edit" onclick="startEditFE(${e.id})">✎ Edit</button>
+          <button class="note-del" onclick="deleteFrontEmail(${e.id})">✕ Delete</button>
+        </div>
+      </div>
+      <div class="note-text" id="fe-text-${e.id}">${e.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+    </div>
+  `).join('');
+}
+
 function fmtTs(){const now=new Date();return now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})+' at '+now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true})}
 function addNote(){
   const ta=document.getElementById('noteInput');if(!ta)return;
@@ -979,7 +1074,7 @@ function val(id){return(document.getElementById(id)||{}).value||''}
 const FLAG_OPTS={
   idAlertOpts:['Double Brokering','Identity Theft','Hostage Load','Stolen Assets','Trailer Misuse','Back Solicitation','Unresolved Insurance Claims','Change in Ownership','Pending Investigation','Bankruptcy Filing','Other'],
   fgOpts:['Unauthorized Re-Brokering of Shipment','Held Load Hostage','Theft or Unjustified Loss of Freight','Unresolved Claim Issues','Fraudulent Activity','Unethical or Deceptive Business Practices','No Show and No Call','Cancelled After Accepting Load','Back-Solicited Shipper','In-Transit Agreement Modification','Repeated Pickup or Delivery Service Failures','Persistent Cancelling'],
-  loadLockOpts:['Out of Range','Overbooked Carrier','Recent Identity Alert']
+  loadLockOpts:['Out of Range','Overbooked Carrier','Recent Identity Alert','Failed to Arrive at Pickup','Vehicle Not Nearby','Provided Vehicle Not Found']
 };
 
 function makeFlagSelect(listId, optsKey){
@@ -1402,7 +1497,20 @@ function generatePDF(){
   dRow([['Load Posted to Loadboard?',getRadio('loadboard')],['Tracking Enabled?',getRadio('tracking')]]);
   div();
 
-  if(val('frontEmails')){sH(8,'Front Emails');lT('Emails Identified',val('frontEmails'));div();}
+  if(frontEmails.length>0){
+    sH(8,'Front Emails');
+    [...frontEmails].reverse().forEach((e,i)=>{
+      need(24);
+      if(i>0){y+=2;doc.setDrawColor(...TEAL_MID);doc.setLineWidth(0.3);doc.line(M,y,PW-M,y);y+=6;}
+      doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+      doc.text(e.ts.toUpperCase()+(e.edited?' · EDITED':''),M,y+4);
+      y+=8;
+      doc.setFontSize(10.5);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
+      const lines=doc.splitTextToSize(e.text,CW);
+      lines.forEach(line=>{need(7);doc.text(line,M,y);y+=5.5});
+    });
+    div();
+  }
 
   if(notes.length>0){
     sH(9,'Comments / Notes');
@@ -1430,37 +1538,60 @@ function generatePDF(){
   const activePhotos=photos.filter(p=>p.dataUrl);
   if(activePhotos.length>0){
     sH(10,'Photos & Media');
-    activePhotos.forEach((p,pi)=>{
-      // Each photo gets its own page after the first
-      if(pi>0)newPage();
-      // Available vertical space: from y to footer
-      const availH=PH-16-y;
-      const imgW=CW;
-      const imgH=Math.min(availH-14, 160); // cap at 160mm, leave room for caption
-      // Draw subtle border
-      doc.setDrawColor(...RULE);doc.setLineWidth(0.3);
-      doc.rect(M,y,imgW,imgH,'S');
-      // Embed image
-      try{
-        const fmt=p.dataUrl.startsWith('data:image/png')?'PNG':
-                  p.dataUrl.startsWith('data:image/gif')?'GIF':'JPEG';
-        doc.addImage(p.dataUrl,fmt,M,y,imgW,imgH,'','FAST');
-      }catch(e){
-        doc.setFillColor(240,240,245);doc.rect(M,y,imgW,imgH,'F');
-        doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
-        doc.text(p.name||'Image',M+imgW/2,y+imgH/2,{align:'center'});
-      }
-      y+=imgH+4;
-      // Photo number + caption
-      doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...MUTED);
-      doc.text(`PHOTO ${pi+1} OF ${activePhotos.length}`,M,y+4);
-      if(p.caption){
-        doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
-        const capLines=doc.splitTextToSize(p.caption,CW-40);
-        doc.text(capLines,M+28,y+4);
-      }
-      y+=10;
-    });
+    // Load image dimensions to preserve aspect ratio, then render
+    const addPhotosToDoc=()=>{
+      const promises=activePhotos.map(p=>new Promise(res=>{
+        const img=new Image();
+        img.onload=()=>res({...p,nw:img.naturalWidth,nh:img.naturalHeight});
+        img.onerror=()=>res({...p,nw:1,nh:1});
+        img.src=p.dataUrl;
+      }));
+      Promise.all(promises).then(loaded=>{
+        loaded.forEach((p,pi)=>{
+          if(pi>0)newPage();
+          const aspect=p.nw/p.nh;
+          const maxH=PH-16-y-16;
+          let imgW=CW;
+          let imgH=imgW/aspect;
+          if(imgH>maxH){imgH=maxH;imgW=imgH*aspect;}
+          const imgX=M+(CW-imgW)/2; // center if narrower than full width
+          doc.setDrawColor(...RULE);doc.setLineWidth(0.3);
+          doc.rect(imgX,y,imgW,imgH,'S');
+          try{
+            const fmt=p.dataUrl.startsWith('data:image/png')?'PNG':
+                      p.dataUrl.startsWith('data:image/gif')?'GIF':'JPEG';
+            doc.addImage(p.dataUrl,fmt,imgX,y,imgW,imgH,'','FAST');
+          }catch(e){
+            doc.setFillColor(240,240,245);doc.rect(imgX,y,imgW,imgH,'F');
+            doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+            doc.text(p.name||'Image',imgX+imgW/2,y+imgH/2,{align:'center'});
+          }
+          y+=imgH+5;
+          doc.setFontSize(7);doc.setFont('helvetica','bold');doc.setTextColor(...MUTED);
+          doc.text(`PHOTO ${pi+1} OF ${loaded.length}`,M,y+4);
+          if(p.caption){
+            doc.setFontSize(9);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
+            const capLines=doc.splitTextToSize(p.caption,CW-36);
+            doc.text(capLines,M+32,y+4);
+          }
+          y+=10;
+        });
+        // Add footers and save once images are done
+        const pages=doc.internal.getNumberOfPages();
+        for(let i=1;i<=pages;i++){
+          doc.setPage(i);
+          doc.setFillColor(...NAVY);doc.rect(0,PH-12,PW,12,'F');
+          doc.setFillColor(...TEAL);doc.rect(0,PH-12,PW,1,'F');
+          doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+          doc.text('CONFIDENTIAL — FOR AUTHORIZED USE ONLY',M,PH-5);
+          doc.text('Armstrong Transport Group',PW/2,PH-5,{align:'center'});
+          doc.text('Page '+i+' of '+pages,PW-M,PH-5,{align:'right'});
+        }
+        doc.save('cti-'+(val('bol')||'report')+'.pdf');
+      });
+    };
+    addPhotosToDoc();
+    return; // early return — save happens inside async callback
     div();
   }
 
@@ -1492,7 +1623,7 @@ const ALL_FIELDS = [
   'policeRptNo','deptName','officerName','officerContact',
   'insBroker','underwriter','prevBroker','prevUnderwriter','changeDate',
   'factoring','factNotifiedDate',
-  'incidentLoc','frontEmails','noteInput',
+  'incidentLoc','noteInput',
   'changeDate'
 ];
 const ALL_RADIOS = [
@@ -1504,7 +1635,7 @@ const ALL_RADIOS = [
 const INFO_STATUS_FIELDS=['ic_ratecon','ic_emails_pdf','ic_email_list','ic_called','ic_texts_nonverified','ic_bol_signed','ic_invoice','ic_police','ic_dl','ic_truck_photo','ic_tractor_photos','ic_plates','ic_vin','ic_surveillance','ic_checkin','ic_carrier_details','ic_loading_desc','ic_trucks_verified','ic_verify_how'];
 
 function collectFormData(){
-  const data={fields:{},radios:{},checkboxes:{},notes:notes,ts:new Date().toISOString(),idAlertTypes:getFlagTypes('idAlertList'),fgTypes:getFlagTypes('fgList'),loadLockTypes:getFlagTypes('loadLockList'),emailAddresses:getEmailAddresses(),photos:photos};
+  const data={fields:{},radios:{},checkboxes:{},notes:notes,frontEmails:frontEmails,ts:new Date().toISOString(),idAlertTypes:getFlagTypes('idAlertList'),fgTypes:getFlagTypes('fgList'),loadLockTypes:getFlagTypes('loadLockList'),emailAddresses:getEmailAddresses(),photos:photos};
   ALL_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el)data.fields[id]=el.value||'';});
   ALL_RADIOS.forEach(name=>{const el=document.querySelector(`input[name="${name}"]:checked`);data.radios[name]=el?el.value:'';});
   INFO_STATUS_FIELDS.forEach(id=>{data.checkboxes[id]=icState[id]||'';});
@@ -1517,6 +1648,7 @@ function restoreFormData(data){
   if(data.fields){Object.entries(data.fields).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v;});}
   if(data.radios){Object.entries(data.radios).forEach(([name,v])=>{if(!v)return;const el=document.querySelector(`input[name="${name}"][value="${v}"]`);if(el)el.checked=true;});}
   if(data.notes&&Array.isArray(data.notes)){notes=data.notes;renderNotes();}
+  if(data.frontEmails&&Array.isArray(data.frontEmails)){frontEmails=data.frontEmails;renderFrontEmails();}
   if(data.emailAddresses&&Array.isArray(data.emailAddresses)){setEmailAddresses(data.emailAddresses);if(data.emailAddresses.length>0){const el=document.getElementById('emailListFields');if(el)el.style.display='block';}}
   if(data.photos&&Array.isArray(data.photos)){photos=data.photos;renderPhotoGallery();}
   if(data.checkboxes){Object.entries(data.checkboxes).forEach(([id,v])=>{
@@ -1625,7 +1757,7 @@ function readPhotoFile(file){
   reader.readAsDataURL(file);
 }
 function handlePhotoPaste(e){
-  if(cur!==9)return;
+  if(cur!==8)return; // only active on Photos section
   const items=Array.from(e.clipboardData?.items||[]);
   items.filter(i=>i.type.startsWith('image/')).forEach(item=>{
     const file=item.getAsFile();if(file)readPhotoFile(file);
