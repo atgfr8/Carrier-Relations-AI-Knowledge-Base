@@ -353,9 +353,22 @@ const d = new Date(document.lastModified);
 const modDate = `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
 document.getElementById("mod-date").textContent = modDate;
 
+function showQ2(is2001plus) {
+  document.getElementById('q1-btns').style.display = 'none';
+  document.getElementById('q2-section').style.display = 'block';
+  const noTarget = is2001plus
+    ? "go('carrier_status','2001+ → Not Sprinter/Hot Shot')"
+    : "go('result_exempt_pre2000','Pre-2000 → Not Sprinter/Hot Shot')";
+  document.getElementById('q2-btns').innerHTML = `
+    <button class="btn-primary" onclick="${noTarget}">No</button>
+    <button class="btn-secondary" onclick="go('result_exempt_pre2000','Sprinter/Hot Shot → Yes')">Yes</button>
+    <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
+  `;
+}
+
 const progressSteps = ["Engine / Equip", "Carrier", "Load History", "Result"];
 const progressMap = {
-  model_year_new: 0, model_year: 0, flatbed_cargo: 0,
+  model_year_new: 0, model_year: 0, model_year_sprinter: 0, flatbed_cargo: 0,
   carrier_status: 1, new_carrier_default: 1, new_carrier_exceptions: 1, new_carrier_rare_prompt: 1, new_carrier_check: 1,
   load_history: 2, cargo_value: 2,
   exceptions: 2, equipment_specialized: 2, short_haul_check: 2, incompatible_eld: 2, glider_kit: 2,
@@ -491,10 +504,19 @@ function renderStep(step) {
   switch (step) {
 
     case "model_year_new":
-      return question({ text: "Is the equipment model year 2001 to present?", tip: "Check Equipment in Highway. You can usually determine the model year from here.", noLabel: "No", yesLabel: "Yes", onNo: "go('model_year','2001 to present → No')", onYes: "go('carrier_status','2001 to present → Yes')", isFirst: true });
-
-    case "model_year":
-      return question({ text: "Is this a Sprinter van / hot shot (Class 1 or 2)?", tip: "Check Equipment in Highway first. Class 1 and 2 vehicles are light-duty — if the truck is a full-size semi or heavy hauler, it's not a hot shot.", onNo: "go('carrier_status','Sprinter/Hot Shot → No')", onYes: "go('result_exempt_pre2000','Sprinter/Hot Shot → Yes')" });
+      return `<div class="fade">
+        <p class="q-text">Is the equipment model year 2001 to present?</p>
+        <div class="tip"><span class="tip-icon">💡</span><span class="tip-text">Check Equipment in Highway. You can usually determine the model year from here.</span></div>
+        <div id="q1-btns" style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-primary" onclick="showQ2(false)">No</button>
+          <button class="btn-secondary" onclick="showQ2(true)">Yes</button>
+        </div>
+        <div id="q2-section" style="display:none;margin-top:24px;border-top:1px solid var(--border);padding-top:20px;">
+          <p class="q-text">Is this a Sprinter van / hot shot (Class 1 or 2)?</p>
+          <div class="tip"><span class="tip-icon">💡</span><span class="tip-text">Class 1 and 2 vehicles are light-duty — if the truck is a full-size semi or heavy hauler, it's not a hot shot.</span></div>
+          <div id="q2-btns" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+        </div>
+      </div>`;
 
     case "carrier_status":
       return question({ text: "Is this a new or existing carrier?", tip: "Check the carrier's load history in Highway. If they have any prior completed loads with ATG, they are an existing carrier.", noLabel: "New carrier", yesLabel: "Existing carrier", onNo: "go('new_carrier_default','New carrier')", onYes: "go('load_history','Existing carrier')" });
