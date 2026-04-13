@@ -1237,13 +1237,15 @@ function toggleFlagCat(catId, radioName){
   const el=document.getElementById(catId);
   if(!el)return;
   const checked=document.querySelector(`input[name="${radioName}"]:checked`);
+  const listMap={idAlertCat:['idAlertList','idAlertOpts'],fgCat:['fgList','fgOpts'],loadLockCat:['loadLockList','loadLockOpts']};
+  const [listId,optsKey]=listMap[catId]||[];
   if(checked&&checked.value==='Yes'){
     el.classList.add('visible');
-    const listMap={idAlertCat:['idAlertList','idAlertOpts'],fgCat:['fgList','fgOpts'],loadLockCat:['loadLockList','loadLockOpts']};
-    const [listId,optsKey]=listMap[catId]||[];
     if(listId&&optsKey){const list=document.getElementById(listId);if(list&&list.children.length===0)addFlagType(listId,optsKey);}
   } else {
     el.classList.remove('visible');
+    // Clear the list so stale entries don't appear in the PDF
+    if(listId){const list=document.getElementById(listId);if(list)list.innerHTML='';}
   }
 }
 
