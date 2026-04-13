@@ -306,7 +306,14 @@
             <div class="field"><label>Dispatcher Phone Used</label><input id="dispPhone" type="text" placeholder="(000) 000-0000"></div>
             <div class="field"><label>Dispatcher Email Used</label><input id="dispEmail" type="email" placeholder="email@domain.com"></div>
           </div>
-          <div class="row c1">
+          <div class="row c2">
+            <div class="field"><label>Highway Verified User</label>
+              <div class="radio-row" style="width:fit-content">
+                <label class="radio-option"><input type="radio" name="hwVerifiedUser" value="Yes"><span>Yes</span></label>
+                <div class="radio-sep"></div>
+                <label class="radio-option"><input type="radio" name="hwVerifiedUser" value="No"><span>No</span></label>
+              </div>
+            </div>
             <div class="field"><label>Secure Ratecon Used?</label>
               <div class="radio-row" style="width:fit-content">
                 <label class="radio-option"><input type="radio" name="secureRatecon" value="Yes"><span>Yes</span></label>
@@ -315,6 +322,7 @@
               </div>
             </div>
           </div>
+
         </div>
       </div>
     </div>
@@ -1436,6 +1444,7 @@ function generatePDF(){
   if(val('driverName2')||val('driverPhone2'))dRow([['2nd Driver Name',val('driverName2')],['2nd Driver Phone',val('driverPhone2')]]);
   if(val('truckNumber')||val('trailerNumber'))dRow([['Truck Number (ATG)',val('truckNumber')],['Trailer Number (ATG)',val('trailerNumber')]]);
   if(val('dispPhone')||val('dispEmail'))dRow([['Dispatcher Phone Used',val('dispPhone')],['Dispatcher Email Used',val('dispEmail')]]);
+  if(getRadio('hwVerifiedUser')||getRadio('secureRatecon'))dRow([['Highway Verified User',getRadio('hwVerifiedUser')],['Secure Ratecon Used?',getRadio('secureRatecon')]]);
   if(getRadio('secureRatecon'))dRow([['Secure Ratecon Used?',getRadio('secureRatecon')]]);
   div();
 
@@ -1451,13 +1460,13 @@ function generatePDF(){
   const idAlertBase=getRadio('idAlert')||'';
   if(idAlertBase){
     dRow([['Identity Alerts',idAlertBase,3]]);
-    idTypes.forEach((r,i)=>{dRow([[i===0?'Alert Type':'',r.type+(r.date?' — '+r.date:''),3]]);});
+    if(idAlertBase==='Yes')idTypes.forEach((r,i)=>{dRow([[i===0?'Alert Type':'',r.type+(r.date?' — '+r.date:''),3]]);});
   }
   const fgTypes=getFlagTypes('fgList');
   const fgBase=getRadio('freightGuard')||'';
   if(fgBase){
     dRow([['FreightGuard Reports',fgBase,3]]);
-    fgTypes.forEach((r,i)=>{dRow([[i===0?'Report Category':'',r.type+(r.date?' — '+r.date:''),3]]);});
+    if(fgBase==='Yes')fgTypes.forEach((r,i)=>{dRow([[i===0?'Report Category':'',r.type+(r.date?' — '+r.date:''),3]]);});
   }
   [['WatchDog Reports','watchdog','watchdogDate'],['VIDTA Reports','vidta','vidtaDate']].forEach(([lbl,rn,di])=>{
     const rv=getRadio(rn),dv2=val(di);
@@ -1468,7 +1477,7 @@ function generatePDF(){
     const llTypes=getFlagTypes('loadLockList');
     const llDate=val('loadLockDate');
     dRow([['Load Lock Alerts',llBase+(llDate?' — Date: '+llDate:''),3]]);
-    llTypes.forEach((r,i)=>{dRow([[i===0?'Alert Type':'',r.type+(r.date?' — '+r.date:''),3]]);});
+    if(llBase==='Yes')llTypes.forEach((r,i)=>{dRow([[i===0?'Alert Type':'',r.type+(r.date?' — '+r.date:''),3]]);});
   }
   div();
 
@@ -1627,7 +1636,7 @@ const ALL_FIELDS = [
   'changeDate'
 ];
 const ALL_RADIOS = [
-  'addIns','eld','secureRatecon','idAlert','freightGuard','watchdog','vidta','loadLock',
+  'addIns','eld','secureRatecon','hwVerifiedUser','idAlert','freightGuard','watchdog','vidta','loadLock',
   'cargonet','highway','wdFiled','carrier411','lawEnf','factNotified',
   'theftClass','loadboard','tracking'
 ];
