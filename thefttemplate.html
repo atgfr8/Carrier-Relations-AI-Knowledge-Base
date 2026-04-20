@@ -195,6 +195,8 @@
             <option value="Investigating" style="background:#fff;color:#1A2E44;">Investigating</option>
             <option value="Missing - Presumed Stolen" style="background:#fff;color:#1A2E44;">Missing — Presumed Stolen</option>
             <option value="Stolen" style="background:#fff;color:#1A2E44;">Stolen</option>
+            <option value="Located" style="background:#fff;color:#1A2E44;">Located</option>
+            <option value="Recovered" style="background:#fff;color:#1A2E44;">Recovered</option>
           </select>
         </div>
         <div style="width:1px;height:20px;background:rgba(255,255,255,0.15);"></div>
@@ -1227,6 +1229,8 @@ function updateStatusBadge(){
     'Investigating':'#F59E0B',
     'Missing - Presumed Stolen':'#EA580C',
     'Stolen':'#DC2626',
+    'Located':'#0069A6',
+    'Recovered':'#0E5C38',
     '':'#F59E0B'
   };
   sel.style.backgroundColor=colors[sel.value]||'#F59E0B';
@@ -1274,6 +1278,8 @@ function generatePDF(){
     if(s==='Stolen')return RED;
     if(s==='Missing - Presumed Stolen')return ORANGE;
     if(s==='Investigating')return AMBER;
+    if(s==='Located')return TEAL;
+    if(s==='Recovered')return[14,92,56];
     return TEAL;
   };
 
