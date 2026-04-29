@@ -307,6 +307,21 @@
     <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7;">As with anything new, expect some pushback. Agents won't always like the answer. Apply it as much as you can, but do so gently — introduce it as part of your process. If you're unsure what to do, ask. The goal right now is for you to get comfortable using it. We want your feedback, and know that we're continuously improving this tool — so stay aware of changes as they come.</div>
   </div>
 
+  <div style="background:var(--surface);border-left:3px solid rgba(0,0,0,0.15);border-top-left-radius:0;border-bottom-left-radius:0;border-top:1px solid rgba(0,0,0,0.07);border-right:1px solid rgba(0,0,0,0.07);border-bottom:1px solid rgba(0,0,0,0.07);border-radius:var(--radius);padding:12px 16px;margin-bottom:20px;">
+    <div class="slabel" style="margin-bottom:10px;">💬 Suggested Opening Responses</div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Option 1</div>
+        <div style="font-size:12px;color:var(--text);line-height:1.7;font-style:italic;">Just a heads up — we're tightening up our ELD process, so there are a few things we need to verify before we can activate. Can you confirm the exemption reason and share any supporting documentation you have?</div>
+      </div>
+      <div style="height:1px;background:var(--border);"></div>
+      <div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Option 2</div>
+        <div style="font-size:12px;color:var(--text);line-height:1.7;font-style:italic;">Just a heads up — we're tightening up our ELD policy. Having an active ELD connection helps us ensure the right carriers are where they're supposed to be, and is an important part of how we protect every load.</div>
+      </div>
+    </div>
+  </div>
+
   <div style="margin-bottom:20px;">
     <div class="slabel" style="margin-bottom:10px;">Primary Exemption Paths</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
@@ -369,7 +384,7 @@ function showQ2(is2001plus) {
 const progressSteps = ["Engine / Equip", "Carrier", "Load History", "Result"];
 const progressMap = {
   model_year_new: 0, model_year: 0, model_year_sprinter: 0, flatbed_cargo: 0,
-  carrier_status: 1, new_carrier_default: 1, new_carrier_exceptions: 1, new_carrier_rare_prompt: 1, new_carrier_check: 1,
+  carrier_status: 1, new_carrier_load_type: 1, new_carrier_default: 1, new_carrier_exceptions: 1, new_carrier_rare_prompt: 1, new_carrier_check: 1,
   load_history: 2, cargo_value: 2,
   exceptions: 2, equipment_specialized: 2, short_haul_check: 2, incompatible_eld: 2, glider_kit: 2,
 };
@@ -481,7 +496,7 @@ function hardStop({ title, detail, response, exceptionLabel, exceptionText, exce
 
 function exceptions() {
   const options = [
-    ["go('equipment_specialized','Drayage or specialized equipment')", "Drayage or specialized equipment (step deck, RGN, flatbed)"],
+    ["go('equipment_specialized','Drayage or specialized equipment')", "Drayage or specialized equipment (step deck, RGN, beam trailer, flatbed)"],
     ["go('short_haul_check','Short-haul exemption')", "Short-haul exemption (under 150 air miles)"],
     ["go('incompatible_eld','Incompatible ELD provider')", "Incompatible ELD provider (e.g. Garmin, Super Dispatch)"],
     ["go('glider_kit','Glider kit')", "Glider kit with verified pre-2000 engine"],
@@ -519,7 +534,10 @@ function renderStep(step) {
       </div>`;
 
     case "carrier_status":
-      return question({ text: "Is this a new or existing carrier?", tip: "Check the carrier's load history in Highway. If they have any prior completed loads with ATG, they are an existing carrier.", noLabel: "New carrier", yesLabel: "Existing carrier", onNo: "go('new_carrier_default','New carrier')", onYes: "go('load_history','Existing carrier')" });
+      return question({ text: "Is this a new or existing carrier?", tip: "Check the carrier's load history in Highway. If they have any prior completed loads with ATG, they are an existing carrier.", noLabel: "New carrier", yesLabel: "Existing carrier", onNo: "go('new_carrier_load_type','New carrier')", onYes: "go('load_history','Existing carrier')" });
+
+    case "new_carrier_load_type":
+      return question({ text: "Is this a dry van or reefer load?", tip: "Dry van and reefer loads carry the highest cargo theft risk. New carriers on these load types are not eligible for ELD exemption.", noLabel: "No — other equipment", yesLabel: "Yes — dry van or reefer", onYes: "go('result_not_exempt_new_dryvan','Dry van or reefer → Yes')", onNo: "go('new_carrier_default','Dry van or reefer → No')" });
 
     case "new_carrier_default":
       return `<div class="fade">
@@ -545,7 +563,7 @@ function renderStep(step) {
         <p class="q-text">Is the carrier claiming an exception?</p>
         <p style="font-size:12px;color:var(--text-2);margin-bottom:18px">Select the exception the carrier is raising, if any.</p>
         <div class="exc-list">
-          <button class="btn-list" onclick="go('equipment_specialized','Drayage or specialized equipment')">Drayage or specialized equipment (step deck, RGN, flatbed)</button>
+          <button class="btn-list" onclick="go('equipment_specialized','Drayage or specialized equipment')">Drayage or specialized equipment (step deck, RGN, beam trailer, flatbed)</button>
           <button class="btn-list" onclick="go('short_haul_check','Short-haul exemption')">Short-haul exemption (under 150 air miles)</button>
           <button class="btn-list" onclick="go('incompatible_eld','Incompatible ELD provider')">Incompatible ELD provider (e.g. Garmin, Super Dispatch)</button>
           <button class="btn-list" onclick="go('glider_kit','Glider kit')">Glider kit with verified pre-2000 engine</button>
@@ -590,6 +608,7 @@ function renderStep(step) {
         <div class="exc-list">
           <button class="btn-list" onclick="go('result_exempt_drayage','Drayage')">Drayage</button>
           <button class="btn-list" onclick="go('result_exempt_stepdeck','Step deck / RGN')">Step deck / RGN</button>
+          <button class="btn-list" onclick="go('result_exempt_beam','Beam trailer')">Beam trailer</button>
           <button class="btn-list" onclick="go('flatbed_cargo','Flatbed')">Flatbed</button>
           <button class="btn-list" onclick="go('result_not_exempt_history','None of the above')">None of the above</button>
           <div class="exc-nav">
@@ -641,11 +660,17 @@ function renderStep(step) {
     case "result_exempt_stepdeck":
       return result({ type: "exempt", title: "Exempt — Step Deck / RGN", detail: "Step deck or RGN equipment qualifies for ELD exemption under current policy. No further evaluation needed.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on the equipment type on file, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
 
+    case "result_exempt_beam":
+      return result({ type: "exempt", title: "Exempt — Beam Trailer", detail: "Beam trailer equipment qualifies for ELD exemption under current policy. No further evaluation needed.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on the equipment type on file, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
+
     case "result_exempt_equipment":
       return result({ type: "exempt", title: "Exempt by Equipment Type", detail: "Sprinter van, hot shot (Class 1/2), or qualifying specialized equipment. No further evaluation needed.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on the equipment type on file, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
 
     case "result_not_exempt_flatbed":
       return result({ type: "notexempt", title: "Not Exempt — High-Risk Flatbed Cargo", detail: "Flatbed carriers hauling metals, ATVs/UTVs, or high-value/easily-offloaded cargo must connect a valid, active ELD regardless of any other exemption criteria.", response: "Per current policy, carriers hauling this cargo type are required to have an active ELD connection regardless of equipment or load history. Please connect your ELD via Highway to proceed." });
+
+    case "result_not_exempt_new_dryvan":
+      return result({ type: "notexempt", title: "Not Exempt — New Carrier (Dry Van / Reefer)", detail: "New carriers on dry van or reefer loads are not eligible for an ELD exemption. These load types carry the highest cargo theft risk and require an active ELD connection.", response: "Our records indicate this is a new carrier. Per current policy, new carriers on dry van or reefer loads are required to have an active ELD connection. Please connect your ELD via Highway to proceed." });
 
     case "result_not_exempt_new":
       return result({ type: "notexempt", title: "Not Exempt — New Carrier", detail: "New carriers generally cannot qualify for ELD exemption via load history. The rare override criteria were not fully met.", response: "Our records indicate this is a new carrier without prior load history with us. Per current policy, new carriers are required to have an active ELD connection to proceed. Please connect your ELD via Highway to continue. If you believe an exception applies, please provide documentation supporting that request and we will review accordingly." });
