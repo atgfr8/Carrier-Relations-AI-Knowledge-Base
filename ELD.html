@@ -385,7 +385,7 @@ const progressSteps = ["Engine / Equip", "Carrier", "Load History", "Result"];
 const progressMap = {
   model_year_new: 0, model_year: 0, model_year_sprinter: 0, flatbed_cargo: 0,
   carrier_status: 1, new_carrier_load_type: 1, new_carrier_default: 1, new_carrier_exceptions: 1, new_carrier_rare_prompt: 1, new_carrier_check: 1,
-  load_history: 2, cargo_value: 2,
+  load_history: 2, existing_carrier_load_type: 2, cargo_value: 2,
   exceptions: 2, equipment_specialized: 2, short_haul_check: 2, incompatible_eld: 2, glider_kit: 2,
 };
 
@@ -593,7 +593,10 @@ function renderStep(step) {
       return question({ text: "Does the carrier meet ALL of the following? Load is not high value · Passes all standard rules · No ownership change in past 365 days · Can provide cab card", tip: "Check ownership history in SAFER or Highway. Cab card must be provided directly — do not proceed without it.", noLabel: "No — one or more missing", yesLabel: "Yes — all criteria met", onNo: "go('result_not_exempt_new','Rare override criteria → Not met')", onYes: "go('result_new_carrier_rare','Rare override criteria → Met')" });
 
     case "load_history":
-      return question({ text: "Does the carrier have 3 or more completed loads in the last 90 days?", tip: "Review load history in ATG. Count only completed loads within the last 90 days — pending or cancelled loads do not qualify.", noLabel: "No — fewer than 3", yesLabel: "Yes — 3+ loads", onNo: "go('result_not_exempt_thin','Load history → Thin/missing')", onYes: "go('cargo_value','Load history → Qualifies')" });
+      return question({ text: "Does the carrier have 3 or more completed loads in the last 90 days?", tip: "Review load history in ATG. Count only completed loads within the last 90 days — pending or cancelled loads do not qualify.", noLabel: "No — fewer than 3", yesLabel: "Yes — 3+ loads", onNo: "go('existing_carrier_load_type','Load history → Thin/missing')", onYes: "go('cargo_value','Load history → Qualifies')" });
+
+    case "existing_carrier_load_type":
+      return question({ text: "Is this a dry van or reefer load?", tip: "Dry van and reefer loads carry the highest cargo theft risk and have less flexibility for exemption exceptions.", noLabel: "No — other equipment", yesLabel: "Yes — dry van or reefer", onYes: "go('result_not_exempt_thin_dryvan','Dry van or reefer → Yes')", onNo: "go('result_not_exempt_thin','Dry van or reefer → No')" });
 
     case "cargo_value":
       return question({ text: "Is cargo value above $100,000?", tip: "Cargo value may not always be known at this stage. If it becomes known later and exceeds $100K, the override should not be granted.", noLabel: "No / Unknown", yesLabel: "Yes — above $100K", onNo: "go('result_exempt_history','Cargo >$100K → No')", onYes: "go('result_not_exempt_cargo','Cargo >$100K → Yes')" });
@@ -631,6 +634,9 @@ function renderStep(step) {
       return question({ text: "Can the carrier provide standard exemption documentation plus invoice, work order, or engine tag verifying pre-2000 engine year?", tip: "The engine year must be verified with a physical document — invoice, work order, or engine tag. Self-reported year alone is not sufficient.", noLabel: "No", yesLabel: "Yes — docs available", onNo: "go('result_not_exempt_history','Glider kit → No docs')", onYes: "go('result_exempt_glider','Glider kit → Docs verified')" });
 
     // ── HARD STOPS ──
+    case "result_not_exempt_thin_dryvan":
+      return result({ type: "notexempt", title: "Not Exempt — Insufficient Load History (Dry Van / Reefer)", detail: "This carrier does not meet the minimum load history requirement and is on a dry van or reefer load. These load types have the highest cargo theft risk and require an active ELD connection.", response: "Based on our review, this carrier does not meet the load history requirement for an ELD exemption, and dry van and reefer loads require an active ELD connection. Please connect your ELD via Highway to proceed." });
+
     case "result_not_exempt_thin":
       return `<div class="fade">
         <div class="hard-stop-box">
