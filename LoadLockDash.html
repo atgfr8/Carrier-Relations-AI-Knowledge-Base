@@ -2,688 +2,1675 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Load Lock Planning Doc</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Load Lock Playbook</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+  :root {
+    --bg: #E8F2FB;
+    --surface: #FFFFFF;
+    --surface2: #D6E8F5;
+    --border: rgba(0,60,120,0.12);
+    --border2: rgba(0,60,120,0.22);
+    --text: #0F2035;
+    --text2: #3A5570;
+    --text3: #6A8FAD;
+    --teal: #0069A6;
+    --teal-light: #C8E0F2;
+    --teal-mid: #7AAED4;
+    --amber: #C47F17;
+    --amber-light: #FDF0D8;
+    --amber-mid: #E8B96A;
+    --red: #C0392B;
+    --red-light: #FDECEA;
+    --red-mid: #E89090;
+    --blue: #0069A6;
+    --blue-light: #C8E0F2;
+    --blue-mid: #7AAED4;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
     font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
     font-size: 14px;
     line-height: 1.6;
-    color: #1a1a1a;
-    background: #eaf4fb;
-    padding: 48px 32px;
+    min-height: 100vh;
   }
 
-  .page {
-    max-width: 860px;
-    margin: 0 auto;
+  /* Layout */
+  .shell { display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: #1A3050;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 28px 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
   }
 
-  /* Header */
-  .doc-header {
-    border-bottom: 2px solid #1a5276;
-    padding-bottom: 16px;
-    margin-bottom: 32px;
+  .sidebar-logo {
+    padding: 0 20px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 20px;
   }
-  .doc-title {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 22px;
+
+  .sidebar-logo .brand {
+    font-size: 13px;
     font-weight: 600;
-    letter-spacing: -0.5px;
-    color: #1a5276;
-  }
-  .doc-meta {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: #888;
-    margin-top: 6px;
-  }
-  .draft-stamp {
-    display: inline-block;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    font-weight: 600;
-    color: #c0392b;
-    border: 1.5px solid #c0392b;
-    padding: 2px 7px;
-    border-radius: 2px;
-    letter-spacing: 1px;
-    margin-left: 12px;
-    vertical-align: middle;
-  }
-
-  /* Sections */
-  .section {
-    margin-bottom: 48px;
-  }
-
-  .section-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    font-weight: 600;
-    color: #888;
-    letter-spacing: 2px;
+    letter-spacing: .04em;
     text-transform: uppercase;
+    color: var(--text);
+  }
+
+  .sidebar-logo .sub {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+
+  .nav-section {
+    padding: 0 12px;
+    margin-bottom: 24px;
+  }
+
+  .nav-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    padding: 0 8px;
     margin-bottom: 6px;
   }
 
-  .section-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #1a5276;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid #aed6f1;
-  }
-
-  .section-note {
-    background: #fffbe6;
-    border-left: 3px solid #f0c040;
-    padding: 10px 14px;
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-sm);
     font-size: 13px;
-    color: #555;
-    margin-bottom: 16px;
-    font-style: italic;
-  }
-
-  /* Tables */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-    font-size: 13px;
-  }
-  thead th {
-    background: #1a5276;
-    color: #fff;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    text-align: left;
-    padding: 8px 12px;
-  }
-  tbody tr:nth-child(even) { background: #f0eeeb; }
-  tbody tr:nth-child(odd)  { background: #fff; }
-  tbody td {
-    padding: 8px 12px;
-    border-bottom: 1px solid #e5e3df;
-    vertical-align: top;
-  }
-  .alert-name {
     font-weight: 500;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+    transition: background .15s, color .15s;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    letter-spacing: .01em;
+  }
+
+  .nav-item:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.95); }
+  .nav-item.active {
+    background: rgba(0,105,166,0.3);
+    color: #fff;
+    font-weight: 600;
+    border-left: 3px solid #0069A6;
+    padding-left: 9px;
+  }
+
+  .nav-dot {
+    width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(255,255,255,0.2);
+    transition: background .15s;
+  }
+  .nav-item.active .nav-dot { background: #0069A6; box-shadow: 0 0 6px #0069A6; }
+  .nav-item:hover .nav-dot { background: rgba(255,255,255,0.5); }
+
+
+
+  .badge-ll { background: var(--blue-light); color: var(--blue); font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; margin-left: auto; }
+  .badge-llp { background: var(--teal-light); color: var(--teal); font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 4px; margin-left: auto; }
+
+  /* Main */
+  .main { flex: 1; padding: 40px 48px; max-width: 860px; background: #E8F2FB; }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* Page header */
+  .page-header { margin-bottom: 32px; }
+  .page-header h1 { font-size: 22px; font-weight: 600; letter-spacing: -.02em; color: var(--text); }
+  .page-header p { font-size: 14px; color: var(--text2); margin-top: 6px; line-height: 1.6; }
+
+  /* Triage tool */
+  .triage-grid { display: grid; gap: 12px; margin-bottom: 24px; }
+
+  .triage-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .q-num {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--surface2);
+    color: var(--text2);
+    font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
     font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .q-body { flex: 1; }
+  .q-text { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 4px; }
+  .q-sub { font-size: 12px; color: var(--text2); margin-bottom: 12px; line-height: 1.5; }
+
+  .q-options { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .opt {
+    padding: 5px 16px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    font-size: 12px; font-weight: 500;
+    cursor: pointer;
+    background: var(--surface);
+    color: var(--text2);
+    transition: all .15s;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  .opt:hover { border-color: var(--text2); color: var(--text); }
+  .opt.yes.selected { background: var(--red-light); color: var(--red); border-color: var(--red-mid); }
+  .opt.no.selected { background: var(--teal-light); color: var(--teal); border-color: var(--teal-mid); }
+  .opt.unknown.selected { background: var(--amber-light); color: var(--amber); border-color: var(--amber-mid); }
+  .opt.flatbed { }
+  .opt.flatbed.selected { background: var(--amber-light); color: var(--amber); border-color: var(--amber-mid); }
+
+  .result-box {
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    display: none;
+    border: 1px solid;
+  }
+
+  .result-box.show { display: block; }
+  .result-box.compliance { background: var(--amber-light); border-color: var(--amber-mid); }
+  .result-box.agent { background: var(--teal-light); border-color: var(--teal-mid); }
+  .result-box.critical { background: var(--red-light); border-color: var(--red-mid); }
+
+  .result-tag {
+    font-size: 10px; font-weight: 600; letter-spacing: .08em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .compliance .result-tag { color: var(--amber); }
+  .agent .result-tag { color: var(--teal); }
+  .critical .result-tag { color: var(--red); }
+
+  .result-title { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .compliance .result-title { color: var(--amber); }
+  .agent .result-title { color: var(--teal); }
+  .critical .result-title { color: var(--red); }
+
+  .result-desc { font-size: 13px; line-height: 1.6; }
+  .compliance .result-desc { color: var(--amber); }
+  .agent .result-desc { color: var(--teal); }
+  .critical .result-desc { color: var(--red); }
+
+  .result-signals {
+    margin-top: 10px; font-size: 12px; font-weight: 500;
+    opacity: .8; font-style: italic;
+  }
+  .compliance .result-signals { color: var(--amber); }
+  .critical .result-signals { color: var(--red); }
+
+  .reset-btn {
+    margin-top: 12px; font-size: 12px; color: var(--text3);
+    text-decoration: underline; cursor: pointer;
+    background: none; border: none; font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  /* Alert playbook */
+  .filter-bar {
+    display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;
+  }
+
+  .search-input {
+    flex: 1; min-width: 200px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    font-size: 13px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .search-input:focus { outline: none; border-color: var(--text2); }
+  .search-input::placeholder { color: var(--text3); }
+
+  .filter-btn {
+    padding: 7px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border2);
+    font-size: 12px; font-weight: 500;
+    cursor: pointer;
+    background: var(--surface);
+    color: var(--text2);
+    transition: all .15s;
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  .filter-btn:hover { border-color: var(--text2); color: var(--text); }
+  .filter-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+
+  .alert-list { display: grid; gap: 10px; }
+
+  .alert-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color .15s;
+    border-left-width: 3px;
+  }
+
+  .alert-card:hover { border-color: var(--border2); }
+  .alert-card.updated { border-color: var(--teal-mid); }
+  .alert-card.owner-agent { border-left-color: #E07820; }
+  .alert-card.owner-tbd { border-left-color: var(--border2); }
+  .alert-card.owner-compliance { border-left-color: #e07060; }
+  .alert-card.owner-coowned { border-left-color: #A090E8; }
+  .alert-card.inactive { border-left-color: var(--border2); }
+
+  .alert-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px; cursor: pointer;
+  }
+
+
+
+  .alert-name { font-size: 14px; font-weight: 500; flex: 1; }
+
+  .agent-pill, .owner-pill.agent {
+    font-size: 10px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+    background: #E07820; color: #fff; border: none;
+  }
+
+  .alert-number {
+    font-size: 11px; font-weight: 600; font-family: 'IBM Plex Mono', monospace;
+    color: var(--text3); min-width: 24px; flex-shrink: 0;
+  }
+
+  .compliance-pill, .owner-pill.compliance {
+    font-size: 10px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+    background: #C0392B; color: #fff; border: none;
+  }
+
+  .owner-pill.tbd {
+    background: var(--surface2); color: var(--text3);
+    border: 1px solid var(--border2); font-weight: 600;
+    font-size: 10px; padding: 3px 10px; border-radius: 20px;
+  }
+
+  .owner-pill.coowned {
+    font-size: 10px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+    background: #7B5EA7; color: #fff; border: none;
+  }
+
+  .updated-pill {
+    font-size: 10px; font-weight: 600; background: #D1FAE5; color: #065F46;
+    padding: 2px 8px; border-radius: 4px;
+  }
+
+  .chevron { font-size: 10px; color: var(--text3); transition: transform .2s; }
+  .chevron.open { transform: rotate(180deg); }
+
+  .alert-body {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 18px 18px 20px;
+  }
+
+  .alert-body.open { display: block; }
+
+  .section-label {
+    font-size: 10px; font-weight: 600; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--text3);
+    margin-bottom: 8px;
+  }
+
+  .means-box {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 13px; color: var(--text2);
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+
+  .steps-list { list-style: none; }
+
+  .step-item {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px; line-height: 1.55;
+  }
+
+  .step-item:last-child { border-bottom: none; }
+
+  .step-n {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--blue-light); color: var(--blue);
+    font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .step-n.override { background: var(--red-light); color: var(--red); }
+
+  .step-text { color: var(--text); }
+  .step-sub { font-size: 12px; color: var(--text2); margin-top: 4px; line-height: 1.5; }
+
+  .script-line {
+    margin-top: 8px;
+    border-left: 2px solid var(--blue-mid);
+    padding: 8px 12px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    background: var(--blue-light);
+    font-size: 12px; color: var(--blue);
+    line-height: 1.6; font-style: italic;
+  }
+
+  .triage-table {
+    margin-top: 10px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
     font-size: 12px;
   }
 
-  /* Tier badges */
-  .tier {
-    display: inline-block;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 8px;
-    border-radius: 2px;
-    white-space: nowrap;
-    letter-spacing: 0.3px;
-  }
-  .tier-hard   { background: #fde8e8; color: #c0392b; border: 1px solid #f5b7b1; }
-  .tier-soft   { background: #fef9e7; color: #9a7d0a; border: 1px solid #f9e79f; }
-  .tier-warn   { background: #eafaf1; color: #1e8449; border: 1px solid #abebc6; }
-  .tier-notif  { background: #eaf4fb; color: #1a5276; border: 1px solid #aed6f1; }
-  .tier-post   { background: #f4f6f7; color: #555; border: 1px solid #ccc; }
-
-  /* Sub-table group label */
-  .group-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 600;
-    color: #2e86c1;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin: 20px 0 6px 0;
+  .triage-row { display: flex; border-bottom: 1px solid var(--border); }
+  .triage-row:last-child { border-bottom: none; }
+  .triage-signal { padding: 8px 12px; flex: 1.3; color: var(--text2); border-right: 1px solid var(--border); line-height: 1.4; }
+  .triage-outcome { padding: 8px 12px; flex: 2; color: var(--text); line-height: 1.4; }
+  .triage-head .triage-signal,
+  .triage-head .triage-outcome {
+    background: var(--surface2); font-weight: 600; font-size: 10px;
+    letter-spacing: .06em; text-transform: uppercase; color: var(--text3);
   }
 
-  /* Open items */
-  .open-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px dashed #ddd;
-    font-size: 13px;
-    color: #444;
-  }
-  .open-item:last-child { border-bottom: none; }
-  .open-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: #c0392b;
-    margin-top: 5px;
-    flex-shrink: 0;
+  .ack-box {
+    margin-top: 10px;
+    background: var(--red-light);
+    border: 1px solid var(--red-mid);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 12px; color: var(--red);
+    line-height: 1.7;
   }
 
-  /* Analytics banner */
-  .analytics-bar {
-    display: flex;
-    gap: 24px;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 16px 20px;
-    margin-bottom: 20px;
-  }
-  .stat {
-    display: flex;
-    flex-direction: column;
-  }
-  .stat-value {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 22px;
-    font-weight: 600;
-    color: #1a1a1a;
-  }
-  .stat-label {
-    font-size: 11px;
-    color: #888;
-    margin-top: 2px;
-  }
-  .stat-divider {
-    width: 1px;
-    background: #e5e3df;
-    margin: 0 4px;
-  }
+  .ack-box strong { display: block; font-weight: 600; margin-bottom: 4px; }
+  .ack-statement { font-style: italic; }
+  .ack-note { margin-top: 6px; font-style: normal; opacity: .85; }
 
-  /* Collapsible */
-  .collapsible-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    user-select: none;
+  .steps-section-label {
+    font-size: 10px; font-weight: 600; letter-spacing: .08em;
+    text-transform: uppercase; padding: 8px 0 4px;
+    display: flex; align-items: center; gap: 8px;
   }
-  .collapsible-header:hover .section-title { color: #2e86c1; }
-  .collapsible-body { display: block; }
-  .collapsible-body.collapsed { display: none; }
-  .toggle-icon {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 20px;
-    color: #2e86c1;
-    font-weight: 400;
-    line-height: 1;
-    margin-left: 12px;
-    flex-shrink: 0;
-    transition: transform 0.2s;
+  .steps-section-label.universal { color: var(--text3); }
+  .steps-section-label.specific { color: var(--blue); margin-top: 4px; }
+  .steps-section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
   }
-  .alert-block-body { display: block; }
-  .alert-block-body.collapsed { display: none; }
-  .alert-toggle-icon {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 14px;
-    color: #2e86c1;
-    font-weight: 600;
-    margin-left: auto;
-    padding-left: 12px;
-    flex-shrink: 0;
-  }
-  .alert-block-header { cursor: pointer; user-select: none; }
-  .alert-block-header:hover .alert-block-name { color: #2e86c1; }
+  .step-n.universal { background: var(--surface2); color: var(--text3); }
 
-  /* Alert blocks */
-  .alert-block {
-    background: #fff;
-    border: 1px solid #aed6f1;
-    border-radius: 4px;
+  .universal-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     margin-bottom: 24px;
     overflow: hidden;
   }
-  .alert-block-header {
-    background: #d6eaf8;
-    padding: 10px 16px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    border-bottom: 1px solid #aed6f1;
+  .universal-block-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 18px; cursor: pointer;
+    border-bottom: 1px solid var(--border);
   }
-  .alert-block-name {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    font-weight: 600;
-    color: #1a5276;
-    flex: 1;
+  .universal-block-title {
+    font-size: 13px; font-weight: 600; color: var(--text);
+    display: flex; align-items: center; gap: 10px;
   }
-  .phase-tag {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    font-weight: 600;
-    color: #1a5276;
-    background: #eaf4fb;
-    border: 1px solid #aed6f1;
-    padding: 2px 8px;
-    border-radius: 2px;
-    letter-spacing: 0.5px;
+  .universal-tag {
+    font-size: 10px; font-weight: 600; letter-spacing: .04em;
+    background: var(--surface2); color: var(--text3);
+    padding: 2px 8px; border-radius: 4px;
   }
-  .alert-block-def {
-    padding: 10px 16px;
-    font-size: 13px;
-    color: #555;
-    border-bottom: 1px solid #d6eaf8;
-    background: #f8fbfe;
-  }
-  .decision-table {
-    width: 100%;
-    border-collapse: collapse;
+  .universal-block-body { padding: 4px 0 8px; }
+  .universal-step {
+    display: flex; gap: 12px; align-items: flex-start;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--border);
     font-size: 13px;
   }
-  .decision-table thead th {
-    background: #1a5276;
-    color: #fff;
+  .universal-step:last-child { border-bottom: none; }
+  .universal-n {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: var(--surface2); color: var(--text3);
+    font-size: 11px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 1px;
     font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    font-weight: 600;
-    text-align: left;
-    padding: 7px 12px;
-  }
-  .decision-table tbody tr:nth-child(even) { background: #f0f7fd; }
-  .decision-table tbody tr:nth-child(odd)  { background: #fff; }
-  .decision-table tbody td {
-    padding: 7px 12px;
-    border-bottom: 1px solid #e5eef5;
-    vertical-align: top;
-  }
-  .decision-table tbody td:first-child {
-    font-weight: 600;
-    color: #1a5276;
-    font-size: 12px;
-  }
-  .decision-table:not(.subcats-table) tbody td:first-child {
-    width: 36%;
-  }
-  .decision-table thead th:nth-child(1) { width: auto; }
-  .subcats-table thead th:nth-child(1) { width: 12%; }
-  .subcats-table thead th:nth-child(2) { width: 8%; }
-  .subcats-table thead th:nth-child(3) { width: 10%; }
-  .subcats-table thead th:nth-child(4) { width: 15%; }
-  .subcats-table thead th:nth-child(5) { width: 27%; }
-  .subcats-table thead th:nth-child(6) { width: 28%; }
-  .subcats-table.no-subcat thead th:nth-child(1) { width: 10%; }
-  .subcats-table.no-subcat thead th:nth-child(2) { width: 12%; }
-  .subcats-table.no-subcat thead th:nth-child(3) { width: 18%; }
-  .subcats-table.no-subcat thead th:nth-child(4) { width: 30%; }
-  .subcats-table.no-subcat thead th:nth-child(5) { width: 30%; }
-  .subcats-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px;
-    font-weight: 600;
-    color: #2e86c1;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    padding: 10px 16px 4px 16px;
-    border-top: 1px solid #d6eaf8;
-    background: #f8fbfe;
   }
 
-  /* Footer */
-  .doc-footer {
-    margin-top: 60px;
+  .alert-card.inactive { opacity: .6; }
+  .alert-card.inactive:hover { opacity: 1; }
+
+  .decision-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
     padding-top: 16px;
-    border-top: 1px solid #ccc;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: #aaa;
+    border-top: 1px solid var(--border);
   }
+  .decision-field {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+  }
+  .decision-label {
+    font-size: 10px; font-weight: 600; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--text3);
+    margin-bottom: 4px;
+  }
+  .decision-value {
+    font-size: 12px; color: var(--text); line-height: 1.5;
+  }
+  .decision-value.tbd { color: var(--text3); font-style: italic; }
+  .decision-field.full { grid-column: 1 / -1; }
+  .pill-block {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 2px 10px; border-radius: 20px;
+    background: #C0392B; color: #fff;
+  }
+  .pill-override {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 2px 10px; border-radius: 20px;
+    background: #E07820; color: #fff;
+  }
+
+  .subcat-section {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  .subcat-label {
+    font-size: 10px; font-weight: 600; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--text3); margin-bottom: 10px;
+  }
+  .subcat-table {
+    width: 100%; border-collapse: collapse;
+    font-size: 12px; border-radius: var(--radius-sm); overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .subcat-table th {
+    background: var(--surface2); color: var(--text3);
+    font-size: 10px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; padding: 8px 10px; text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .subcat-table td {
+    padding: 9px 10px; border-bottom: 1px solid var(--border);
+    color: var(--text); vertical-align: top; line-height: 1.4;
+  }
+  .subcat-table tr:last-child td { border-bottom: none; }
+  .subcat-table tr.block-row td { background: rgba(192,57,43,0.05); }
+  .subcat-table tr.override-row td { background: rgba(210,100,0,0.05); }
+  .subcat-name { font-weight: 500; }
+
+  .noise-note {
+    margin: 10px 0 14px;
+    background: var(--amber-light);
+    border: 1px solid var(--amber-mid);
+    border-left: 3px solid var(--amber);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--amber);
+    line-height: 1.6;
+  }
+  .noise-note-label {
+    font-size: 10px; font-weight: 700; letter-spacing: .07em;
+    text-transform: uppercase; margin-bottom: 4px; opacity: .8;
+  }
+
+  .empty-state {
+    text-align: center; padding: 40px;
+    color: var(--text3); font-size: 13px;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
 </style>
 </head>
 <body>
-<div class="page">
 
-  <div class="doc-header">
-    <div style="display:flex; align-items:flex-start; justify-content:space-between;">
-      <div>
-        <div class="doc-title">Load Lock Alert System <span class="draft-stamp">DRAFT</span></div>
-        <div class="doc-meta">Planning & Decision Framework &nbsp;·&nbsp; Started April 2026 &nbsp;·&nbsp; In progress</div>
-      </div>
-      <button onclick="toggleAllCards(this)" style="font-family:'IBM Plex Mono',monospace; font-size:11px; font-weight:600; color:#1a5276; background:#fff; border:1.5px solid #1a5276; padding:6px 14px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-top:4px;">Collapse All</button>
+<div class="shell">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div style="font-family:'IBM Plex Sans',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;color:#ffffff;text-transform:uppercase;line-height:1.2;">Armstrong</div>
+      <div style="font-family:'IBM Plex Sans',sans-serif;font-size:8px;font-weight:400;letter-spacing:4px;color:rgba(255,255,255,0.5);text-transform:uppercase;margin-bottom:6px;">Transport Group</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:.04em;text-transform:uppercase;font-weight:500;border-top:1px solid rgba(255,255,255,0.1);padding-top:8px;">Load Lock Guide</div>
     </div>
 
-    <!-- Analytics + Running Count -->
-    <div style="display:flex; gap:12px; margin-top:20px;">
+    <div class="nav-section">
+      <div class="nav-label">Tools</div>
+      <button class="nav-item active" onclick="showPage('playbook')">
+        <span class="nav-dot"></span>
+        Alert playbook
+      </button>
+      <button class="nav-item" onclick="showPage('agent-playbook')">
+        <span class="nav-dot"></span>
+        Agent playbook
+      </button>
+      <button class="nav-item" onclick="showPage('triage')">
+        <span class="nav-dot"></span>
+        Alert triage filter
+      </button>
+      <button class="nav-item" onclick="showPage('distinctions')">
+        <span class="nav-dot"></span>
+        Alert distinctions
+      </button>
+    </div>
 
-      <!-- Analytics from dashboard -->
-      <div style="display:flex; gap:0; background:#1a2e3b; border-radius:6px; overflow:hidden; flex:1;">
-        <div style="padding:14px 20px; flex:1;">
-          <div style="font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:600; color:#5dade2;">2,886</div>
-          <div style="font-size:11px; color:#7fb3cc; margin-top:3px;">Total Actionable Alerts</div>
+    <div class="nav-section" id="alert-nav" style="display:block">
+      <div class="nav-label">Load Lock</div>
+      <div id="ll-nav-items"></div>
+      <div class="nav-label" style="margin-top:16px">Load Lock Plus</div>
+      <div id="llp-nav-items"></div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- Triage Page -->
+    <div class="page" id="page-triage">
+      <div class="page-header">
+        <h1>Alert triage filter</h1>
+        <p>After reading the alert description, answer these questions to determine risk level and routing. Equipment type is your strongest signal — dry van and reefer account for nearly all cargo theft events.</p>
+      </div>
+
+            <div class="universal-block">
+        <div class="universal-block-header" onclick="toggleUniversalTriage()">
+          <div class="universal-block-title">
+            <span class="universal-tag">All alerts</span>
+            Universal response steps
+          </div>
+          <span class="chevron" id="universal-chevron-triage">&#9660;</span>
         </div>
-        <div style="width:1px; background:#2e4a5e;"></div>
-        <div style="padding:14px 20px; flex:1;">
-          <div style="font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:600; color:#5dade2;">187</div>
-          <div style="font-size:11px; color:#7fb3cc; margin-top:3px;">Resulted in Carrier Removal</div>
+        <div class="universal-block-body" id="universal-body-triage"></div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+        <button onclick="resetTriage()" style="font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:500;padding:6px 16px;border-radius:20px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);cursor:pointer;">Clear answers</button>
+      </div>
+
+      <div class="triage-grid">
+
+        <div class="triage-card" id="q1-card">
+          <div class="q-num">1</div>
+          <div class="q-body">
+            <div class="q-text">What is the equipment type?</div>
+            <div class="q-sub">Equipment type is one of the strongest early indicators of theft risk.</div>
+            <div class="q-options" style="flex-wrap:wrap">
+              <button class="opt yes" onclick="answerEquip('dryvan',this)">Dry van</button>
+              <button class="opt yes" onclick="answerEquip('reefer',this)">Reefer</button>
+              <button class="opt flatbed" onclick="answerEquip('flatbed',this)">Flatbed</button>
+              <button class="opt no" onclick="answerEquip('specialized',this)">Step deck / RGN</button>
+              <button class="opt no" onclick="answerEquip('specialized',this)">Drayage</button>
+              <button class="opt no" onclick="answerEquip('specialized',this)">Other specialized</button>
+            </div>
+            <div id="q1-followup" style="display:none;margin-top:12px;padding:12px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border)">
+              <div class="q-sub" style="margin-bottom:8px;font-weight:500;color:var(--text)">Flatbed: is the cargo metals, ATVs / UTVs / off-road vehicles, or anything easily offloaded?</div>
+              <div class="q-options">
+                <button class="opt yes" onclick="answerFlatbed('yes',this)">Yes — elevated risk</button>
+                <button class="opt no" onclick="answerFlatbed('no',this)">No — lower risk</button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div style="width:1px; background:#2e4a5e;"></div>
-        <div style="padding:14px 20px; flex:1;">
-          <div style="font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:600; color:#5dade2;">6.5%</div>
-          <div style="font-size:11px; color:#7fb3cc; margin-top:3px;">Overall Action Rate</div>
+
+        <div class="triage-card">
+          <div class="q-num">2</div>
+          <div class="q-body">
+            <div class="q-text">Is the commodity high-value or theft-prone?</div>
+            <div class="q-sub">Electronics, pharmaceuticals, alcohol, tobacco, food grade, metals. Unknown commodity — treat as yes.</div>
+            <div class="q-options">
+              <button class="opt yes" onclick="answer(1,'yes',this)">Yes</button>
+              <button class="opt no" onclick="answer(1,'no',this)">No</button>
+              <button class="opt unknown" onclick="answer(1,'yes',this)">Unknown</button>
+            </div>
+          </div>
         </div>
-      </div>
 
-      <!-- Running count -->
-      <div style="display:flex; gap:0; background:#1a2e3b; border-radius:6px; overflow:hidden; flex:1;">
-        <div style="padding:14px 20px; flex:1;">
-          <div style="font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:600; color:#58d68d;">17</div>
-          <div style="font-size:11px; color:#7fb3cc; margin-top:3px;">Load Lock Alerts</div>
+        <div class="triage-card">
+          <div class="q-num">3</div>
+          <div class="q-body">
+            <div class="q-text">Are there any identity or fraud signals on the carrier?</div>
+            <div class="q-sub">Active identity alert, spoofed email or domain, fraudulent contact, flagged VOIP number.</div>
+            <div class="q-options">
+              <button class="opt yes" onclick="answer(2,'yes',this)">Yes</button>
+              <button class="opt no" onclick="answer(2,'no',this)">No</button>
+            </div>
+          </div>
         </div>
-        <div style="width:1px; background:#2e4a5e;"></div>
-        <div style="padding:14px 20px; flex:1;">
-          <div style="font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:600; color:#58d68d;">9</div>
-          <div style="font-size:11px; color:#7fb3cc; margin-top:3px;">Load Lock+ Alerts</div>
+
+<div class="triage-card">
+          <div class="q-num">4</div>
+          <div class="q-body">
+            <div class="q-text">Is this lane outside the carrier's known operating area?</div>
+            <div class="q-sub">No observed operations in the origin state in the past year.</div>
+            <div class="q-options">
+              <button class="opt yes" onclick="answer(3,'yes',this)">Yes</button>
+              <button class="opt no" onclick="answer(3,'no',this)">No</button>
+            </div>
+          </div>
         </div>
-        <div style="width:1px; background:#2e4a5e;"></div>
-        <div style="padding:14px 20px; flex:1;">
-          <div style="font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:600; color:#f0b429;">26</div>
-          <div style="font-size:11px; color:#7fb3cc; margin-top:3px;">Total Alert Types</div>
+
+      </div>
+
+      <div id="triage-result" class="result-box">
+        <div class="result-tag" id="r-tag"></div>
+        <div class="result-title" id="r-title"></div>
+        <div class="result-desc" id="r-desc"></div>
+        <div class="result-signals" id="r-signals"></div>
+        <button class="reset-btn" onclick="resetTriage()">Reset answers</button>
+      </div>
+    </div>
+
+    <!-- Playbook Page -->
+    <div class="page active" id="page-playbook">
+      <div class="page-header">
+        <h1>Alert playbook</h1>
+        <p>Full detail reference for compliance and development teams.</p>
+      </div>
+
+      <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:2px;background:#E07820;display:inline-block"></span>Agent</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:2px;background:#A090E8;display:inline-block"></span>Co-owned</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:2px;background:#e07060;display:inline-block"></span>Compliance</div>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" class="search-input" id="search" placeholder="Search alerts..." oninput="renderAlerts()">
+        <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+        <button class="filter-btn" onclick="setFilter('agent',this)">Agent</button>
+        <button class="filter-btn" onclick="setFilter('coowned',this)">Co-owned</button>
+        <button class="filter-btn" onclick="setFilter('compliance',this)">Compliance</button>
+      </div>
+
+      <div class="alert-list" id="alert-list"></div>
+    </div>
+
+    <!-- Agent Playbook Page -->
+    <div class="page" id="page-agent-playbook">
+      <div class="page-header">
+        <h1>Agent playbook</h1>
+        <p>Step-by-step response guidance for agents handling Load Lock alerts.</p>
+      </div>
+
+      <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:2px;background:#E07820;display:inline-block"></span>Agent</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:2px;background:#A090E8;display:inline-block"></span>Co-owned</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:2px;background:#e07060;display:inline-block"></span>Compliance</div>
+      </div>
+
+      <div class="universal-block">
+        <div class="universal-block-header" onclick="toggleUniversalAgent()">
+          <div class="universal-block-title">
+            <span class="universal-tag">All alerts</span>
+            Universal response steps
+          </div>
+          <span class="chevron" id="universal-chevron-agent">&#9660;</span>
         </div>
-        <div style="width:1px; background:#2e4a5e;"></div>
-        <div style="padding:14px 20px; flex:1; display:flex; flex-direction:column; justify-content:center;">
-          <div style="font-family:'IBM Plex Mono',monospace; font-size:13px; font-weight:600; color:#5dade2;">Apr 6, 2026</div>
-          <div style="font-size:11px; color:#7fb3cc; margin-top:3px;">Last Updated</div>
-        </div>
+        <div class="universal-block-body" id="universal-body-agent"></div>
       </div>
 
-    </div>
-  </div>
+      <div class="filter-bar">
+        <input type="text" class="search-input" id="search-agent" placeholder="Search alerts..." oninput="renderAgentAlerts()">
+        <button class="filter-btn active" onclick="setAgentFilter('all',this)">All</button>
+        <button class="filter-btn" onclick="setAgentFilter('agent',this)">Agent</button>
+        <button class="filter-btn" onclick="setAgentFilter('compliance',this)">Compliance</button>
+      </div>
 
-  <!-- ── SECTION 1 ── -->
-  <div class="section">
-    <div class="section-label">Question 1</div>
-    <div class="collapsible-header" onclick="toggleSection(this)">
-      <div class="section-title" style="flex:1; margin-bottom:0; border-bottom:none; padding-bottom:0;">Which alerts do we want displayed in-app?</div>
-      <span class="toggle-icon">−</span>
-    </div>
-    <div style="border-bottom:1px solid #aed6f1; margin-bottom:12px;"></div>
-    <div class="collapsible-body">
-
-    <div class="section-note">
-      Starting focus: The 3 identity alert types below are confirmed for initial in-app display. Additional alerts (Load Lock and Load Lock+) will be added in subsequent phases. The question is not just whether to show them — it's what action to enforce when they fire.
+      <div class="alert-list" id="agent-alert-list"></div>
     </div>
 
-    <div class="section-note">
-      For each alert, we need to answer all 5 planning questions. Decisions marked <span style="color:#c0392b; font-weight:600;">TBD</span> are still open.
+    <!-- Distinctions Page -->
+    <div class="page" id="page-distinctions">
+      <div class="page-header">
+        <h1>Alert distinctions</h1>
+        <p>These alerts can sound similar. This section explains what each one is actually measuring and how to tell them apart in practice.</p>
+      </div>
+      <div id="distinctions-list"></div>
     </div>
 
-    <div style="font-family:'IBM Plex Sans',sans-serif; font-size:16px; font-weight:600; color:#1a5276; margin:20px 0 10px 0; padding-bottom:6px; border-bottom:2px solid #aed6f1;">Display in App</div>
-
-    <!-- ── ALERT 1: Recent Identity Alert ── -->
-    <div class="alert-block">
-      <div class="alert-block-header" onclick="toggleAlert(this)">
-        <span class="alert-block-name">Recent Identity Alert</span> <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1e8449; background:#eafaf1; border:1px solid #abebc6; padding:2px 8px; border-radius:2px;">Load Lock</span>
-        <span class="tier tier-hard">Hard No</span>
-        <span class="phase-tag">Phase 1</span>
-        <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button><span class="alert-toggle-icon">−</span>
-      </div>
-      <div class="alert-block-body">
-      <div class="alert-block-def">
-        New Identity Alert for Stolen Assets published on a date within the load pickup/delivery window. <em>Action: Review the description of the Identity Alert posted on the carrier profile, determine risk level, and consider taking the carrier off the load.</em>
-      </div>
-      <table class="decision-table">
-        <thead><tr><th style="width:36%">Question</th><th>Decision / Notes</th></tr></thead>
-        <tbody>
-          <tr><td>Display in-app?</td><td>✅ Yes — confirmed Phase 1</td></tr>
-          <tr><td>Block or allow override?</td><td>Dependent on sub-category — see table below</td></tr>
-          <tr><td>Who can override?</td><td>Dependent on sub-category — see table below</td></tr>
-          <tr><td>Who receives notifications?</td><td>Dependent on sub-category — see table below</td></tr>
-          <tr><td>Override message to display?</td><td>Dependent on sub-category — see table below</td></tr>
-        </tbody>
-      </table>
-      <div class="subcats-label">Priority Sub-Categories</div>
-      <table class="decision-table subcats-table">
-        <thead><tr><th>Sub-Category</th><th>Block or Override?</th><th>Who Can Override?</th><th>Notification Recipients</th><th>Notification Message</th><th>Override Message</th></tr></thead>
-        <tbody>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Stolen Assets</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Stolen Assets identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load.</td><td>N/A - Compliance will override if reviewed and approved.</td></tr>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Pending Investigation</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Pending Investigation identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load.</td><td>N/A - Compliance will override if reviewed and approved.</td></tr>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Change of Ownership</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Change of Ownership identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load.</td><td>N/A - Compliance will override if reviewed and approved.</td></tr>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Hostage Load</td><td><span class="tier tier-soft">Override Eligible</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Hostage Load identity alert. Do not negotiate or agree to any additional payment demands. Contact your manager immediately and do not proceed with this carrier without office-level approval.</td><td>I understand this carrier has an active Hostage Load alert. I have consulted with my office manager and accept responsibility for any cargo loss, theft, or damages resulting from proceeding with this carrier.</td></tr>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Victim of Identity Theft</td><td><span class="tier tier-soft">Override Eligible</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active VIDTA alert. Before proceeding, review the VIDTA report in Highway and confirm the contact information you are working with is not tied to any identity theft report. Proceeding without review means you assume full responsibility for any resulting loss or damages.</td><td>I understand and have reviewed the VIDTA report in Highway and accept responsibility for proceeding, confirming that the individual, email address, and phone number I am working with are not referenced in any related identity theft report.</td></tr>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Double Brokering</td><td><span class="tier tier-soft">Override Eligible</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Double Brokering identity alert. Verify that the carrier you are working with is the authorized carrier on this load and has not re-brokered to another party. Do not proceed until you have confirmed the identity of the carrier accepting this load.</td><td>I understand this carrier has an active Double Brokering alert. I have verified the identity of the carrier accepting this load and accept responsibility for any cargo loss, theft, or damages resulting from proceeding.</td></tr>
-        </tbody>
-      </table>
-    </div><!-- end alert-block-body -->
-    </div>
-
-    <!-- ── ALERT 2: Identity Alert on Active Rate Confirmation ── -->
-    <div class="alert-block">
-      <div class="alert-block-header" onclick="toggleAlert(this)">
-        <span class="alert-block-name">Identity Alert on Active Rate Confirmation</span> <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1e8449; background:#eafaf1; border:1px solid #abebc6; padding:2px 8px; border-radius:2px;">Load Lock</span>
-        <span class="tier tier-hard">Hard No</span>
-        <span class="phase-tag">Phase 1</span>
-        <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button><span class="alert-toggle-icon">−</span>
-      </div>
-      <div class="alert-block-body">
-      <div class="alert-block-def">
-        An identity alert fires while a rate confirmation is currently live. <em>Definition TBD — awaiting official source text.</em>
-      </div>
-      <table class="decision-table">
-        <thead><tr><th style="width:36%">Question</th><th>Decision / Notes</th></tr></thead>
-        <tbody>
-          <tr><td>Display in-app?</td><td>✅ Yes — confirmed Phase 1</td></tr>
-          <tr><td>Block or allow override?</td><td>Dependent on sub-category — see table below</td></tr>
-          <tr><td>Who can override?</td><td>Dependent on sub-category — see table below</td></tr>
-          <tr><td>Who receives notifications?</td><td>Dependent on sub-category — see table below</td></tr>
-          <tr><td>Override message to display?</td><td>Dependent on sub-category — see table below</td></tr>
-        </tbody>
-      </table>
-      <div class="subcats-label">Priority Sub-Categories</div>
-      <table class="decision-table subcats-table">
-        <thead><tr><th>Sub-Category</th><th>Block or Override?</th><th>Who Can Override?</th><th>Notification Recipients</th><th>Notification Message</th><th>Override Message</th></tr></thead>
-        <tbody>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Stolen Assets</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Stolen Assets identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load.</td><td>N/A - Compliance will override if reviewed and approved.</td></tr>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Pending Investigation</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Pending Investigation identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load.</td><td>N/A - Compliance will override if reviewed and approved.</td></tr>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Change of Ownership</td><td><span class="tier tier-hard">Block</span></td><td>Carrier Compliance</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Change of Ownership identity alert. Compliance is reviewing — do not proceed until a Compliance Manager has cleared this carrier. If you choose to proceed without approval, you assume full responsibility for any cargo loss, theft, or damages on this load.</td><td>N/A - Compliance will override if reviewed and approved.</td></tr>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Hostage Load</td><td><span class="tier tier-soft">Override Eligible</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Hostage Load identity alert. Do not negotiate or agree to any additional payment demands. Contact your manager immediately and do not proceed with this carrier without office-level approval.</td><td>I understand this carrier has an active Hostage Load alert. I have consulted with my office manager and accept responsibility for any cargo loss, theft, or damages resulting from proceeding with this carrier.</td></tr>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Victim of Identity Theft</td><td><span class="tier tier-soft">Override Eligible</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active VIDTA alert. Before proceeding, review the VIDTA report in Highway and confirm the contact information you are working with is not tied to any identity theft report. Proceeding without review means you assume full responsibility for any resulting loss or damages.</td><td>I understand and have reviewed the VIDTA report in Highway and accept responsibility for proceeding, confirming that the individual, email address, and phone number I am working with are not referenced in any related identity theft report.</td></tr>
-          <tr style="border-left:3px solid #1a5276;"><td class="alert-name" style="padding-left:10px;">⭐ Double Brokering</td><td><span class="tier tier-soft">Override Eligible</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager</td><td>This carrier has an active Double Brokering identity alert. Verify that the carrier you are working with is the authorized carrier on this load and has not re-brokered to another party. Do not proceed until you have confirmed the identity of the carrier accepting this load.</td><td>I understand this carrier has an active Double Brokering alert. I have verified the identity of the carrier accepting this load and accept responsibility for any cargo loss, theft, or damages resulting from proceeding.</td></tr>
-        </tbody>
-      </table>
-    </div><!-- end alert-block-body -->
-    </div>
-
-    <!-- ── ALERT 3: Identity Alert on Non-Active Load ── -->
-    <div class="alert-block">
-      <div class="alert-block-header" onclick="toggleAlert(this)">
-        <span class="alert-block-name">Identity Alert on Non-Active Load</span> <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1e8449; background:#eafaf1; border:1px solid #abebc6; padding:2px 8px; border-radius:2px;">Load Lock</span>
-        <span class="tier tier-post">Notification Only</span>
-        <span class="phase-tag">Phase 1</span>
-        <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button><span class="alert-toggle-icon">−</span>
-      </div>
-      <div class="alert-block-body">
-      <div class="alert-block-def">
-        New Identity Alert for Stolen Assets published after the delivery window for a previously delivered load. Confirm proof of delivery. <em>Action: Review the proof of delivery provided by the carrier and determine risk of falsified proof of delivery.</em>
-      </div>
-      <table class="decision-table">
-        <thead><tr><th style="width:36%">Question</th><th>Decision / Notes</th></tr></thead>
-        <tbody>
-          <tr><td>Display in-app?</td><td>✅ Yes — confirmed Phase 1</td></tr>
-          <tr><td>Block or allow override?</td><td>N/A — load already delivered. No booking action to block.</td></tr>
-          <tr><td>Who can override?</td><td>N/A</td></tr>
-          <tr><td>Who receives notifications?</td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td></tr>
-          <tr><td>Override message to display?</td><td>N/A</td></tr>
-        </tbody>
-      </table>
-    </div><!-- end alert-block-body -->
-    </div>
-
-
-    <div class="alert-block">
-      <div class="alert-block-header" onclick="toggleAlert(this)">
-        <span class="alert-block-name">Out Of Range</span> <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1e8449; background:#eafaf1; border:1px solid #abebc6; padding:2px 8px; border-radius:2px;">Load Lock</span>
-        <span class="tier tier-soft">Soft Block / Review</span>
-        <span class="phase-tag">Phase 1</span>
-        <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button><span class="alert-toggle-icon">−</span>
-      </div>
-      <div class="alert-block-body">
-      <div class="alert-block-def">
-        The carrier's closest power unit is # miles from the origin for a load pickup in # hours, which exceeds the minimum travel distance threshold. <em>Action: Contact the carrier and ask which VIN is picking up your load. Search for the provided VIN in Highway's Equipment Search portal and determine the carrier association.</em>
-      </div>
-      <table class="decision-table subcats-table no-subcat">
-        <thead><tr><th>Block or Override?</th><th>Who Can Override?</th><th>Notification Recipients</th><th>Notification Message</th><th>Override Message</th></tr></thead>
-        <tbody>
-          <tr><td><span class="tier tier-soft">Override Eligible</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To</td><td>This carrier's nearest power unit is outside the minimum distance threshold for this load's pickup. Contact the carrier to confirm which VIN is picking up your load and verify through Highway's Equipment Search portal before proceeding.</td><td>I understand this carrier may be outside the acceptable range for this load's pickup location and accept responsibility for proceeding without confirmed vehicle assignment.</td></tr>
-        </tbody>
-      </table>
-      </div><!-- end alert-block-body -->
-    </div>
-
-    <!-- ── Overbooked Carrier ── -->
-    <div class="alert-block">
-      <div class="alert-block-header" onclick="toggleAlert(this)">
-        <span class="alert-block-name">Overbooked Carrier</span> <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1e8449; background:#eafaf1; border:1px solid #abebc6; padding:2px 8px; border-radius:2px;">Load Lock</span>
-        <span class="tier tier-warn">Warning</span>
-        <span class="phase-tag">Phase 1</span>
-        <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button><span class="alert-toggle-icon">−</span>
-      </div>
-      <div class="alert-block-body">
-      <div class="alert-block-def">
-        The carrier has # loads (seen with other Load Lock participants) with a scheduled pickup in the next 24 hours, and only has # trucks observed. <em>Action: Check the Length of Haul of the current shipment and the difference between PU and Load Count. If the difference is material and the shipment has more than 200 miles, consider removing the carrier from the load. Otherwise, contact the carrier to understand their local/regional operations to determine risk.</em>
-      </div>
-      <table class="decision-table subcats-table no-subcat">
-        <thead><tr><th>Block or Override?</th><th>Who Can Override?</th><th>Notification Recipients</th><th>Notification Message</th><th>Override Message</th></tr></thead>
-        <tbody>
-          <tr><td><span class="tier tier-soft">Override Eligible</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To</td><td>This carrier has more loads scheduled in the next 24 hours than observed trucks. Review the length of haul and load count before proceeding. If the difference is material and the shipment exceeds 200 miles, consider removing this carrier.</td><td>I understand this carrier is overbooked relative to their observed truck count and accept responsibility for any service failure or cargo risk resulting from proceeding with this carrier.</td></tr>
-        </tbody>
-      </table>
-      </div><!-- end alert-block-body -->
-    </div>
-
-    <!-- ── High Risk Area ── -->
-    <div class="alert-block">
-      <div class="alert-block-header" onclick="toggleAlert(this)">
-        <span class="alert-block-name">High Risk Area</span> <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1e8449; background:#eafaf1; border:1px solid #abebc6; padding:2px 8px; border-radius:2px;">Load Lock</span>
-        <span class="tier tier-soft">Soft Block / Review</span>
-        <span class="phase-tag">Phase 1</span>
-        <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button><span class="alert-toggle-icon">−</span>
-      </div>
-      <div class="alert-block-body">
-      <div class="alert-block-def">
-        The load has a stop in {zip code} which is a high risk area for strategic cargo theft and this carrier has never been observed in that {state name}. <em>Action: Review Carrier Network Map in the Carrier Profile and consider removing the carrier from the load.</em>
-      </div>
-      <table class="decision-table subcats-table no-subcat">
-        <thead><tr><th>Block or Override?</th><th>Who Can Override?</th><th>Notification Recipients</th><th>Notification Message</th><th>Override Message</th></tr></thead>
-        <tbody>
-          <tr><td><span class="tier tier-soft">Override Eligible</span></td><td>Office Level</td><td>Office Owner, Sales Manager, Cover By, Assigned To</td><td>This load has a stop in a high risk area for strategic cargo theft and this carrier has not been previously observed in that state. Review the Carrier Network Map in the carrier profile before proceeding.</td><td>I understand this load stops in a high risk cargo theft area and that this carrier has no observed history in that region. I accept responsibility for any cargo loss or theft resulting from proceeding with this carrier.</td></tr>
-        </tbody>
-      </table>
-      </div><!-- end alert-block-body -->
-    </div>
-
-    <!-- ── Fraudulent Phone Number ── -->
-    <div class="alert-block">
-      <div class="alert-block-header" onclick="toggleAlert(this)">
-        <span class="alert-block-name">Fraudulent Phone Number</span> <span style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1e8449; background:#eafaf1; border:1px solid #abebc6; padding:2px 8px; border-radius:2px;">Load Lock</span>
-        <span class="tier tier-hard">Hard No</span>
-        <span class="phase-tag">Phase 1</span>
-        <button onclick="event.stopPropagation(); toggleAlertCard(this)" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#1a5276; background:#d6eaf8; border:1.5px solid #aed6f1; padding:3px 10px; border-radius:3px; cursor:pointer; white-space:nowrap; margin-left:8px;">Collapse</button>
-        <span class="alert-toggle-icon">−</span>
-      </div>
-      <div class="alert-block-body">
-      <div class="alert-block-def">
-        The driver phone number (XXX) XXX-XXXX has been reported for fraud. <em>Action: Perform a contact search with the fraudulent phone number and review the associated identity alert details. Determine risk level and consider taking the carrier off shipment.</em>
-      </div>
-      <table class="decision-table subcats-table no-subcat">
-        <thead><tr><th>Block or Override?</th><th>Who Can Override?</th><th>Notification Recipients</th><th>Notification Message</th><th>Override Message</th></tr></thead>
-        <tbody>
-          <tr><td><span style="color:#c0392b; font-weight:600;">TBD</span></td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td><td><span style="color:#c0392b; font-weight:600;">TBD</span></td></tr>
-        </tbody>
-      </table>
-      </div><!-- end alert-block-body -->
-    </div>
-
-    <div style="font-family:'IBM Plex Sans',sans-serif; font-size:16px; font-weight:600; color:#1a5276; margin:20px 0 10px 0; padding-bottom:6px; border-bottom:2px solid #aed6f1;">To Be Phased In — Additional Alerts</div>
-    <p style="font-size:13px; color:#555; margin-bottom:10px;">These alerts from Load Lock and Load Lock+ will be added in subsequent phases.</p>
-    <table>
-      <thead>
-        <tr>
-          <th style="width:40%">Alert</th>
-          <th>What It Flags</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="background:#f0f4f8;"><td colspan="2" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#2e86c1; letter-spacing:1px; padding:8px 12px;">LOAD LOCK</td></tr>
-        <tr><td class="alert-name">Cargo Exclusion</td><td>Carrier's policy excludes the commodity being hauled</td></tr>
-        <tr><td class="alert-name">Dispatch Service Domain</td><td>Domain belongs to a 3rd-party dispatcher service</td></tr>
-        <tr><td class="alert-name">Dispatch Service Email</td><td>Email belongs to a 3rd-party dispatcher service</td></tr>
-        <tr><td class="alert-name">Domain Spoofing</td><td>Domain appears to spoof carrier's known contact info</td></tr>
-        <tr><td class="alert-name">Email Spoofing</td><td>Email appears to spoof carrier's known contact info</td></tr>
-        <tr><td class="alert-name">Failed To Arrive At Pickup</td><td>Definition TBD</td></tr>
-        <tr><td class="alert-name">Failing Broker Requirements</td><td>Carrier is failing internal rules</td></tr>
-        <tr><td class="alert-name">Fraudulent Domain</td><td>Domain has been reported for fraud</td></tr>
-        <tr><td class="alert-name">Fraudulent Email</td><td>Email has been reported for fraud</td></tr>
-        <tr><td class="alert-name">VoIP Phone Number</td><td>Driver phone is a VoIP number</td></tr>
-        <tr style="background:#f0f4f8;"><td colspan="2" style="font-family:'IBM Plex Mono',monospace; font-size:10px; font-weight:600; color:#2e86c1; letter-spacing:1px; padding:8px 12px;">LOAD LOCK+</td></tr>
-        <tr><td class="alert-name">Carrier Assigned ELD Exempt Vehicle</td><td>Validated ELD-exempt truck assigned to load</td></tr>
-        <tr><td class="alert-name">Dormant Vehicle Assigned</td><td>Assigned truck hasn't moved in 14+ days</td></tr>
-        <tr><td class="alert-name">Potentially Uninsured Vehicle Assigned</td><td>Vehicle missing from carrier's COI</td></tr>
-        <tr><td class="alert-name">Provided Vehicle Not Found</td><td>Assigned VIN not found with that carrier</td></tr>
-        <tr><td class="alert-name">Revoked ELD</td><td>ELD connection lost mid-transit</td></tr>
-        <tr><td class="alert-name">Route Deviation</td><td>Truck not moving toward delivery for 3+ hours</td></tr>
-        <tr><td class="alert-name">Unauthorized Stop</td><td>Definition TBD</td></tr>
-        <tr><td class="alert-name">Vehicle Assignment Required</td><td>Carrier assigned after pickup window; no vehicle linked</td></tr>
-        <tr><td class="alert-name">Vehicle Not Nearby</td><td>No vehicles within 200mi of pickup</td></tr>
-      </tbody>
-    </table>
-
-    <div class="group-label">Open Items</div>
-    <div class="open-item"><div class="open-dot"></div><div>Definitions still needed for: <strong>Failed To Arrive At Pickup, Unauthorized Stop</strong></div></div>
-    <div class="open-item"><div class="open-dot"></div><div>Highway has confirmed these are now separate alerts: <strong>Dispatch Service Domain, Dispatch Service Email, Domain Spoofing, Email Spoofing, Fraudulent Domain, Fraudulent Email</strong> — decisions needed for each</div></div>
-
-  </div><!-- end collapsible-body -->
-  </div>
-  <!-- end section 1 -->
-
-  <div class="doc-footer">
-    Load Lock Planning Doc &nbsp;·&nbsp; Draft &nbsp;·&nbsp; Sections to add: Block vs. Override · Override Access · Notification Routing · Override Messaging · Rollout
-  </div>
-
+  </main>
 </div>
+
 <script>
-  function toggleSection(header) {
-    const body = header.parentElement.querySelector('.collapsible-body');
-    const icon = header.querySelector('.toggle-icon');
-    const collapsed = body.classList.toggle('collapsed');
-    icon.textContent = collapsed ? '+' : '−';
+const UNIVERSAL_STEPS = [
+  {
+    text: "Alert received.",
+    sub: "Note the alert type, the load number, origin, destination, and pickup window.",
+    tag: "universal"
+  },
+  {
+    text: "Read the alert description.",
+    sub: "The description tells you why the alert fired before you open any system. Note the specific data points surfaced — what triggered the alert, any counts or thresholds mentioned, and key locations.",
+    tag: "universal"
+  },
+  {
+    text: "Evaluate risk.",
+    sub: "Risk is determined by three factors — equipment type, commodity type, and load value. Assess all three before taking action.",
+    tag: "universal",
+    triage: [
+      { signal: "Equipment: dry van or reefer", outcome: "Elevated — nearly all theft events involve these types" },
+      { signal: "Equipment: flatbed with metals, ATVs / UTVs, or easily offloaded cargo", outcome: "Elevated — accessible cargo and high-target" },
+      { signal: "Equipment: step deck, RGN, drayage, or other specialized", outcome: "Lower — specialized equipment is rarely targeted" },
+      { signal: "Commodity: electronics, pharma, alcohol, tobacco, food grade, metals", outcome: "Elevated — regardless of equipment type" },
+      { signal: "Commodity: dry plastics, lumber, paper, or low-value industrial goods", outcome: "Lower — weigh against equipment type and other signals" },
+      { signal: "Commodity: unknown or not listed", outcome: "Treat as elevated until confirmed — ask the agent" }
+    ]
+  },
+  {
+    text: "Check ATG.",
+    sub: "Cross-reference what Highway is showing against ATG. Look for equipment near the pickup origin and review the carrier's historical lane activity in the region.",
+    tag: "universal"
   }
-  function toggleAlert(header) {
-    const body = header.nextElementSibling;
-    const icon = header.querySelector('.alert-toggle-icon');
-    const btn = header.querySelector('button');
-    const collapsed = body.classList.toggle('collapsed');
-    icon.textContent = collapsed ? '+' : '−';
-    if (btn) btn.textContent = collapsed ? 'Expand' : 'Collapse';
+];
+
+const ALERTS = [
+  {
+    title: "Failed to arrive at pickup",
+    block: "override",
+    whoOverride: "Agent",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To",
+    notifMsg: "A Load Lock alert has been triggered for this load. The assigned carrier has not been detected at the pickup location 3+ hours after the scheduled window. Please contact the carrier and confirm status before escalating.",
+    overrideMsg: "I understand the assigned carrier has not been confirmed at the pickup location, have taken additional steps to verify the carrier is valid, and accept responsibility for proceeding.",
+    owner: "agent",
+    means: "Highway has not detected the assigned vehicle break the geofence of the pickup location 3+ hours after the pickup window.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile and ask again for the VIN picking up your load and their current location." }
+    ],
+    active: true
+  ,
+    number: 1
+  },
+  {
+    title: "Vehicle assignment required",
+    block: "override",
+    whoOverride: "Agent",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To",
+    notifMsg: "A Load Lock alert has been triggered for this load. Highway is unable to assign a vehicle because the carrier was booked after the pickup window passed. Please confirm the VIN and have the carrier assign the vehicle in the Highway Carrier Portal.",
+    overrideMsg: "I understand a vehicle has not been formally assigned in Highway for this load, have taken additional steps to confirm the carrier has a vehicle en route, and accept responsibility for proceeding.",
+    owner: "agent",
+    means: "Highway is unable to assign a vehicle to the load because the carrier has been assigned after the pickup appointment window has passed.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile and ask again for the VIN picking up your load and their location.", sub: "Have the carrier assign the vehicle in the Highway Carrier Portal." }
+    ],
+    active: true
+  ,
+    number: 2
+  },
+  {
+    title: "Received TMS vehicle and not found",
+    block: "override",
+    whoOverride: "Agent",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To",
+    notifMsg: "A Load Lock alert has been triggered for this load. The vehicle assigned in the TMS could not be matched to this carrier in Highway. Please confirm the VIN and ensure the carrier is connected via ELD.",
+    overrideMsg: "I understand the vehicle assigned to this load could not be verified in Highway, have taken additional steps to confirm the correct VIN with the carrier, and accept responsibility for proceeding.",
+    owner: "agent",
+    means: "A vehicle was assigned and Highway is not able to find a matching vehicle with that carrier.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile, confirm the VIN, and ensure they are connected with ELD." }
+    ],
+    active: true
+  ,
+    number: 3
+  },
+  {
+    title: "Vehicle not nearby",
+    block: "override",
+    whoOverride: "Agent",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To",
+    notifMsg: "A Load Lock alert has been triggered for this load. No vehicle has been detected within 200 miles of the pickup location. Please contact the carrier to confirm the VIN and current location.",
+    overrideMsg: "I understand no vehicle has been detected near the pickup location, have taken additional steps to confirm the carrier's truck is en route, and accept responsibility for proceeding.",
+    owner: "agent",
+    means: "Highway is unable to detect any vehicles in the 200 mile radius of the pickup location OR a vehicle that is manually assigned is more than 300 miles away from the pickup location.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile and ask again for the VIN picking up your load and their location.", sub: "Ask dispatch to connect the vehicle's ELD in Highway by logging into their carrier portal, or to provide the proper vehicle hauling the load." }
+    ],
+    active: true
+  ,
+    number: 4
+  },
+  {
+    title: "Dormant vehicle assigned",
+    block: "override",
+    whoOverride: "Agent",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To",
+    notifMsg: "A Load Lock alert has been triggered for this load. The assigned vehicle has not moved in the last 14 days according to ELD data. Please contact the carrier to confirm the vehicle is active and en route.",
+    overrideMsg: "I understand the assigned vehicle has shown no movement in the last 14 days, have taken additional steps to confirm the vehicle is active and assigned to this load, and accept responsibility for proceeding.",
+    owner: "agent",
+    means: "The broker's TMS has assigned a vehicle that is dormant on the carrier's ELD, meaning the truck has not moved in the last 14 days.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile and request the carrier to ensure their ELD is connected with that VIN.", sub: "Once a dormant vehicle starts moving again, Highway will receive an updated location." }
+    ],
+    active: true
+  ,
+    number: 5
+  },
+  {
+    title: "Physical location out of range from origin",
+    block: "block",
+    whoOverride: "Carrier Compliance",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "A Load Lock alert has been triggered for this load. The carrier's closest vehicle is outside the acceptable range for the pickup location. Please review carrier equipment and location before proceeding.",
+    overrideMsg: "I understand this carrier may be outside the acceptable range for this load's pickup location and accept responsibility for proceeding without confirmed vehicle assignment.",
+    owner: "compliance",
+    updated: true,
+    means: "The carrier's closest power unit is # miles from the origin for a load pickup in # hours, which exceeds the minimum travel distance threshold.",
+    specific: [
+      { text: "Contact the carrier and ask which VIN is picking up your load.", sub: "Search for the provided VIN in Highway's Equipment Search portal and determine the carrier association." }
+    ],
+    active: true
+  ,
+    number: 6
+  },
+  {
+    title: "High risk area / no physical presence",
+    noiseNote: "Often a false positive from agent data entry: a zip code is entered at load creation, triggers the alert, and is later corrected, but the alert persists on the original entry. Before escalating, verify the current zip code on the load matches the flagged location.",
+    block: "override",
+    whoOverride: "Compliance or Agent",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To",
+    notifMsg: "A Load Lock alert has been triggered for this load. The pickup or delivery location falls within a high-risk area for cargo theft and this carrier has no observed history in that region. Please review before proceeding.",
+    overrideMsg: "I understand this load has a stop in a high-risk cargo theft area and that the carrier has no observed history operating in that region. I accept responsibility for proceeding with this carrier assignment.",
+    owner: "coowned",
+    means: "The load has a stop in {zip code} which is a high risk area for strategic cargo theft and this carrier has never been observed in that {state name}.",
+    specific: [
+      { text: "Review the Carrier Network Map in the Carrier Profile and consider removing the carrier from the load." }
+    ],
+    active: true
+  ,
+    number: 7
+  },
+  {
+    title: "VOIP phone number",
+    block: "block",
+    whoOverride: "Carrier Compliance",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "A Load Lock alert has been triggered for this load. A VoIP phone number has been detected on the carrier contact. Please verify that the number belongs to the driver and not a third-party dispatcher before proceeding.",
+    overrideMsg: "I understand a VoIP phone number has been flagged on this carrier and accept responsibility for proceeding after verifying the contact belongs to the assigned driver.",
+    owner: "compliance",
+    means: "The driver phone number (XXX) XXX-XXXX is a VoIP number registered with {name of the phone carrier}.",
+    specific: [
+      { text: "Ensure that the provided phone number is the driver phone number (not a carrier dispatcher number) and consider taking the carrier off the load." }
+    ],
+    active: true
+  ,
+    number: 8
+  },
+  {
+    title: "Overbooked carrier",
+    block: "block",
+    whoOverride: "Carrier Compliance",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "A Load Lock alert has been triggered for this load. The carrier has more loads scheduled in the next 24 hours than observed trucks. Please review the load count gap and length of haul before proceeding.",
+    overrideMsg: "I understand this carrier has more scheduled pickups than observed trucks in the next 24 hours and accept responsibility for proceeding with the risk that this load may not be performed.",
+    owner: "compliance",
+    means: "The carrier has # loads (seen with other Load Lock participants) with a scheduled pickup in the next 24 hours, and only has # trucks observed.",
+    specific: [
+      { text: "Check the length of haul of the current shipment and the difference between pickup and load count.", sub: "If the difference is material and the shipment has more than 200 miles, consider removing the carrier from the load. Otherwise, contact the carrier to understand their local/regional operations to determine risk." }
+    ],
+    active: true
+  ,
+    number: 9
+  },
+  {
+    title: "ELD revoked during transit",
+    block: "block",
+    whoOverride: "Carrier Compliance",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "A Load Lock alert has been triggered for this load. The carrier's ELD connection was lost while the load is in transit. Please contact the carrier immediately and request reconnection.",
+    overrideMsg: "I understand this carrier's ELD connection has been lost mid-transit and accept responsibility for proceeding without real-time location visibility on this load.",
+    owner: "compliance",
+    means: "The carrier's ELD connection is lost mid-transit.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile and request the carrier to reconnect their ELD." }
+    ],
+    active: true
+  ,
+    number: 10
+  },
+  {
+    title: "Found phone flagged for fraud",
+    block: "block",
+    whoOverride: "Carrier Compliance",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "A Load Lock alert has been triggered for this load. A phone number associated with this carrier has been reported for fraud. Please review the contact details and associated identity alerts before proceeding.",
+    overrideMsg: "I understand a phone number associated with this carrier has been flagged for fraud and accept responsibility for proceeding after reviewing the associated risk.",
+    owner: "compliance",
+    means: "The driver phone number (XXX) XXX-XXXX has been reported for fraud.",
+    specific: [
+      { text: "Perform a contact search with the fraudulent phone number and review the associated identity alert details.", sub: "Determine risk level and consider taking the carrier off the shipment." }
+    ],
+    active: true
+  ,
+    number: 11
+  },
+  {
+    title: "Carrier assigned ELD-exempt vehicle",
+    block: "block",
+    whoOverride: "Carrier Compliance",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "A Load Lock alert has been triggered for this load. The carrier has assigned an ELD-exempt vehicle. Please request app-based tracking or confirm the delivery VIN if this is a local pickup driver.",
+    overrideMsg: "I understand the vehicle assigned to this load is ELD-exempt and accept responsibility for proceeding with limited or no real-time tracking visibility.",
+    owner: "compliance",
+    means: "A validated ELD Exempt vehicle is assigned to your load.",
+    specific: [
+      { text: "Call the dispatch number and request the carrier to set up app based tracking for the driver.", sub: "If it is a local pickup driver, ask for the VIN number that will be delivering the load after pickup completion." }
+    ],
+    active: true
+  ,
+    number: 12
+  },
+  {
+    title: "Identity alert on active load",
+    block: "block",
+    subcategories: [
+      { name: "Stolen Assets", block: "block", who: "Carrier Compliance", recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager", overrideMsg: "N/A — Compliance will override once reviewed and if approved." },
+      { name: "Pending Investigation", block: "block", who: "Carrier Compliance", recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager", overrideMsg: "N/A — Compliance will override once reviewed and if approved." },
+      { name: "Change of Ownership", block: "block", who: "Carrier Compliance", recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager", overrideMsg: "N/A — Compliance will override once reviewed and if approved." },
+      { name: "Hostage Load", block: "block", who: "Carrier Compliance", recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager", overrideMsg: "N/A — Compliance will override once reviewed and if approved." },
+      { name: "Victim of Identity Theft", block: "override", who: "Office Level", recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager", notifMsg: "This carrier has an active VIDTA alert. Before proceeding, review the VIDTA report in Highway and confirm the contact information you are working with is not tied to any identity theft report. Proceeding without review means you assume full responsibility for any resulting loss or damages.", overrideMsg: "I understand and have reviewed the VIDTA report in Highway and accept responsibility for proceeding, confirming that the individual, email address, and phone number I am working with are not referenced in any related identity theft report." },
+      { name: "Double Brokering", block: "override", who: "Office Level", recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager", notifMsg: "This carrier has an active Double Brokering identity alert. Verify that the carrier you are working with is the authorized carrier on this load and has not re-brokered to another party. Do not proceed until you have confirmed the identity of the carrier accepting this load.", overrideMsg: "I understand this carrier has an active Double Brokering alert. I have verified the identity of the carrier accepting this load and accept responsibility for any cargo loss, theft, or damages resulting from proceeding." }
+    ],
+    whoOverride: "Carrier Compliance",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "A Load Lock alert has been triggered for this load. A new Identity Alert has been published for this carrier within the pickup or delivery window. Compliance is reviewing — do not proceed until cleared.",
+    overrideMsg: "N/A — Carrier Compliance only",
+    owner: "compliance",
+    means: "New Identity Alert for {Stolen Assets} published on {date within load pickup/delivery window}.",
+    specific: [
+      { text: "Review the description of the Identity Alert that was posted on the carrier profile.", sub: "Determine risk level and consider taking the carrier off the load." }
+    ],
+    active: true
+  ,
+    number: 13
+  },
+  {
+    title: "Know your driver failed",
+    number: 14,
+    owner: "tbd",
+    active: true,
+    block: "tbd",
+    whoOverride: "TBD",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "TBD",
+    overrideMsg: "TBD",
+    means: "TBD — details pending.",
+    specific: [
+      { text: "TBD — steps pending." }
+    ]
+  },
+  {
+    title: "Know your driver issue",
+    number: 15,
+    owner: "tbd",
+    active: true,
+    block: "tbd",
+    whoOverride: "TBD",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "TBD",
+    overrideMsg: "TBD",
+    means: "TBD — details pending.",
+    specific: [
+      { text: "TBD — steps pending." }
+    ]
+  },
+  {
+    title: "Email / domain spoofing",
+    means: "The email or domain #{email} appears to be spoofing the carrier's known contact information.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile to verify the email address.", sub: "Either take the carrier off the load or ask them to verify their contact through Highway's identity engine." }
+    ],
+    active: false
+  },
+  {
+    title: "Fraudulent email / domain",
+    means: "The email or domain #{email} has been reported for fraud.",
+    specific: [
+      { text: "Perform a contact search with the fraudulent email or domain and review the associated identity alert details.", sub: "Determine risk level and consider taking the carrier off the shipment." }
+    ],
+    active: false
+  },
+  {
+    title: "Dispatch service email / domain",
+    means: "The email or domain #{email} belongs to a third-party dispatcher service.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile to verify if they work with the dispatch service.", sub: "If they do, ask them to add the dispatcher service as an approved contact to their Highway profile. If they don\'t work with a dispatch service, that\'s a red flag." }
+    ],
+    active: false
+  },
+  {
+    title: "Facility commodity excluded",
+    means: "The carrier has a cargo exclusion for a specific commodity on their current cargo policy which conflicts with the facility commodity at the address for pickup.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile to verify if they are able to haul the specific commodity.", sub: "If they are not covered to haul that specific freight, consider taking the carrier off the load." }
+    ],
+    active: false
+  },
+  {
+    title: "Failing broker requirements",
+    means: "The carrier is failing X rules.",
+    specific: [
+      { text: "Review the rule that the carrier is failing and ensure you are still willing to allow the carrier to haul your freight." }
+    ],
+    active: false
+  },
+  {
+    title: "Potentially wrong vehicle assigned",
+    means: "The vehicle assigned to the load has not moved toward the delivery location. The vehicle has not moved at least 30 miles in more than 3 hours toward the delivery.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile to get an updated location and ETA, as well as confirming the VIN who picked up your load." }
+    ],
+    active: false
+  },
+  {
+    title: "Unverified vehicle assigned",
+    means: "The vehicle is assigned to the load but is missing from the carrier's Certificate of Insurance (COI).",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile, confirm the VIN that is on the load, and request an updated COI with the VIN added." }
+    ],
+    active: false
   }
-  function toggleAlertCard(btn) {
-    const header = btn.closest('.alert-block-header');
-    const body = header.nextElementSibling;
-    const icon = header.querySelector('.alert-toggle-icon');
-    const collapsed = body.classList.toggle('collapsed');
-    icon.textContent = collapsed ? '+' : '−';
-    btn.textContent = collapsed ? 'Expand' : 'Collapse';
+];
+
+const ALL = ALERTS;
+
+// Triage
+const triageAnswers = [null, null, null, null];
+let equipType = null;
+
+function answerEquip(type, btn) {
+  equipType = type;
+  const group = btn.closest('.q-options');
+  group.querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const followup = document.getElementById('q1-followup');
+  if (type === 'flatbed') {
+    followup.style.display = 'block';
+    triageAnswers[0] = null;
+  } else if (type === 'dryvan' || type === 'reefer') {
+    followup.style.display = 'none';
+    triageAnswers[0] = 'yes';
+    evaluateTriage();
+  } else {
+    followup.style.display = 'none';
+    triageAnswers[0] = 'no';
+    evaluateTriage();
   }
-  function toggleAllCards(btn) {
-    const isCollapsing = btn.textContent.trim() === 'Collapse All';
-    document.querySelectorAll('.alert-block-body').forEach(body => {
-      body.classList.toggle('collapsed', isCollapsing);
-    });
-    document.querySelectorAll('.alert-toggle-icon').forEach(icon => {
-      icon.textContent = isCollapsing ? '+' : '−';
-    });
-    document.querySelectorAll('.alert-block-header button').forEach(b => {
-      b.textContent = isCollapsing ? 'Expand' : 'Collapse';
-    });
-    btn.textContent = isCollapsing ? 'Expand All' : 'Collapse All';
+}
+
+function answerFlatbed(val, btn) {
+  const group = btn.closest('.q-options');
+  group.querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  triageAnswers[0] = val;
+  evaluateTriage();
+}
+
+function answer(i, val, btn) {
+  triageAnswers[i] = val;
+  const group = btn.closest('.q-options');
+  group.querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  evaluateTriage();
+}
+
+function evaluateTriage() {
+  const signals = [];
+  if (triageAnswers[0] === 'yes') signals.push(equipType === 'flatbed' ? 'flatbed with high-risk cargo' : (equipType === 'reefer' ? 'reefer equipment' : 'dry van equipment'));
+  if (triageAnswers[1] === 'yes') signals.push('high-value or unknown commodity');
+  if (triageAnswers[2] === 'yes') signals.push('identity or fraud signal');
+  if (triageAnswers[3] === 'yes') signals.push('outside known operating area');
+
+  const answered = triageAnswers.filter(a => a !== null).length;
+  const allAnswered = answered === 4;
+  const anyYes = signals.length > 0;
+
+  const box = document.getElementById('triage-result');
+  const tag = document.getElementById('r-tag');
+  const title = document.getElementById('r-title');
+  const desc = document.getElementById('r-desc');
+  const sig = document.getElementById('r-signals');
+
+  if (!anyYes && !allAnswered) {
+    box.className = 'result-box';
+    return;
   }
+
+  box.className = 'result-box show';
+
+  if (triageAnswers[2] === 'yes') {
+    box.classList.add('critical');
+    tag.textContent = 'Routing: compliance — urgent';
+    title.textContent = 'Escalate to compliance immediately';
+    desc.textContent = 'Identity or fraud signal detected. Compliance must investigate before the agent is notified or any action is taken.';
+  } else if (signals.length >= 2) {
+    box.classList.add('compliance');
+    tag.textContent = 'Routing: compliance';
+    title.textContent = 'Escalate to compliance';
+    desc.textContent = 'Multiple risk signals present. Compliance should investigate and advise the agent before proceeding.';
+  } else if (anyYes) {
+    box.classList.add('compliance');
+    tag.textContent = 'Routing: compliance review';
+    title.textContent = 'Compliance review recommended';
+    desc.textContent = 'At least one elevated risk signal present. Compliance should assess and advise the agent.';
+  } else {
+    box.classList.add('agent');
+    tag.textContent = 'Routing: agent';
+    title.textContent = 'Agent handles with playbook';
+    desc.textContent = 'No elevated risk signals on this load. Agent can self-serve using the alert playbook.';
+  }
+
+  sig.textContent = signals.length ? 'Signals: ' + signals.join(' · ') : (allAnswered ? 'No risk signals identified.' : '');
+}
+
+function resetTriage() {
+  triageAnswers.fill(null);
+  equipType = null;
+  document.querySelectorAll('.opt').forEach(b => b.classList.remove('selected'));
+  document.getElementById('q1-followup').style.display = 'none';
+  const box = document.getElementById('triage-result');
+  box.className = 'result-box';
+}
+
+// Playbook
+let currentFilter = 'all';
+let openIndex = null;
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  openIndex = null;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAlerts();
+}
+
+function getFiltered() {
+  const q = document.getElementById('search').value.toLowerCase();
+  let src = currentFilter === 'all' ? ALERTS
+    : ALERTS.filter(a => a.owner === currentFilter);
+  return q ? src.filter(a =>
+    a.title.toLowerCase().includes(q) ||
+    a.means.toLowerCase().includes(q) ||
+    (a.specific || a.steps || []).some(s => s.text.toLowerCase().includes(q) || (s.sub && s.sub.toLowerCase().includes(q)))
+  ) : src;
+}
+
+function toggle(i) { openIndex = openIndex === i ? null : i; renderAlerts(); }
+
+function renderStep(s, n, isUniversal) {
+  let html = `<div class="step-text">${s.text}</div>`;
+  if (s.sub) html += `<div class="step-sub">${s.sub}</div>`;
+  if (s.script) html += `<div class="script-line">"${s.script}"</div>`;
+  if (s.triage) {
+    html += `<div class="triage-table">
+      <div class="triage-row triage-head">
+        <div class="triage-signal">What you find</div>
+        <div class="triage-outcome">What to do</div>
+      </div>
+      ${s.triage.map(r => `
+        <div class="triage-row">
+          <div class="triage-signal">${r.signal}</div>
+          <div class="triage-outcome">${r.outcome}</div>
+        </div>`).join('')}
+    </div>`;
+  }
+  if (s.ack) {
+    html += `<div class="ack-box">
+      <strong>Agent acknowledgment required — exact language:</strong>
+      <span class="ack-statement">"${s.ack}"</span>
+      <div class="ack-note">${s.ackNote}</div>
+    </div>`;
+  }
+  const numClass = s.override ? 'step-n override' : isUniversal ? 'step-n universal' : 'step-n';
+  return `<li class="step-item"><span class="${numClass}">${n + 1}</span><div>${html}</div></li>`;
+}
+
+function renderAlerts() {
+  const items = getFiltered();
+  const el = document.getElementById('alert-list');
+  if (!items.length) {
+    el.innerHTML = '<div class="empty-state">No alerts match your search.</div>';
+    return;
+  }
+
+  const activeItems = items.filter(a => a.active !== false);
+  const inactiveItems = items.filter(a => a.active === false);
+  const allOrdered = [...activeItems, ...inactiveItems];
+
+  let html = '';
+  allOrdered.forEach((a, i) => {
+    if (i === activeItems.length && inactiveItems.length > 0) {
+      html += `<div style="display:flex;align-items:center;gap:10px;padding:12px 0 4px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Other alerts <span style="flex:1;height:1px;background:var(--border);display:inline-block;margin-left:4px"></span></div>`;
+    }
+    const steps = (a.specific || a.steps || []).map((s, n) => renderStep(s, n + 1, false)).join('');
+    html += `<div class="alert-card${a.updated ? ' updated' : ''}${a.active === false ? ' inactive' : ''}${a.owner ? ' owner-' + a.owner : ''}">
+      <div class="alert-header" onclick="toggle(${i})">
+        ${a.number ? `<span class="alert-number" style="color:${a.owner === 'agent' ? '#E07820' : a.owner === 'compliance' ? '#e07060' : a.owner === 'coowned' ? '#A090E8' : 'var(--text3)'}">${a.number}.</span>` : ''}<span class="alert-name">${a.title}</span>
+        ${a.owner ? `<span class="owner-pill ${a.owner}">${a.owner === 'agent' ? 'Agent' : a.owner === 'compliance' ? 'Compliance' : a.owner === 'coowned' ? 'Co-owned' : 'TBD'}</span>` : ''}
+        <span class="chevron ${openIndex === i ? 'open' : ''}">&#9660;</span>
+      </div>
+      <div class="alert-body ${openIndex === i ? 'open' : ''}">
+        <div class="section-label">What it means</div>
+        <div class="means-box">${a.means}</div>
+        ${a.noiseNote ? `<div class="noise-note"><div class="noise-note-label">⚠ Why this may be noise</div>${a.noiseNote}</div>` : ''}
+        <div class="section-label">Alert-specific steps</div>
+        <ul class="steps-list">${steps}</ul>
+        ${a.subcategories ? `
+        <div class="subcat-section">
+          <div class="subcat-label">Sub-categories</div>
+          <table class="subcat-table">
+            <thead>
+              <tr>
+                <th style="width:14%">Sub-category</th>
+                <th style="width:11%">Block or Override?</th>
+                <th style="width:13%">Who Can Override?</th>
+                <th style="width:20%">Notification Recipients</th>
+                <th style="width:21%">Notification Message</th>
+                <th>Override Message</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${a.subcategories.map(s => `
+                <tr class="${s.block === 'block' ? 'block-row' : 'override-row'}">
+                  <td class="subcat-name">${s.name}</td>
+                  <td>${s.block === 'block' ? '<span class="pill-block">Block</span>' : '<span class="pill-override">Override</span>'}</td>
+                  <td>${s.block === 'block' ? '<span class="owner-pill compliance" style="font-size:10px;padding:2px 8px;white-space:nowrap">Carrier Compliance</span>' : '<span class="owner-pill" style="background:#7B5EA7;color:#fff;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700">Office Level</span>'}</td>
+                  <td style="color:var(--text2);font-size:11px">${s.recipients || 'TBD'}</td>
+                  <td style="color:var(--text2);font-size:11px;font-style:${s.notifMsg ? 'normal' : 'italic'}">${s.notifMsg || 'N/A'}</td>
+                  <td style="color:var(--text2);font-size:11px;font-style:${s.overrideMsg.startsWith('N/A') ? 'italic' : 'normal'}">${s.overrideMsg}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>` : ''}
+        ${a.block && !a.subcategories ? `
+        <div class="decision-grid">
+          <div class="decision-field">
+            <div class="decision-label">Block or Override?</div>
+            <div class="decision-value">${a.block === 'block' ? '<span class="pill-block">Block</span>' : a.block === 'override' ? '<span class="pill-override">Override</span>' : '<span class="owner-pill tbd">TBD</span>'}</div>
+          </div>
+          <div class="decision-field">
+            <div class="decision-label">Who Can Override?</div>
+            ${a.owner === 'compliance' ? '<span class="owner-pill compliance" style="display:inline-block">Carrier Compliance</span>' : a.owner === 'coowned' ? '<span class="owner-pill compliance" style="display:inline-block;margin-right:4px">Compliance</span><span class="owner-pill agent" style="display:inline-block">Agent</span>' : a.block !== 'block' ? '<span class="owner-pill agent" style="display:inline-block">Agent</span>' : '<div class="decision-value tbd">TBD</div>'}
+          </div>
+          <div class="decision-field full">
+            <div class="decision-label">Notification Recipients</div>
+            <div class="decision-value ${a.recipients === 'TBD' ? 'tbd' : ''}">${a.recipients}</div>
+          </div>
+          <div class="decision-field full">
+            <div class="decision-label">Notification Message</div>
+            <div class="decision-value ${a.notifMsg === 'TBD' ? 'tbd' : ''}">${a.notifMsg}</div>
+          </div>
+          <div class="decision-field full">
+            <div class="decision-label">Override Message</div>
+            <div class="decision-value ${a.overrideMsg === 'TBD' ? 'tbd' : ''}">${a.overrideMsg}</div>
+          </div>
+        </div>` : ''}
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+// Nav
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  document.getElementById('alert-nav').style.display = (id === 'playbook' || id === 'agent-playbook') ? 'block' : 'none';
+  if (id === 'playbook') renderAlerts();
+  if (id === 'agent-playbook') { renderAgentAlerts(); renderUniversalBlockAgent(); }
+  if (id === 'distinctions') renderDistinctions();
+}
+
+function buildNav() {
+  const llNav = document.getElementById('ll-nav-items');
+  const llpNav = document.getElementById('llp-nav-items');
+  const activeAlerts = ALERTS.filter(a => a.active !== false);
+  const inactiveAlerts = ALERTS.filter(a => a.active === false);
+  [...activeAlerts, ...inactiveAlerts].forEach((a, idx) => {
+    const nav = (a.type || 'llp') === 'll' ? llNav : llpNav;
+    const dim = a.active === false ? 'opacity:.5;' : '';
+    const ownerColor = a.owner === 'agent' ? '#E07820' : a.owner === 'compliance' ? '#e07060' : a.owner === 'coowned' ? '#A090E8' : 'rgba(255,255,255,0.3)';
+    const numStyle = a.number ? `color:${ownerColor};font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;margin-right:2px;` : '';
+    nav.innerHTML += `<button class="nav-item" style="font-size:12px;${dim}" onclick="jumpToAlert('${a.title}')"><span style="${numStyle}">${a.number ? a.number + '.' : ''}</span><span style="margin-left:${a.number ? '4px' : '0'}">${a.title}</span></button>`;
+  });
+}
+
+function jumpToAlert(title) {
+  showPage('playbook');
+  document.getElementById('search').value = '';
+  currentFilter = 'all';
+  document.querySelectorAll('.filter-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
+  renderAlerts();
+  setTimeout(() => {
+    const activeItems = ALERTS.filter(a => a.active !== false);
+    const inactiveItems = ALERTS.filter(a => a.active === false);
+    const allOrdered = [...activeItems, ...inactiveItems];
+    const idx = allOrdered.findIndex(a => a.title === title);
+    if (idx >= 0) { openIndex = idx; renderAlerts(); }
+  }, 50);
+}
+
+buildNav();
+
+// Distinctions
+const DISTINCTIONS = [
+  {
+    title: "Location-based alerts",
+    intro: "These four alerts all involve where a vehicle is — but each one measures something different and fires at a different point in the load lifecycle.",
+    alerts: [
+      {
+        name: "Physical Location Out of Range from Origin",
+        owner: "compliance",
+        means: "The carrier's closest power unit is # miles from the origin for a load pickup in # hours, which exceeds the minimum travel distance threshold.",
+        realWorld: "This alert is about math — can the closest truck physically make it to the pickup in time? It fires before or during the pickup window based on distance vs. time remaining. Example: closest truck is 980 miles away with -4 hours to pickup. That truck was never going to make it. This is a compliance alert because the risk is about carrier capacity and potential fraud, not just a tracking gap."
+      },
+      {
+        name: "Vehicle Not Nearby",
+        owner: "agent",
+        means: "Highway is unable to detect any vehicles in the 200 mile radius of the pickup location OR a vehicle that is manually assigned is more than 300 miles away.",
+        realWorld: "This alert is purely about proximity — is anything within 200 miles? It doesn't factor in time. A carrier could have a truck 190 miles away and this alert won't fire, even if pickup is in 2 hours. It fires when Highway simply can't find a vehicle close enough, which often means ELD data is missing or the carrier hasn't assigned a truck yet."
+      },
+      {
+        name: "Failed to Arrive at Pickup",
+        owner: "agent",
+        means: "Highway has not detected the assigned vehicle break the geofence of the pickup location 3+ hours after the pickup window.",
+        realWorld: "This alert fires after the pickup window has already passed. The truck was assigned, the window opened, and Highway never saw it cross the geofence. At this point the load may already be at risk. The key question is whether the carrier is late, has the wrong location, or is a no-show entirely."
+      },
+      {
+        name: "Dormant Vehicle Assigned",
+        owner: "agent",
+        means: "The broker's TMS has assigned a vehicle that is dormant on the carrier's ELD, meaning the truck has not moved in the last 14 days.",
+        realWorld: "This one is about the assigned vehicle specifically — it hasn't moved in two weeks. It doesn't mean no truck is nearby; it means the truck on record is likely parked or out of service. Often an ELD connection issue or a stale VIN in the TMS. The fix is usually getting the carrier to reconnect their ELD or confirm the correct VIN."
+      }
+    ]
+  },
+  {
+    title: "Vehicle identity alerts",
+    intro: "These alerts all relate to whether the right vehicle can be confirmed — but they trigger for different reasons.",
+    alerts: [
+      {
+        name: "Vehicle Assignment Required",
+        owner: "agent",
+        means: "Highway is unable to assign a vehicle to the load because the carrier has been assigned after the pickup appointment window has passed.",
+        realWorld: "The timing is the issue here — the carrier was added to the load after the pickup window already closed, so Highway's assignment logic couldn't run. This isn't about the vehicle being wrong or missing; it's about a sequencing problem in how the load was set up."
+      },
+      {
+        name: "Provided Vehicle Not Found",
+        owner: "agent",
+        means: "A vehicle was assigned and Highway is not able to find a matching vehicle with that carrier.",
+        realWorld: "A VIN was entered but Highway can't match it to this carrier's fleet. Could be a typo, a recently added truck not yet in Highway, or a VIN that belongs to a different carrier entirely. The last scenario is the one to watch — it may indicate the wrong carrier is on the load."
+      }
+    ]
+  },
+  {
+    title: "High Risk Area vs. Out of Range",
+    intro: "Both involve carrier geography — but they're measuring very different things.",
+    alerts: [
+      {
+        name: "High Risk Area / No Physical Presence",
+        owner: "coowned",
+        means: "The load has a stop in {zip code} which is a high risk area for strategic cargo theft and this carrier has never been observed in that {state name}.",
+        realWorld: "This alert is about the destination or stop location, not the carrier's current position. Highway flags it because the zip code is a known cargo theft hotspot AND the carrier has no history operating there. The risk is about who you're sending into a high-risk area, not where the truck is right now. Often a false positive when a zip code is corrected after load creation but the alert persists."
+      },
+      {
+        name: "Physical Location Out of Range from Origin",
+        owner: "compliance",
+        means: "The carrier's closest power unit is # miles from the origin for a load pickup in # hours, which exceeds the minimum travel distance threshold.",
+        realWorld: "This alert is about the pickup origin, not the destination. It's asking: can this carrier's closest truck realistically get to where the load is starting? High Risk Area asks who you're sending somewhere dangerous. Out of Range asks whether anyone is actually coming to pick it up."
+      }
+    ]
+  }
+];
+
+function renderDistinctions() {
+  const el = document.getElementById('distinctions-list');
+  if (!el) return;
+
+  el.innerHTML = DISTINCTIONS.map(group => `
+    <div style="margin-bottom:32px">
+      <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px">${group.title}</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6">${group.intro}</div>
+      <div style="display:grid;gap:12px">
+        ${group.alerts.map(a => {
+          const ownerColor = a.owner === 'agent' ? '#E07820' : a.owner === 'compliance' ? '#C0392B' : '#7B5EA7';
+          const ownerLabel = a.owner === 'agent' ? 'Agent' : a.owner === 'compliance' ? 'Compliance' : 'Co-owned';
+          return `<div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid ${ownerColor};border-radius:var(--radius);padding:16px 18px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+              <span style="font-size:14px;font-weight:600;color:var(--text);flex:1">${a.name}</span>
+              <span class="owner-pill ${a.owner}" style="font-size:10px;padding:2px 8px">${ownerLabel}</span>
+            </div>
+            <div style="font-size:12px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">What it means</div>
+            <div style="font-size:13px;color:var(--text2);background:var(--surface2);padding:10px 12px;border-radius:var(--radius-sm);margin-bottom:12px;line-height:1.6">${a.means}</div>
+            <div style="font-size:12px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">In the real world</div>
+            <div style="font-size:13px;color:var(--text);line-height:1.6">${a.realWorld}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+// Agent playbook
+let agentFilter = 'all';
+let agentOpenIndex = null;
+
+function setAgentFilter(f, btn) {
+  agentFilter = f;
+  agentOpenIndex = null;
+  document.querySelectorAll('#page-agent-playbook .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAgentAlerts();
+}
+
+function getAgentFiltered() {
+  const q = document.getElementById('search-agent').value.toLowerCase();
+  let src = ALERTS.filter(a => a.active !== false);
+  if (agentFilter === 'agent') src = src.filter(a => a.owner === 'agent');
+  else if (agentFilter === 'compliance') src = src.filter(a => a.owner === 'compliance' || a.owner === 'coowned');
+  return q ? src.filter(a =>
+    a.title.toLowerCase().includes(q) ||
+    a.means.toLowerCase().includes(q) ||
+    (a.specific || a.steps || []).some(s => s.text.toLowerCase().includes(q) || (s.sub && s.sub.toLowerCase().includes(q)))
+  ) : src;
+}
+
+function toggleAgentAlert(i) { agentOpenIndex = agentOpenIndex === i ? null : i; renderAgentAlerts(); }
+
+function renderAgentAlerts() {
+  const items = getAgentFiltered();
+  const el = document.getElementById('agent-alert-list');
+  if (!el) return;
+  if (!items.length) { el.innerHTML = '<div class="empty-state">No alerts match your search.</div>'; return; }
+
+  let html = '';
+  items.forEach((a, i) => {
+    const steps = (a.specific || a.steps || []).map((s, n) => renderStep(s, n + 1, false)).join('');
+    const ownerColor = a.owner === 'agent' ? '#E07820' : a.owner === 'compliance' ? '#e07060' : a.owner === 'coowned' ? '#A090E8' : 'var(--text3)';
+    html += `<div class="alert-card${a.active === false ? ' inactive' : ''}${a.owner ? ' owner-' + a.owner : ''}">
+      <div class="alert-header" onclick="toggleAgentAlert(${i})">
+        ${a.number ? `<span class="alert-number" style="color:${ownerColor}">${a.number}.</span>` : ''}
+        <span class="alert-name">${a.title}</span>
+        ${a.owner === 'agent' ? '<span class="owner-pill agent">Agent</span>' : a.owner === 'compliance' ? '<span class="owner-pill compliance">Compliance</span>' : a.owner === 'coowned' ? '<span class="owner-pill coowned">Co-owned</span>' : a.owner === 'tbd' ? '<span class="owner-pill tbd">TBD</span>' : ''}
+        <span class="chevron ${agentOpenIndex === i ? 'open' : ''}">&#9660;</span>
+      </div>
+      <div class="alert-body ${agentOpenIndex === i ? 'open' : ''}">
+        <div class="section-label">What it means</div>
+        <div class="means-box">${a.means}</div>
+        ${a.noiseNote ? `<div class="noise-note"><div class="noise-note-label">⚠ Why this may be noise</div>${a.noiseNote}</div>` : ''}
+        <div class="section-label">Alert-specific steps</div>
+        <ul class="steps-list">${steps}</ul>
+        ${a.subcategories ? `
+        <div class="subcat-section">
+          <div class="subcat-label">Sub-categories</div>
+          <table class="subcat-table">
+            <thead>
+              <tr>
+                <th style="width:14%">Sub-category</th>
+                <th style="width:11%">Block or Override?</th>
+                <th style="width:13%">Who Can Override?</th>
+                <th style="width:20%">Notification Recipients</th>
+                <th style="width:21%">Notification Message</th>
+                <th>Override Message</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${a.subcategories.map(s => `
+                <tr class="${s.block === 'block' ? 'block-row' : 'override-row'}">
+                  <td class="subcat-name">${s.name}</td>
+                  <td>${s.block === 'block' ? '<span class="pill-block">Block</span>' : '<span class="pill-override">Override</span>'}</td>
+                  <td>${s.block === 'block' ? '<span class="owner-pill compliance" style="font-size:10px;padding:2px 8px;white-space:nowrap">Carrier Compliance</span>' : '<span class="owner-pill" style="background:#7B5EA7;color:#fff;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700">Office Level</span>'}</td>
+                  <td style="color:var(--text2);font-size:11px">${s.recipients || 'TBD'}</td>
+                  <td style="color:var(--text2);font-size:11px;font-style:${s.notifMsg ? 'normal' : 'italic'}">${s.notifMsg || 'N/A'}</td>
+                  <td style="color:var(--text2);font-size:11px;font-style:${s.overrideMsg.startsWith('N/A') ? 'italic' : 'normal'}">${s.overrideMsg}</td>
+                </tr>`).join('')}
+            </tbody>
+          </table>
+        </div>` : ''}
+        ${a.block && !a.subcategories ? `
+        <div class="decision-grid">
+          <div class="decision-field">
+            <div class="decision-label">Block or Override?</div>
+            <div class="decision-value">${a.block === 'block' ? '<span class="pill-block">Block</span>' : a.block === 'override' ? '<span class="pill-override">Override</span>' : '<span class="owner-pill tbd">TBD</span>'}</div>
+          </div>
+          <div class="decision-field">
+            <div class="decision-label">Who Can Override?</div>
+            ${a.owner === 'compliance' ? '<span class="owner-pill compliance" style="display:inline-block">Carrier Compliance</span>' : a.owner === 'coowned' ? '<span class="owner-pill compliance" style="display:inline-block;margin-right:4px">Compliance</span><span class="owner-pill agent" style="display:inline-block">Agent</span>' : a.block !== 'block' ? '<span class="owner-pill agent" style="display:inline-block">Agent</span>' : '<div class="decision-value tbd">TBD</div>'}
+          </div>
+          <div class="decision-field full">
+            <div class="decision-label">Notification Recipients</div>
+            <div class="decision-value ${a.recipients === 'TBD' ? 'tbd' : ''}">${a.recipients}</div>
+          </div>
+          <div class="decision-field full">
+            <div class="decision-label">Notification Message</div>
+            <div class="decision-value ${a.notifMsg === 'TBD' ? 'tbd' : ''}">${a.notifMsg}</div>
+          </div>
+          <div class="decision-field full">
+            <div class="decision-label">Override Message</div>
+            <div class="decision-value ${a.overrideMsg === 'TBD' ? 'tbd' : ''}">${a.overrideMsg}</div>
+          </div>
+        </div>` : ''}
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
+let universalAgentOpen = false;
+function toggleUniversalAgent() {
+  universalAgentOpen = !universalAgentOpen;
+  document.getElementById('universal-body-agent').style.display = universalAgentOpen ? 'block' : 'none';
+  document.getElementById('universal-chevron-agent').classList.toggle('open', universalAgentOpen);
+}
+
+function renderUniversalBlockAgent() {
+  const body = document.getElementById('universal-body-agent');
+  body.style.display = 'none';
+  if (!body) return;
+  body.innerHTML = UNIVERSAL_STEPS.map((s, n) => {
+    let html = `<div style="color:var(--text);line-height:1.55">${s.text}</div>`;
+    if (s.sub) html += `<div class="step-sub">${s.sub}</div>`;
+    if (s.triage) {
+      html += `<div class="triage-table">
+        <div class="triage-row triage-head">
+          <div class="triage-signal">What you find</div>
+          <div class="triage-outcome">What to do</div>
+        </div>
+        ${s.triage.map(r => `
+          <div class="triage-row">
+            <div class="triage-signal">${r.signal}</div>
+            <div class="triage-outcome">${r.outcome}</div>
+          </div>`).join('')}
+      </div>`;
+    }
+    return `<div class="universal-step">
+      <span class="universal-n">${n + 1}</span>
+      <div style="flex:1">${html}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderUniversalBlockTriage() {
+  const body = document.getElementById('universal-body-triage');
+  body.style.display = 'none';
+  if (!body) return;
+  body.innerHTML = UNIVERSAL_STEPS.map((s, n) => {
+    let html = `<div style="color:var(--text);line-height:1.55">${s.text}</div>`;
+    if (s.sub) html += `<div class="step-sub">${s.sub}</div>`;
+    if (s.triage) {
+      html += `<div class="triage-table">
+        <div class="triage-row triage-head">
+          <div class="triage-signal">What you find</div>
+          <div class="triage-outcome">What to do</div>
+        </div>
+        ${s.triage.map(r => `
+          <div class="triage-row">
+            <div class="triage-signal">${r.signal}</div>
+            <div class="triage-outcome">${r.outcome}</div>
+          </div>`).join('')}
+      </div>`;
+    }
+    return `<div class="universal-step">
+      <span class="universal-n">${n + 1}</span>
+      <div style="flex:1">${html}</div>
+    </div>`;
+  }).join('');
+}
+
+let universalTriageOpen = false;
+function toggleUniversalTriage() {
+  universalTriageOpen = !universalTriageOpen;
+  document.getElementById('universal-body-triage').style.display = universalTriageOpen ? 'block' : 'none';
+  document.getElementById('universal-chevron-triage').classList.toggle('open', universalTriageOpen);
+}
+
+renderUniversalBlockTriage();
+renderUniversalBlockAgent();
+renderAgentAlerts();
+renderAlerts();
 </script>
 </body>
 </html>
