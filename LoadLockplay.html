@@ -314,6 +314,10 @@
     background: #C0392B; color: #fff; border: none;
   }
 
+  .alert-header.pg-shaded {
+    background: rgba(8,145,178,0.08);
+  }
+
   .owner-pill.tbd {
     background: var(--surface2); color: var(--text3);
     border: 1px solid var(--border2); font-weight: 600;
@@ -597,6 +601,10 @@
         <span class="nav-dot"></span>
         Alert distinctions
       </button>
+      <button class="nav-item" onclick="showPage('dashboard-sop')">
+        <span class="nav-dot"></span>
+        Dashboard SOP
+      </button>
     </div>
 
     <div class="nav-section" id="alert-nav" style="display:block">
@@ -712,10 +720,12 @@
         <p>Full detail reference for compliance and development teams.</p>
       </div>
 
-      <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
+      <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
         <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:2px;background:#E07820;display:inline-block"></span>Agent</div>
         <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:2px;background:#A090E8;display:inline-block"></span>Co-owned</div>
         <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:2px;background:#e07060;display:inline-block"></span>Compliance</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:28px;height:12px;border-radius:2px;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.3);display:inline-block"></span>Performance Guarantee</div>
+
       </div>
 
       <div class="filter-bar">
@@ -736,10 +746,12 @@
         <p>Step-by-step response guidance for agents handling Load Lock alerts.</p>
       </div>
 
-      <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;">
+      <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
         <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:2px;background:#E07820;display:inline-block"></span>Agent</div>
         <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:2px;background:#A090E8;display:inline-block"></span>Co-owned</div>
         <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:2px;background:#e07060;display:inline-block"></span>Compliance</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:28px;height:12px;border-radius:2px;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.3);display:inline-block"></span>Performance Guarantee</div>
+
       </div>
 
       <div class="universal-block">
@@ -770,6 +782,16 @@
         <p>These alerts can sound similar. This section explains what each one is actually measuring and how to tell them apart in practice.</p>
       </div>
       <div id="distinctions-list"></div>
+    </div>
+
+    <!-- Dashboard SOP Page -->
+    <div class="page" id="page-dashboard-sop">
+      <div class="page-header">
+        <h1>Load Lock Dashboard SOP</h1>
+        <p>Internal compliance reference for navigating and actioning alerts in the Highway Load Lock dashboard.</p>
+      </div>
+
+      <div id="dashboard-sop-content"></div>
     </div>
 
   </main>
@@ -834,7 +856,9 @@ const ALERTS = [
     owner: "agent",
     means: "Highway is unable to assign a vehicle to the load because the carrier has been assigned after the pickup appointment window has passed.",
     specific: [
-      { text: "Call the dispatch number under the carrier profile and ask again for the VIN picking up your load and their location.", sub: "Have the carrier assign the vehicle in the Highway Carrier Portal." }
+      { text: "Call the carrier's dispatch number listed in their Highway profile." },
+      { text: "Ask which VIN is assigned to pick up this load and confirm its current location." },
+      { text: "Direct the carrier to log into the Highway Carrier Portal and assign that vehicle to the load." }
     ],
     active: true
   ,
@@ -890,6 +914,7 @@ const ALERTS = [
   },
   {
     title: "Physical location out of range from origin",
+    performanceGuarantee: true,
     block: "block",
     whoOverride: "Carrier Compliance",
     recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
@@ -899,6 +924,8 @@ const ALERTS = [
     updated: true,
     means: "The carrier's closest power unit is # miles from the origin for a load pickup in # hours, which exceeds the minimum travel distance threshold.",
     specific: [
+      { text: "Open the carrier's heat map in Highway.", sub: "Check whether the carrier has activity in the area of the origin and destination. No presence in either region is a significant risk signal." },
+      { text: "Cross-reference in GenLogs.", sub: "Open the map in GenLogs and look for equipment activity near the origin and destination. Compare against the Highway heat map to confirm or challenge the alert." },
       { text: "Contact the carrier and ask which VIN is picking up your load.", sub: "Search for the provided VIN in Highway's Equipment Search portal and determine the carrier association." }
     ],
     active: true
@@ -907,6 +934,7 @@ const ALERTS = [
   },
   {
     title: "High risk area / no physical presence",
+    performanceGuarantee: true,
     noiseNote: "Often a false positive from agent data entry: a zip code is entered at load creation, triggers the alert, and is later corrected, but the alert persists on the original entry. Before escalating, verify the current zip code on the load matches the flagged location.",
     block: "override",
     whoOverride: "Compliance or Agent",
@@ -940,6 +968,7 @@ const ALERTS = [
   },
   {
     title: "Overbooked carrier",
+    performanceGuarantee: true,
     block: "block",
     whoOverride: "Carrier Compliance",
     recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
@@ -948,6 +977,7 @@ const ALERTS = [
     owner: "compliance",
     means: "The carrier has # loads (seen with other Load Lock participants) with a scheduled pickup in the next 24 hours, and only has # trucks observed.",
     specific: [
+      { text: "Note that the load count in the alert reflects all Load Lock participants in Highway — not just ATG loads.", sub: "This means the carrier may have pickups scheduled with multiple brokers, not just yours. The count is a network-wide view of their committed capacity." },
       { text: "Check the length of haul of the current shipment and the difference between pickup and load count.", sub: "If the difference is material and the shipment has more than 200 miles, consider removing the carrier from the load. Otherwise, contact the carrier to understand their local/regional operations to determine risk." }
     ],
     active: true
@@ -972,6 +1002,7 @@ const ALERTS = [
   },
   {
     title: "Found phone flagged for fraud",
+    performanceGuarantee: true,
     block: "block",
     whoOverride: "Carrier Compliance",
     recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
@@ -1004,6 +1035,7 @@ const ALERTS = [
   },
   {
     title: "Identity alert on active load",
+    performanceGuarantee: true,
     block: "block",
     subcategories: [
       { name: "Stolen Assets", block: "block", who: "Carrier Compliance", recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager", overrideMsg: "N/A — Compliance will override once reviewed and if approved." },
@@ -1286,7 +1318,7 @@ function renderAlerts() {
     }
     const steps = (a.specific || a.steps || []).map((s, n) => renderStep(s, n + 1, false)).join('');
     html += `<div class="alert-card${a.updated ? ' updated' : ''}${a.active === false ? ' inactive' : ''}${a.owner ? ' owner-' + a.owner : ''}">
-      <div class="alert-header" onclick="toggle(${i})">
+      <div class="alert-header" onclick="toggle(${i})" style="${a.performanceGuarantee ? 'background:rgba(192,57,43,0.07);border-bottom:1px solid rgba(192,57,43,0.15);' : ''}">
         ${a.number ? `<span class="alert-number" style="color:${a.owner === 'agent' ? '#E07820' : a.owner === 'compliance' ? '#e07060' : a.owner === 'coowned' ? '#A090E8' : 'var(--text3)'}">${a.number}.</span>` : ''}<span class="alert-name">${a.title}</span>
         ${a.owner ? `<span class="owner-pill ${a.owner}">${a.owner === 'agent' ? 'Agent' : a.owner === 'compliance' ? 'Compliance' : a.owner === 'coowned' ? 'Co-owned' : 'TBD'}</span>` : ''}
         <span class="chevron ${openIndex === i ? 'open' : ''}">&#9660;</span>
@@ -1363,6 +1395,7 @@ function showPage(id) {
   if (id === 'playbook') renderAlerts();
   if (id === 'agent-playbook') { renderAgentAlerts(); renderUniversalBlockAgent(); }
   if (id === 'distinctions') renderDistinctions();
+  if (id === 'dashboard-sop') renderDashboardSOP();
 }
 
 function buildNav() {
@@ -1395,6 +1428,96 @@ function jumpToAlert(title) {
 }
 
 buildNav();
+
+// Dashboard SOP
+const DASHBOARD_SOP = {
+  walkthrough: [
+    {
+      step: 1,
+      title: "Click on the alert",
+      body: "Open the Load Lock dashboard in Highway. Alerts surface in real time as carriers are monitored against active loads. Click on the alert to open the full detail view.",
+      sub: null
+    },
+    {
+      step: 2,
+      title: "Review the alert description",
+      body: "Read the description carefully before taking any action. The description tells you exactly what Highway detected — distance, timing, load count, contact flags, or identity signals. This is your first diagnostic input.",
+      sub: null
+    },
+    {
+      step: 3,
+      title: "Review the Performance Guarantee status",
+      body: "Check whether the load carries a Performance Guarantee (PG). PG loads carry elevated exposure and require closer scrutiny before any decision is made. A PG alert that is dismissed without review creates direct liability.",
+      sub: null
+    },
+    {
+      step: 4,
+      title: "Triage using HVHR principles",
+      body: "Assess the load against four risk factors before opening any system. All four together determine whether this alert requires immediate action or can be monitored.",
+      bullets: [
+        { label: "Equipment type", detail: "Dry van and reefer are elevated risk by default — nearly all cargo theft events involve these types. Flatbed depends on cargo. Specialized equipment is lower risk." },
+        { label: "Commodity", detail: "Electronics, pharma, alcohol, tobacco, food grade, and metals are high-target commodities. Unknown commodity should be treated as elevated until confirmed." },
+        { label: "Load value", detail: "High-dollar loads increase exposure. Factor this into how aggressively you pursue the alert." },
+        { label: "Lane", detail: "Does the carrier have any observed history operating in the origin and destination region? No lane presence compounds the risk of any other signal present." }
+      ]
+    },
+    {
+      step: 5,
+      title: "Review the carrier profile in Highway",
+      body: "Open the carrier profile and check two things specifically:",
+      bullets: [
+        { label: "Identity alerts", detail: "Are there any active or recent identity alerts on this carrier? Check the type — Stolen Assets, Pending Investigation, Change of Ownership, and Hostage Load are hard blocks. VIDTA and Double Brokering are override-eligible at office level." },
+        { label: "Network heat map", detail: "Does the carrier have observed activity near the origin and destination? A carrier with no heat map presence in the relevant geography is a meaningful risk signal regardless of the alert type." }
+      ]
+    },
+    {
+      step: 6,
+      title: "Review the load in ATG",
+      body: "Open the load in ATG and cross-reference against what Highway is showing. Confirm load details, check for red flags in the setup, and review the carrier's history on prior loads.",
+      bullets: [
+        { label: "Confirm load details", detail: "Commodity, origin, destination, equipment type, and pickup window. Verify these match what the alert is flagging." },
+        { label: "Cross-reference carrier history", detail: "Has this carrier hauled for ATG before? Any prior issues, claims, or flags on previous loads?" },
+        { label: "Check for red flags in the load setup", detail: "Was the carrier added late? Is the commodity missing or vague? Does anything about the load setup look inconsistent with the carrier's profile?" }
+      ]
+    }
+  ]
+};
+
+function renderDashboardSOP() {
+  const el = document.getElementById('dashboard-sop-content');
+  if (!el) return;
+
+  // Walkthrough section
+  let html = `
+    <div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:6px">Alert response walkthrough</div>
+    <div style="font-size:13px;color:var(--text2);margin-bottom:20px;line-height:1.6">Follow these steps in order for every compliance-owned alert that surfaces in the Load Lock dashboard.</div>
+    <div style="display:grid;gap:12px;margin-bottom:40px">
+  `;
+
+  DASHBOARD_SOP.walkthrough.forEach(item => {
+    const bulletsHtml = item.bullets ? `
+      <div style="margin-top:10px;display:grid;gap:6px">
+        ${item.bullets.map(b => `
+          <div style="display:flex;gap:10px;align-items:flex-start;padding:8px 10px;background:var(--surface2);border-radius:var(--radius-sm)">
+            <span style="font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;min-width:110px">${b.label}</span>
+            <span style="font-size:12px;color:var(--text2);line-height:1.5">${b.detail}</span>
+          </div>`).join('')}
+      </div>` : '';
+
+    html += `
+      <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--teal);border-radius:var(--radius);padding:16px 18px">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px">
+          <span style="width:26px;height:26px;border-radius:50%;background:var(--teal-light);color:var(--teal);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:'IBM Plex Mono',monospace">${item.step}</span>
+          <span style="font-size:14px;font-weight:600;color:var(--text)">${item.title}</span>
+        </div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-left:38px">${item.body}</div>
+        ${bulletsHtml ? `<div style="margin-left:38px">${bulletsHtml}</div>` : ''}
+      </div>`;
+  });
+
+  html += `</div>`;
+  el.innerHTML = html;
+}
 
 // Distinctions
 const DISTINCTIONS = [
@@ -1531,7 +1654,7 @@ function renderAgentAlerts() {
     const steps = (a.specific || a.steps || []).map((s, n) => renderStep(s, n + 1, false)).join('');
     const ownerColor = a.owner === 'agent' ? '#E07820' : a.owner === 'compliance' ? '#e07060' : a.owner === 'coowned' ? '#A090E8' : 'var(--text3)';
     html += `<div class="alert-card${a.active === false ? ' inactive' : ''}${a.owner ? ' owner-' + a.owner : ''}">
-      <div class="alert-header" onclick="toggleAgentAlert(${i})">
+      <div class="alert-header" onclick="toggleAgentAlert(${i})" style="${a.performanceGuarantee ? 'background:rgba(192,57,43,0.07);border-bottom:1px solid rgba(192,57,43,0.15);' : ''}">
         ${a.number ? `<span class="alert-number" style="color:${ownerColor}">${a.number}.</span>` : ''}
         <span class="alert-name">${a.title}</span>
         ${a.owner === 'agent' ? '<span class="owner-pill agent">Agent</span>' : a.owner === 'compliance' ? '<span class="owner-pill compliance">Compliance</span>' : a.owner === 'coowned' ? '<span class="owner-pill coowned">Co-owned</span>' : a.owner === 'tbd' ? '<span class="owner-pill tbd">TBD</span>' : ''}
