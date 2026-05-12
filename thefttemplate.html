@@ -574,6 +574,7 @@
                 <option value="Agent">Agent</option>
                 <option value="CargoNet">CargoNet</option>
                 <option value="Highway">Highway</option>
+                <option value="External">External</option>
               </select>
             </div>
             <textarea id="noteInput" placeholder="Type a note and click Add Entry…"></textarea>
@@ -1058,7 +1059,8 @@ function renderNotes(){
     Internal:{bg:'var(--atg-navy)',color:'#ffffff'},
     Agent:{bg:'var(--atg-teal)',color:'#ffffff'},
     CargoNet:{bg:'#7C4000',color:'#ffffff'},
-    Highway:{bg:'#0E5C38',color:'#ffffff'}
+    Highway:{bg:'#0E5C38',color:'#ffffff'},
+    External:{bg:'#6D28D9',color:'#ffffff'}
   };
   list.innerHTML=notes.map(n=>{
     const src=n.source||'Internal';
@@ -1100,6 +1102,7 @@ function startEdit(id){
         <option value="Agent"${src==='Agent'?' selected':''}>Agent</option>
         <option value="CargoNet"${src==='CargoNet'?' selected':''}>CargoNet</option>
         <option value="Highway"${src==='Highway'?' selected':''}>Highway</option>
+        <option value="External"${src==='External'?' selected':''}>External</option>
       </select>
     </div>
     <textarea class="note-edit-area" id="note-edit-ta-${id}">${note.text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</textarea>
@@ -1615,7 +1618,7 @@ function generatePDF(){
 
   if(notes.length>0){
     sH(9,'Comments / Notes');
-    const pdfSrcColors={Internal:NAVY,Agent:TEAL,CargoNet:[124,64,0],Highway:[14,92,56]};
+    const pdfSrcColors={Internal:NAVY,Agent:TEAL,CargoNet:[124,64,0],Highway:[14,92,56],External:[109,40,217]};
     [...notes].reverse().forEach((n,i)=>{
       need(24);
       if(i>0){y+=2;doc.setDrawColor(...TEAL_MID);doc.setLineWidth(0.3);doc.line(M,y,PW-M,y);y+=6;}
@@ -1910,6 +1913,28 @@ function generateExternalPDF(){
       doc.text(e.ts.toUpperCase()+(e.edited?' · EDITED':''),M,y+4);y+=8;
       doc.setFontSize(10.5);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
       const lines=doc.splitTextToSize(e.text,CW);
+      lines.forEach(line=>{need(7);doc.text(line,M,y);y+=5.5});
+    });
+  }
+
+  // External notes (source === 'External')
+  const extNotes=notes.filter(n=>(n.source||'Internal')==='External');
+  if(extNotes.length>0){
+    sH(9,'Comments / Notes');
+    const extPdfSrcColors={External:[109,40,217]};
+    [...extNotes].reverse().forEach((n,i)=>{
+      need(24);
+      if(i>0){y+=2;doc.setDrawColor(...TEAL_MID);doc.setLineWidth(0.3);doc.line(M,y,PW-M,y);y+=6;}
+      const sc=extPdfSrcColors[n.source||'External']||[109,40,217];
+      const badgeW=(n.source||'External').length*2.8+8;
+      doc.setFillColor(...sc);doc.roundedRect(M,y,badgeW,6,1,1,'F');
+      doc.setFontSize(6.5);doc.setFont('helvetica','bold');doc.setTextColor(255,255,255);
+      doc.text((n.source||'External').toUpperCase(),M+badgeW/2,y+4.3,{align:'center'});
+      doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
+      doc.text(n.ts.toUpperCase()+(n.edited?' · EDITED':''),M+badgeW+4,y+4.3);
+      y+=9;
+      doc.setFontSize(10.5);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
+      const lines=doc.splitTextToSize(n.text,CW);
       lines.forEach(line=>{need(7);doc.text(line,M,y);y+=5.5});
     });
   }
