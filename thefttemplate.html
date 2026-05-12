@@ -33,6 +33,9 @@
   .nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;cursor:pointer;transition:background 0.15s;border:none;background:transparent;width:100%;text-align:left}
   .nav-item:hover{background:rgba(255,255,255,0.07)}
   .nav-item.active{background:rgba(255,255,255,0.13)}
+  .nav-item.filled{background:rgba(0,105,166,0.18);border-left:2px solid rgba(0,105,166,0.5);}
+  .nav-item.filled .nav-num{color:#8DD4A8}
+  .nav-item.filled .nav-label{color:rgba(255,255,255,0.85)}
   .nav-num{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;color:var(--atg-teal);min-width:18px}
   .nav-label{font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:rgba(255,255,255,0.65);line-height:1.2}
   .nav-item.active .nav-num{color:#8DD4A8}
@@ -80,6 +83,9 @@
   .flag-type-list{display:flex;flex-direction:column;gap:6px}
   .flag-type-row{display:flex;align-items:center;gap:8px}
   .flag-type-row select{flex:1;font-size:13px}
+  .pp-select{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;border:1px solid var(--border);border-radius:4px;padding:4px 6px;background:var(--surface);color:var(--text-2);cursor:pointer;flex-shrink:0;outline:none}
+  .pp-select.pre{background:#FDF5E8;border-color:#E8C87A;color:#7A5200}
+  .pp-select.post{background:#E6F2F9;border-color:#8AAFC5;color:#004F7C}
   .flag-type-date{width:140px;flex-shrink:0;font-size:12px!important;padding:8px 9px!important}
   .flag-type-remove{all:unset;font-size:16px;color:#bbb;cursor:pointer;line-height:1;padding:0 4px;flex-shrink:0}
   .flag-type-remove:hover{color:#c0392b}
@@ -787,6 +793,56 @@
           </div>
         </div>
 
+        <!-- Copy Template -->
+        <div class="field-group" style="border-left:3px solid #F59E0B;">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+            <div class="field-group-title" style="margin-bottom:0;">Information Request Template</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <button onclick="copyChecklist()" id="copyChecklistBtn" style="all:unset;display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.5px;color:#7C4000;cursor:pointer;padding:6px 12px;border:1px solid rgba(124,64,0,0.3);border-radius:5px;background:rgba(245,158,11,0.08);transition:all 0.15s;">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M3 4h8M3 7h6M3 10h4" stroke="#7C4000" stroke-width="1.2" stroke-linecap="round"/></svg>
+                Copy Checklist
+              </button>
+              <button onclick="copyInfoTemplate()" id="copyTemplateBtn" style="all:unset;display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;letter-spacing:0.5px;color:var(--atg-teal);cursor:pointer;padding:6px 12px;border:1px solid var(--atg-teal-mid);border-radius:5px;background:var(--atg-teal-light);transition:all 0.15s;">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><rect x="4" y="4" width="9" height="9" rx="1" stroke="var(--atg-teal)" stroke-width="1.2"/><path d="M2 10V2h8" stroke="var(--atg-teal)" stroke-width="1.2" stroke-linecap="round"/></svg>
+                Copy Full Template
+              </button>
+            </div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 16px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-2);line-height:1.8;white-space:pre-wrap;user-select:all;" id="infoTemplateText">A. What We Need From the Agent / Internal Team
+
+1. Signed rate confirmation. N/A if sent via SRC.
+2. All emails between ATG and the motor carrier (PDF).
+3. List of every email address the rate confirmation was sent to.
+4. Carrier verification details:
+   * Was the carrier called?
+   * What phone number was used?
+5. Confirmation of text messages:
+   * Any texts sent to non-verified contacts?
+6. Signed BOL from the shipping location.
+7. Original commercial invoice.
+8. Police report status (Must be filed by the shipper, cargo owner, or trailer owner.)
+
+B. What We Need You to Request From the Shipper
+Photos &amp; Visual Evidence
+
+1. Driver's license of the pickup driver.
+2. Photo of the truck showing company name and markings.
+3. Photos of tractor and trailer at pickup.
+4. License plate number(s).
+5. VIN number(s).
+6. Surveillance footage (yard, dock, gate).
+NOTE: Identify whether photos were provided by the carrier or the shipper.
+
+C. Documentation &amp; Verification
+
+1. Driver check-in sheet.
+2. Name, MC#, and DOT# of the carrier that picked up.
+3. Description of the loading process.
+4. Confirmation of:
+   * Whether trucks are verified before loading
+   * How verification is performed</div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -1095,7 +1151,7 @@ function makeFlagSelect(listId, optsKey){
   return sel;
 }
 
-function addFlagType(listId, optsKey, dateVal){
+function addFlagType(listId, optsKey, dateVal, ppVal){
   const list=document.getElementById(listId);
   if(!list)return;
   const row=document.createElement('div');
@@ -1104,9 +1160,20 @@ function addFlagType(listId, optsKey, dateVal){
   const dateIn=document.createElement('input');
   dateIn.type='date';
   dateIn.className='flag-type-date';
-  dateIn.title='Date for this alert';
+  dateIn.title='Report date for this alert';
   if(dateVal)dateIn.value=dateVal;
   dateIn.onchange=autoSave;
+  // Pre/Post Pickup selector
+  const pp=document.createElement('select');
+  pp.className='pp-select';
+  pp.title='Pre or Post pickup?';
+  pp.innerHTML='<option value="">—</option><option value="Pre">Pre</option><option value="Post">Post</option>';
+  if(ppVal)pp.value=ppVal;
+  pp.onchange=()=>{
+    pp.className='pp-select'+(pp.value==='Pre'?' pre':pp.value==='Post'?' post':'');
+    autoSave();
+  };
+  if(ppVal)pp.className='pp-select'+(ppVal==='Pre'?' pre':ppVal==='Post'?' post':'');
   const rm=document.createElement('button');
   rm.className='flag-type-remove';
   rm.textContent='×';
@@ -1114,6 +1181,7 @@ function addFlagType(listId, optsKey, dateVal){
   rm.onclick=()=>{row.remove();autoSave();};
   row.appendChild(sel);
   row.appendChild(dateIn);
+  row.appendChild(pp);
   row.appendChild(rm);
   list.appendChild(row);
 }
@@ -1122,9 +1190,10 @@ function getFlagTypes(listId){
   const list=document.getElementById(listId);
   if(!list)return[];
   return Array.from(list.querySelectorAll('.flag-type-row')).map(row=>{
-    const sel=row.querySelector('select');
+    const sels=row.querySelectorAll('select');
     const dt=row.querySelector('input[type=date]');
-    return{type:sel?sel.value:'',date:dt?dt.value:''};
+    const typeSel=sels[0];const ppSel=sels[1];
+    return{type:typeSel?typeSel.value:'',date:dt?dt.value:'',pp:ppSel?ppSel.value:''};
   }).filter(r=>r.type);
 }
 
@@ -1133,11 +1202,11 @@ function setFlagTypes(listId, optsKey, values){
   if(!list)return;
   list.innerHTML='';
   (values||[]).forEach(v=>{
-    const entry=typeof v==='object'?v:{type:v,date:''};
-    addFlagType(listId,optsKey,entry.date);
+    const entry=typeof v==='object'?v:{type:v,date:'',pp:''};
+    addFlagType(listId,optsKey,entry.date,entry.pp);
     const rows=list.querySelectorAll('.flag-type-row');
     const lastRow=rows[rows.length-1];
-    if(lastRow){const sel=lastRow.querySelector('select');if(sel)sel.value=entry.type;}
+    if(lastRow){const sels=lastRow.querySelectorAll('select');if(sels[0])sels[0].value=entry.type;}
   });
 }
 
@@ -1468,13 +1537,13 @@ function generatePDF(){
   const idAlertBase=getRadio('idAlert')||'';
   if(idAlertBase){
     dRow([['Identity Alerts',idAlertBase,3]]);
-    if(idAlertBase==='Yes')idTypes.forEach((r,i)=>{dRow([[i===0?'Alert Type':'',r.type+(r.date?' — '+r.date:''),3]]);});
+    if(idAlertBase==='Yes')idTypes.forEach((r,i)=>{dRow([[i===0?'Alert Type':'',r.type+(r.date?' — '+r.date:'')+(r.pp?' ['+r.pp+'-pickup]':''),3]]);});
   }
   const fgTypes=getFlagTypes('fgList');
   const fgBase=getRadio('freightGuard')||'';
   if(fgBase){
     dRow([['FreightGuard Reports',fgBase,3]]);
-    if(fgBase==='Yes')fgTypes.forEach((r,i)=>{dRow([[i===0?'Report Category':'',r.type+(r.date?' — '+r.date:''),3]]);});
+    if(fgBase==='Yes')fgTypes.forEach((r,i)=>{dRow([[i===0?'Report Category':'',r.type+(r.date?' — '+r.date:'')+(r.pp?' ['+r.pp+'-pickup]':''),3]]);});
   }
   [['WatchDog Reports','watchdog','watchdogDate'],['VIDTA Reports','vidta','vidtaDate']].forEach(([lbl,rn,di])=>{
     const rv=getRadio(rn),dv2=val(di);
@@ -1485,7 +1554,7 @@ function generatePDF(){
     const llTypes=getFlagTypes('loadLockList');
     const llDate=val('loadLockDate');
     dRow([['Load Lock Alerts',llBase+(llDate?' — Date: '+llDate:''),3]]);
-    if(llBase==='Yes')llTypes.forEach((r,i)=>{dRow([[i===0?'Alert Type':'',r.type+(r.date?' — '+r.date:''),3]]);});
+    if(llBase==='Yes')llTypes.forEach((r,i)=>{dRow([[i===0?'Alert Type':'',r.type+(r.date?' — '+r.date:'')+(r.pp?' ['+r.pp+'-pickup]':''),3]]);});
   }
   div();
 
@@ -1684,10 +1753,125 @@ function restoreFormData(data){
   updateStatusBadge();
   toggleCargoNetNum();
   updateSidebarBol();
+  updateNavFill();
 }
 
+function copyChecklist(){
+  const CHECKLIST_TEXT =
+`Information Request — Cargo Theft Investigation
+
+A. FROM THE AGENT / INTERNAL TEAM
+1. Signed rate confirmation (N/A if sent via SRC)
+2. All emails between ATG and the motor carrier (PDF)
+3. List of every email address the rate confirmation was sent to
+4. Carrier verification details:
+   - Was the carrier called?
+   - What phone number was used?
+5. Text message confirmation:
+   - Any texts sent to non-verified contacts?
+6. Signed BOL from the shipping location
+7. Original commercial invoice
+8. Police report status
+   (Must be filed by the shipper, cargo owner, or trailer owner)
+
+B. REQUEST FROM THE SHIPPER — Photos & Visual Evidence
+1. Driver's license of the pickup driver
+2. Photo of the truck showing company name and markings
+3. Photos of tractor and trailer at pickup
+4. License plate number(s)
+5. VIN number(s)
+6. Surveillance footage (yard, dock, gate)
+NOTE: Identify whether photos were provided by the carrier or the shipper.
+
+C. DOCUMENTATION & VERIFICATION
+1. Driver check-in sheet
+2. Name, MC#, and DOT# of the carrier that picked up
+3. Description of the loading process
+4. Confirmation of:
+   - Whether trucks are verified before loading
+   - How verification is performed`;
+  navigator.clipboard.writeText(CHECKLIST_TEXT).then(()=>{
+    const btn=document.getElementById('copyChecklistBtn');
+    if(btn){
+      const orig=btn.innerHTML;
+      btn.innerHTML='<svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 7l4 4 6-6" stroke="#7C4000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Copied!';
+      setTimeout(()=>{btn.innerHTML=orig;},2000);
+    }
+    showToast('Checklist copied!');
+  }).catch(()=>showToast('Copy failed — try selecting the text manually.'));
+}
+
+function copyInfoTemplate(){
+  const el=document.getElementById('infoTemplateText');
+  if(!el)return;
+  const text=el.innerText||el.textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn=document.getElementById('copyTemplateBtn');
+    if(btn){
+      const orig=btn.innerHTML;
+      btn.innerHTML='<svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 7l4 4 6-6" stroke="var(--atg-teal)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Copied!';
+      setTimeout(()=>{btn.innerHTML=orig;},2000);
+    }
+    showToast('Template copied to clipboard!');
+  }).catch(()=>{
+    // Fallback for browsers without clipboard API
+    const range=document.createRange();
+    range.selectNodeContents(el);
+    const sel=window.getSelection();
+    sel.removeAllRanges();sel.addRange(range);
+    document.execCommand('copy');
+    sel.removeAllRanges();
+    showToast('Template copied!');
+  });
+}
+
+
+// ── SECTION FILL DETECTION ────────────────────────────────────────────────
+const SECTION_FIELDS={
+  0:['bol','pickupDate','deliveryDate','origin','destination','declaredValue','commodity','equipType','palletsWeight','shipper','customerName','agentName','agentOffice','driverName','driverPhone'],
+  1:['carrierName','mcNumber','dotNumber'],
+  2:[], // flags — checked via radios
+  3:[], // reporting — checked via radios
+  4:['policeRptNo','deptName','officerName','officerContact'],
+  5:['insBroker','underwriter','factoring'],
+  6:['incidentLoc'],
+  7:[], // front emails — checked via frontEmails array
+  8:[], // photos — checked via photos array
+  9:[], // notes — checked via notes array
+};
+const SECTION_RADIOS={
+  2:['idAlert','freightGuard','watchdog','vidta','loadLock'],
+  3:['cargonet','highway','wdFiled','carrier411'],
+  4:['lawEnf'],
+  5:['factNotified'],
+  6:['theftClass','loadboard','tracking'],
+};
+
+function isSectionFilled(i){
+  const fields=SECTION_FIELDS[i]||[];
+  const radios=SECTION_RADIOS[i]||[];
+  if(fields.some(id=>{const el=document.getElementById(id);return el&&el.value.trim();}))return true;
+  if(radios.some(name=>document.querySelector(`input[name="${name}"]:checked`)))return true;
+  if(i===7&&frontEmails.length>0)return true;
+  if(i===8&&photos.filter(p=>p.dataUrl).length>0)return true;
+  if(i===9&&notes.length>0)return true;
+  return false;
+}
+
+function updateNavFill(){
+  for(let i=0;i<10;i++){
+    const btn=document.getElementById('n'+i);
+    if(!btn)continue;
+    if(isSectionFilled(i)){
+      btn.classList.add('filled');
+    } else {
+      btn.classList.remove('filled');
+    }
+  }
+}
 function autoSave(){
   try{localStorage.setItem('atg_cti_autosave',JSON.stringify(collectFormData()));}catch(e){}
+  updateNavFill();
 }
 
 function saveSession(){
