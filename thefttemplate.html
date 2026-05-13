@@ -361,17 +361,38 @@
             <div class="field"><label>Last Load Date</label><input id="lastLoad" type="date"></div>
             <div class="field"><label>Carrier Onboarded Date</label><input id="onboardDate" type="date"></div>
           </div>
+          <div class="row c2">
+            <div class="field"><label>Number of Trucks</label><input id="numTrucks" type="text" placeholder="e.g. 5"></div>
+            <div class="field"><label>Inspections in State of Pickup / Delivery?</label>
+              <div class="radio-row" style="width:fit-content">
+                <label class="radio-option"><input type="radio" name="stateInspections" value="Yes"><span>Yes</span></label>
+                <div class="radio-sep"></div>
+                <label class="radio-option"><input type="radio" name="stateInspections" value="No"><span>No</span></label>
+                <div class="radio-sep"></div>
+                <label class="radio-option"><input type="radio" name="stateInspections" value="Not Reviewed"><span>Not Reviewed</span></label>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="field-group">
           <div class="field-group-title">Dispatcher &amp; Operations</div>
-          <div class="row c1">
-            <div class="field"><label>Active ELD</label>
+          <div class="row c2">
+            <div class="field"><label>Was ELD Active at Time of Pickup?</label>
               <div class="radio-row" style="width:fit-content">
                 <label class="radio-option"><input type="radio" name="eld" value="Yes"><span>Yes</span></label>
                 <div class="radio-sep"></div>
                 <label class="radio-option"><input type="radio" name="eld" value="No"><span>No</span></label>
                 <div class="radio-sep"></div>
                 <label class="radio-option"><input type="radio" name="eld" value="Unknown"><span>Unknown</span></label>
+              </div>
+            </div>
+            <div class="field"><label>Did ELD / Tracking Remain Connected?</label>
+              <div class="radio-row" style="width:fit-content">
+                <label class="radio-option"><input type="radio" name="eldConnected" value="Yes"><span>Yes</span></label>
+                <div class="radio-sep"></div>
+                <label class="radio-option"><input type="radio" name="eldConnected" value="No"><span>No</span></label>
+                <div class="radio-sep"></div>
+                <label class="radio-option"><input type="radio" name="eldConnected" value="Unknown"><span>Unknown</span></label>
               </div>
             </div>
           </div>
@@ -1547,7 +1568,7 @@ function generatePDF(){
   dRow([['Carrier Name',val('carrierName'),3]]);
   dRow([['MC Number',val('mcNumber')],['DOT Number',val('dotNumber')]]);
   dRow([['Loads in Past 6 Months',val('loadsCount')],['Last Load',val('lastLoad')],['Carrier Onboarded Date',val('onboardDate')]]);
-  dRow([['Active ELD',getRadio('eld')]]);  
+  dRow([['Was ELD Active at Time of Pickup?',getRadio('eld')],['Did ELD / Tracking Remain Connected?',getRadio('eldConnected')]]);  
   div();
 
   sH(3,'Flags & Concerns');
@@ -1858,7 +1879,8 @@ function generateExternalPDF(){
   dRow([['Carrier Name',val('carrierName'),3]]);
   dRow([['MC Number',val('mcNumber')],['DOT Number',val('dotNumber')]]);
   dRow([['Loads in Past 6 Months',val('loadsCount')],['Last Load',val('lastLoad')],['Carrier Onboarded Date',val('onboardDate')]]);
-  dRow([['Active ELD',getRadio('eld')]]);div();
+  dRow([['Number of Trucks',val('numTrucks')],['Inspections in State of Pickup/Delivery?',getRadio('stateInspections')]]);
+  dRow([['Was ELD Active at Time of Pickup?',getRadio('eld')],['Did ELD / Tracking Remain Connected?',getRadio('eldConnected')]]);div();
 
   sH(3,'Flags & Concerns');
   const idTypes=getFlagTypes('idAlertList');
@@ -1960,7 +1982,7 @@ const ALL_FIELDS = [
   'bol','pickupDate','deliveryDate','origin','destination','declaredValue',
   'commodity','equipType','palletsWeight','shipper','customerName','agentName',
   'agentOffice','driverName','driverPhone','driverName2','driverPhone2','truckNumber','trailerNumber',
-  'carrierName','mcNumber','dotNumber','loadsCount','lastLoad','onboardDate',
+  'carrierName','mcNumber','dotNumber','loadsCount','lastLoad','onboardDate','numTrucks',
   'dispPhone','dispEmail',
   'watchdogDate','vidtaDate','loadLockDate',
   'policeRptNo','deptName','officerName','officerContact',
@@ -1970,7 +1992,7 @@ const ALL_FIELDS = [
   'changeDate'
 ];
 const ALL_RADIOS = [
-  'addIns','eld','secureRatecon','hwVerifiedUser','idAlert','freightGuard','watchdog','vidta','loadLock',
+  'addIns','eld','eldConnected','secureRatecon','hwVerifiedUser','stateInspections','idAlert','freightGuard','watchdog','vidta','loadLock',
   'cargonet','highway','wdFiled','carrier411','lawEnf','factNotified',
   'theftClass','loadboard','tracking'
 ];
