@@ -395,6 +395,9 @@
               </div>
             </div>
           </div>
+          <div class="row c2">
+            <div class="field"><label>Tracking Enabled?</label><div class="radio-row"><label class="radio-option"><input type="radio" name="tracking" value="Yes"><span>Yes</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="tracking" value="No"><span>No</span></label></div></div>
+          </div>
         </div>
 
         <div class="field-group">
@@ -403,9 +406,8 @@
             <div class="field"><label>Theft Classification</label><div class="radio-row"><label class="radio-option"><input type="radio" name="theftClass" value="Strategic Theft"><span>Strategic Theft</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="theftClass" value="Standard Theft"><span>Standard Theft</span></label></div></div>
             <div class="field"><label>Estimated Incident Location</label><input id="incidentLoc" type="text" placeholder="City, State or highway"></div>
           </div>
-          <div class="row c2">
-            <div class="field"><label>Load Posted to Loadboard?</label><div class="radio-row"><label class="radio-option"><input type="radio" name="loadboard" value="Yes"><span>Yes</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="loadboard" value="No"><span>No</span></label></div></div>
-            <div class="field"><label>Tracking Enabled?</label><div class="radio-row"><label class="radio-option"><input type="radio" name="tracking" value="Yes"><span>Yes</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="tracking" value="No"><span>No</span></label></div></div>
+          <div class="row c1">
+            <div class="field"><label>Load Posted to Loadboard?</label><div class="radio-row" style="width:fit-content"><label class="radio-option"><input type="radio" name="loadboard" value="Yes"><span>Yes</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="loadboard" value="No"><span>No</span></label></div></div>
           </div>
         </div>
       </div>
@@ -495,9 +497,8 @@
             <div class="field"><label>Theft Classification</label><div class="radio-row"><label class="radio-option"><input type="radio" name="theftClass" value="Strategic Theft"><span>Strategic Theft</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="theftClass" value="Standard Theft"><span>Standard Theft</span></label></div></div>
             <div class="field"><label>Estimated Incident Location</label><input id="incidentLoc" type="text" placeholder="City, State or highway"></div>
           </div>
-          <div class="row c2">
-            <div class="field"><label>Load Posted to Loadboard?</label><div class="radio-row"><label class="radio-option"><input type="radio" name="loadboard" value="Yes"><span>Yes</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="loadboard" value="No"><span>No</span></label></div></div>
-            <div class="field"><label>Tracking Enabled?</label><div class="radio-row"><label class="radio-option"><input type="radio" name="tracking" value="Yes"><span>Yes</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="tracking" value="No"><span>No</span></label></div></div>
+          <div class="row c1">
+            <div class="field"><label>Load Posted to Loadboard?</label><div class="radio-row" style="width:fit-content"><label class="radio-option"><input type="radio" name="loadboard" value="Yes"><span>Yes</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="loadboard" value="No"><span>No</span></label></div></div>
           </div>
         </div>
       </div>
@@ -1573,8 +1574,9 @@ function generatePDF(){
   dRow([['MC Number',val('mcNumber')],['DOT Number',val('dotNumber')]]);
   dRow([['Loads in Past 6 Months',val('loadsCount')],['Last Load',val('lastLoad')],['Carrier Onboarded Date',val('onboardDate')]]);
   dRow([['Was ELD Active at Time of Pickup?',getRadio('eld')],['Did ELD / Tracking Remain Connected?',getRadio('eldConnected')]]);
+  dRow([['Tracking Enabled?',getRadio('tracking')]]);
   dRow([['Theft Classification',getRadio('theftClass')],['Estimated Incident Location',val('incidentLoc'),2]]);
-  dRow([['Load Posted to Loadboard?',getRadio('loadboard')],['Tracking Enabled?',getRadio('tracking')]]);
+  dRow([['Load Posted to Loadboard?',getRadio('loadboard')]]);
   div();
 
   sH(3,'Flags & Concerns');
@@ -1884,8 +1886,9 @@ function generateExternalPDF(){
   dRow([['Loads in Past 6 Months',val('loadsCount')],['Last Load',val('lastLoad')],['Carrier Onboarded Date',val('onboardDate')]]);
   dRow([['Number of Trucks',val('numTrucks')],['Inspections in State of Pickup/Delivery?',getRadio('stateInspections')]]);
   dRow([['Was ELD Active at Time of Pickup?',getRadio('eld')],['Did ELD / Tracking Remain Connected?',getRadio('eldConnected')]]);
+  dRow([['Tracking Enabled?',getRadio('tracking')]]);
   dRow([['Theft Classification',getRadio('theftClass')],['Estimated Incident Location',val('incidentLoc'),2]]);
-  dRow([['Load Posted to Loadboard?',getRadio('loadboard')],['Tracking Enabled?',getRadio('tracking')]]);div();
+  dRow([['Load Posted to Loadboard?',getRadio('loadboard')]]);div();
 
   sH(3,'Flags & Concerns');
   const idTypes=getFlagTypes('idAlertList');
