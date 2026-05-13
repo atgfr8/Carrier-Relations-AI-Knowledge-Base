@@ -54,7 +54,7 @@ body { font-family: var(--body); background: var(--bg); color: var(--ink); font-
 .header-meta { font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 0.05em; }
 
 /* ── LAYOUT ── */
-.layout { display: grid; grid-template-columns: 1fr 300px; max-width: 1100px; margin: 0 auto; min-height: calc(100vh - 55px); }
+.layout { display: grid; grid-template-columns: 1fr 300px; max-width: 1400px; margin: 0 auto; min-height: calc(100vh - 55px); }
 
 /* ── LEFT PANEL ── */
 .left { padding: 20px 24px; overflow-y: auto; }
@@ -115,7 +115,7 @@ body { font-family: var(--body); background: var(--bg); color: var(--ink); font-
 .hidden { display: none !important; }
 
 /* ── RIGHT PANEL ── */
-.right { border-left: 1px solid var(--border); display: flex; flex-direction: column; position: sticky; top: 55px; height: calc(100vh - 55px); background: var(--surface); }
+.right { border-left: 1px solid var(--border); display: flex; flex-direction: column; position: sticky; top: 55px; height: fit-content; max-height: calc(100vh - 55px); background: var(--surface); }
 
 /* Reference section — top of right */
 .ref-section { border-bottom: 1px solid var(--border); flex-shrink: 0; }
