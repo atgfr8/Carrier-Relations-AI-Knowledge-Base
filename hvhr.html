@@ -736,7 +736,7 @@ function togglePill(el) {
 
 function isHVHR() {
   if (document.querySelectorAll('.pill.active').length > 0) return true;
-  if (getRawValue() >= 1000000) return 'overlimit';
+  if (getRawValue() > 1000000) return 'overlimit';
   if (getRawValue() > 100000) return true;
   if (state.origin === 'yes') return true;
   if (state.flatbedcargo === 'yes') return true;
@@ -762,10 +762,10 @@ function getRawValue() {
 
 function checkValueLimit() {
   const val = getRawValue();
-  if (val >= 1000000) {
+  if (val > 1000000) {
     showVerdict('fail', 'REQUIRES UNDERWRITER APPROVAL',
-      'Cargo value exceeds $1,000,000. This load is subject to additional criteria and underwriter approval. Do not book — send request to Claims.',
-      [{ type: 'bad', text: 'Load value over $1,000,000 — hard stop pending underwriter review' }]);
+      'Cargo value exceeds $1,000,000. Do not book or override — this load requires underwriter approval. Notify Tristan to prescreen before Claims submits for approval.',
+      [{ type: 'bad', text: 'Load value over $1,000,000 — notify Tristan for prescreening before submitting to underwriter' }]);
   } else {
     document.getElementById('verdict').style.display = 'none';
   }
@@ -786,10 +786,10 @@ function runCheck() {
   }
 
   // $1M hard stop — fires before everything else, no exceptions
-  if (getRawValue() >= 1000000) {
+  if (getRawValue() > 1000000) {
     showVerdict('fail', 'REQUIRES UNDERWRITER APPROVAL',
-      'Cargo value exceeds $1,000,000. This load is subject to additional criteria and underwriter approval. Do not book — send request to Claims.',
-      [{ type: 'bad', text: 'Load value over $1,000,000 — hard stop pending underwriter review' }]);
+      'Cargo value exceeds $1,000,000. Do not book or override — this load requires underwriter approval. Notify Tristan to prescreen before Claims submits for approval.',
+      [{ type: 'bad', text: 'Load value over $1,000,000 — notify Tristan for prescreening before submitting to underwriter' }]);
     return;
   }
 
@@ -823,8 +823,8 @@ function runCheck() {
 
   if (hvhr === 'overlimit') {
     showVerdict('fail', 'REQUIRES UNDERWRITER APPROVAL',
-      'Cargo value exceeds $1,000,000. This load is subject to additional criteria and underwriter approval. Do not book — send request to Claims.',
-      [{ type: 'bad', text: 'Load value over $1,000,000 — hard stop pending underwriter review' }]);
+      'Cargo value exceeds $1,000,000. Do not book or override — this load requires underwriter approval. Notify Tristan to prescreen before Claims submits for approval.',
+      [{ type: 'bad', text: 'Load value over $1,000,000 — notify Tristan for prescreening before submitting to underwriter' }]);
     return;
   }
 
@@ -1001,11 +1001,7 @@ function closeModal() { document.getElementById('modal').classList.remove('open'
 function closeModalOutside(e) { if (e.target.id === 'modal') closeModal(); }
 </script>
 <script>
-(function(){
-  const d = new Date(document.lastModified);
-  const opts = { month: 'short', day: 'numeric', year: 'numeric' };
-  document.getElementById('last-modified').textContent = d.toLocaleDateString('en-US', opts);
-})();
+document.getElementById('last-modified').textContent = 'May 5, 2026';
 </script>
 </body>
 </html>
