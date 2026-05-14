@@ -3,723 +3,972 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ELD Exemption Guide</title>
+<title>ELD Exemption Guide — V4</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --atg-teal: #0069A6;
-    --atg-teal-dark: #004F7C;
-    --atg-teal-light: #E6F2F9;
-    --atg-teal-mid: #CCE4F1;
-    --atg-navy: #1A2E44;
-    --atg-navy-light: #EBF0F5;
+:root {
+  --atg-teal: #0069A6;
+  --atg-teal-dark: #004F7C;
+  --atg-teal-light: #E6F2F9;
+  --atg-teal-mid: #CCE4F1;
+  --atg-navy: #1A2E44;
+  --bg: #D6E3ED;
+  --surface: #FFFFFF;
+  --surface-2: #EBF0F5;
+  --border: #C8D8E4;
+  --border-dark: #8AAFC5;
+  --ink: #1A2E44;
+  --ink-mid: #4A6478;
+  --ink-light: #8AAFC5;
+  --hard-bg: #FDF0EF;
+  --hard-border: #E8A09C;
+  --hard-text: #8B2220;
+  --hard-dot: #D64340;
+  --eld-bg: #EDFAF4;
+  --eld-border: #8ED4B0;
+  --eld-text: #0E5C38;
+  --eld-dot: #1A9458;
+  --amber: #C98F00;
+  --amber-light: #FDF5E8;
+  --amber-border: #E8C87A;
+  --mono: 'IBM Plex Mono', monospace;
+  --body: 'IBM Plex Sans', sans-serif;
+  --radius: 6px;
+}
 
-    --bg: #F2F6F9;
-    --surface: #FFFFFF;
-    --surface-2: #EBF0F5;
-    --border: #C8D8E4;
-    --border-strong: #8AAFC5;
-    --text: #1A2E44;
-    --text-2: #4A6478;
-    --text-3: #8AAFC5;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--body); background: var(--bg); color: var(--ink); font-size: 14px; line-height: 1.5; min-height: 100vh; }
 
-    --hard-bg: #FDF0EF;
-    --hard-border: #E8A09C;
-    --hard-text: #8B2220;
-    --hard-dot: #D64340;
+/* ── HEADER ── */
+.header {
+  background: var(--atg-navy); border-bottom: 3px solid var(--atg-teal);
+  padding: 12px 24px; display: flex; align-items: center;
+  justify-content: space-between; position: sticky; top: 0; z-index: 100;
+}
+.header-brand { display: flex; align-items: center; gap: 14px; }
+.atg-logo strong { font-size: 16px; font-weight: 700; letter-spacing: 2px; color: #fff; text-transform: uppercase; }
+.atg-logo span { font-size: 8px; font-weight: 400; letter-spacing: 4px; color: rgba(255,255,255,0.5); text-transform: uppercase; display: block; }
+.header-div { width: 1px; height: 24px; background: rgba(255,255,255,0.15); }
+.header-title { font-size: 15px; font-weight: 600; color: #fff; }
+.header-meta { font-family: var(--mono); font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 0.05em; }
 
-    --escalate-bg: #FDF5E8;
-    --escalate-border: #E8C87A;
-    --escalate-text: #7A5200;
-    --escalate-dot: #C98F00;
+/* ── LAYOUT ── */
+.layout { display: grid; grid-template-columns: 1fr 300px; max-width: 1400px; margin: 0 auto; min-height: calc(100vh - 55px); }
 
-    --eld-bg: #EDFAF4;
-    --eld-border: #8ED4B0;
-    --eld-text: #0E5C38;
-    --eld-dot: #1A9458;
+/* ── LEFT PANEL ── */
+.left { padding: 20px 24px; overflow-y: auto; }
 
-    --conditional-bg: #FDF5E8;
-    --conditional-border: #E8C87A;
-    --conditional-text: #7A5200;
-    --conditional-dot: #C98F00;
+/* Accordion cards */
+.acc { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); margin-bottom: 8px; overflow: hidden; }
+.acc-header { display: flex; align-items: center; justify-content: space-between; padding: 11px 16px; cursor: pointer; user-select: none; }
+.acc-header:hover { background: var(--surface-2); }
+.acc-label { font-family: var(--mono); font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; color: var(--atg-teal); }
+.acc-arrow { font-size: 10px; color: var(--ink-light); transition: transform 0.2s; }
+.acc-arrow.open { transform: rotate(180deg); }
+.acc-body { display: none; padding: 0 16px 14px; border-top: 1px solid var(--border); }
+.acc-body.open { display: block; }
+.acc-body p { font-size: 14px; color: var(--ink-mid); line-height: 1.7; font-style: italic; margin-bottom: 8px; }
+.acc-body p:last-child { margin-bottom: 0; }
+.opt-lbl { font-family: var(--mono); font-size: 10px; color: var(--atg-teal); text-transform: uppercase; letter-spacing: 0.06em; margin: 10px 0 4px; }
+.opt-lbl:first-child { margin-top: 0; }
+.acc-tip { background: var(--atg-teal-light); border-left: 2px solid var(--atg-teal); border-radius: 0 4px 4px 0; padding: 7px 11px; margin-bottom: 10px; font-size: 13px; color: var(--atg-teal-dark); line-height: 1.6; }
+.acc-list { padding-left: 14px; }
+.acc-list li { font-size: 13px; color: var(--ink-mid); line-height: 1.9; }
+.acc-rule { font-size: 12px; color: var(--ink-mid); padding: 5px 0; border-bottom: 1px solid var(--border); line-height: 1.5; }
+.acc-rule:last-child { border-bottom: none; }
+.acc-rule strong { color: var(--ink); }
 
-    --radius: 6px;
-    --radius-lg: 10px;
-  }
+/* ── TRIAGE BLOCKS ── */
+.block { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; overflow: hidden; }
+.block-title { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--ink-light); padding: 12px 18px 0; }
+.block-body { padding: 12px 18px 16px; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* Q rows */
+.q-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.q-row:last-child { border-bottom: none; padding-bottom: 0; }
+.q-row:first-child { padding-top: 0; }
+.q-row.col { flex-direction: column; align-items: flex-start; gap: 8px; }
+.q-label { font-size: 13px; font-weight: 500; color: var(--ink); flex: 1; line-height: 1.4; }
+.q-sub { font-family: var(--mono); font-size: 10px; color: var(--ink-light); display: block; margin-top: 2px; }
 
-  body {
-    font-family: 'IBM Plex Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    font-size: 14px;
-    line-height: 1.5;
-  }
+/* Toggles */
+.tog { display: flex; border: 1.5px solid var(--border-dark); border-radius: var(--radius); overflow: hidden; flex-shrink: 0; }
+.tog-btn { padding: 6px 14px; font-family: var(--mono); font-size: 11px; font-weight: 500; background: none; border: none; border-right: 1px solid var(--border-dark); cursor: pointer; color: var(--ink-light); transition: all 0.15s; white-space: nowrap; }
+.tog-btn:last-child { border-right: none; }
+.tog-btn:hover { background: var(--atg-teal-light); color: var(--atg-teal-dark); }
+.tog-btn.yes { background: var(--eld-bg); color: var(--eld-text); border-color: var(--eld-border); }
+.tog-btn.no  { background: var(--hard-bg); color: var(--hard-text); border-color: var(--hard-border); }
+.tog-btn.sel { background: var(--atg-teal-light); color: var(--atg-teal); border-color: var(--atg-teal-mid); }
 
-  /* Header */
-  .header {
-    background: var(--atg-navy);
-    border-bottom: 3px solid var(--atg-teal);
-    padding: 14px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-  .header-brand {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: #fff;
-  }
-  .header-brand span { color: #8DD4A8; }
-  .header-version {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
-    color: rgba(255,255,255,0.5);
-    letter-spacing: 0.06em;
-  }
+/* Pills */
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill { padding: 5px 13px; border: 1.5px solid var(--border); border-radius: 99px; font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--ink-mid); background: var(--surface); cursor: pointer; transition: all 0.15s; user-select: none; }
+.pill:hover { border-color: var(--atg-teal); color: var(--atg-teal); }
+.pill.active { background: var(--atg-teal-mid); border-color: var(--atg-teal); color: var(--atg-teal-dark); font-weight: 600; }
+.pill.active.high-risk { background: var(--hard-bg); border-color: var(--hard-border); color: var(--hard-text); }
 
-  /* Layout */
-  .container { max-width: 680px; margin: 0 auto; padding: 28px 24px 60px; }
+/* Caveat */
+.caveat { padding: 10px 14px; border: 1.5px solid var(--amber-border); border-left: 3px solid var(--amber); border-radius: 0 var(--radius) var(--radius) 0; background: var(--amber-light); font-size: 11px; font-weight: 500; color: #7A5200; line-height: 1.7; margin-top: 10px; }
 
-  /* Caveat */
-  .caveat {
-    font-size: 12px;
-    font-weight: 500;
-    color: #7A5200;
-    background: #FDF5E8;
-    border: 1.5px solid #E8C87A;
-    border-left: 4px solid #C98F00;
-    border-radius: var(--radius);
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-    padding: 12px 16px;
-    line-height: 1.7;
-    margin-bottom: 24px;
-  }
+/* Hidden */
+.hidden { display: none !important; }
 
-  /* Progress */
-  .progress { display: flex; gap: 4px; margin-bottom: 24px; }
-  .progress-item { flex: 1; text-align: center; }
-  .progress-bar { height: 3px; border-radius: 3px; margin-bottom: 5px; transition: all 0.3s; }
-  .progress-item span { font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; }
+/* ── RIGHT PANEL ── */
+.right { border-left: 1px solid var(--border); display: flex; flex-direction: column; position: sticky; top: 55px; height: fit-content; max-height: calc(100vh - 55px); background: var(--surface); }
 
-  /* Crumb */
-  .crumb { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 20px; align-items: center; }
-  .crumb-item { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-3); }
-  .crumb-sep { font-size: 11px; color: var(--border); }
+/* Reference section — top of right */
+.ref-section { border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.exempt-strip { background: var(--atg-navy); padding: 9px 16px; display: flex; align-items: center; gap: 14px; }
+.exempt-lbl { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(255,255,255,0.35); flex-shrink: 0; }
+.exempt-item .en { font-family: var(--mono); font-size: 10px; font-weight: 600; color: #8DD4A8; }
+.exempt-item .ec { font-size: 10px; color: rgba(255,255,255,0.4); }
+.ref-tabs { display: flex; background: var(--surface-2); }
+.ref-tab { flex: 1; padding: 8px 4px; text-align: center; font-family: var(--mono); font-size: 9px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-light); background: none; border: none; border-right: 1px solid var(--border); border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.15s; }
+.ref-tab:last-child { border-right: none; }
+.ref-tab:hover { color: var(--ink); background: var(--surface); }
+.ref-tab.active { color: var(--atg-teal); border-bottom-color: var(--atg-teal); background: var(--atg-teal-light); }
+.ref-panel { display: none; padding: 12px 14px; max-height: 200px; overflow-y: auto; border-bottom: 1px solid var(--border); }
+.ref-panel.open { display: block; }
+.ref-panel p { font-size: 11px; color: var(--ink-mid); line-height: 1.7; font-style: italic; margin-bottom: 6px; }
+.ref-panel p:last-child { margin-bottom: 0; }
+.rp-lbl { font-family: var(--mono); font-size: 9px; color: var(--atg-teal); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 3px; margin-top: 8px; }
+.rp-lbl:first-child { margin-top: 0; }
+.rp-tip { background: var(--atg-teal-light); border-left: 2px solid var(--atg-teal); border-radius: 0 4px 4px 0; padding: 5px 9px; margin-bottom: 7px; font-size: 11px; color: var(--atg-teal-dark); line-height: 1.6; }
+.rp-list { padding-left: 13px; margin-bottom: 4px; }
+.rp-list li { font-size: 11px; color: var(--ink-mid); line-height: 1.8; }
+.rp-rule { font-size: 11px; color: var(--ink-mid); padding: 3px 0; border-bottom: 1px solid var(--border); line-height: 1.5; }
+.rp-rule:last-child { border-bottom: none; }
+.rp-rule strong { color: var(--ink); }
 
-  /* Card */
-  .card {
-    background: var(--surface);
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--border);
-    padding: 28px 32px;
-    box-shadow: 0 2px 12px rgba(26,46,68,0.07);
-  }
+/* Live result */
+.live-result { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+.pending-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 8px; color: var(--ink-light); }
+.pending-state .pi { font-size: 28px; opacity: 0.3; }
+.pending-state p { font-size: 11px; line-height: 1.6; max-width: 180px; }
 
-  /* Question */
-  .q-text {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text);
-    line-height: 1.5;
-    margin-bottom: 12px;
-  }
-  .tip {
-    display: flex; gap: 9px; align-items: flex-start;
-    background: var(--atg-teal-light);
-    border: 1px solid var(--atg-teal-mid);
-    border-left: 3px solid var(--atg-teal);
-    border-top-left-radius: 0; border-bottom-left-radius: 0;
-    border-radius: var(--radius);
-    padding: 10px 13px; margin-bottom: 20px;
-  }
-  .tip-icon { font-size: 13px; margin-top: 1px; flex-shrink: 0; }
-  .tip-text { font-size: 12px; color: var(--atg-teal-dark); line-height: 1.6; }
+/* Result badge */
+.r-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 99px; font-family: var(--mono); font-size: 11px; font-weight: 500; border: 1px solid; margin-bottom: 8px; }
+.r-badge.exempt { background: var(--eld-bg); color: var(--eld-text); border-color: var(--eld-border); }
+.r-badge.notexempt { background: var(--hard-bg); color: var(--hard-text); border-color: var(--hard-border); }
+.r-badge.conditional { background: var(--amber-light); color: var(--amber); border-color: var(--amber-border); }
 
-  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 20px; }
+.r-title { font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 6px; line-height: 1.3; }
+.r-detail { font-size: 12px; color: var(--ink-mid); line-height: 1.65; margin-bottom: 10px; }
 
-  button { cursor: pointer; transition: all 0.15s; font-family: 'IBM Plex Sans', sans-serif; }
-  button:hover { filter: brightness(0.95); }
+/* Denial tags */
+.denial-wrap { margin-bottom: 10px; }
+.denial-lbl { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--hard-dot); margin-bottom: 5px; }
+.denial-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.d-tag { padding: 2px 8px; border-radius: 4px; background: var(--hard-bg); border: 1px solid var(--hard-border); font-family: var(--mono); font-size: 10px; color: var(--hard-text); }
 
-  .btn-primary {
-    padding: 9px 22px; border-radius: var(--radius);
-    background: var(--atg-navy); color: #fff;
-    border: 1.5px solid var(--atg-navy);
-    font-size: 13px; font-weight: 500;
-  }
-  .btn-secondary {
-    padding: 9px 22px; border-radius: var(--radius);
-    background: var(--surface); color: var(--text);
-    border: 1.5px solid var(--border);
-    font-size: 13px; font-weight: 500;
-  }
-  .btn-ghost {
-    padding: 7px 16px; border-radius: var(--radius);
-    background: var(--surface-2); color: var(--text-2);
-    border: 1.5px solid var(--border);
-    font-size: 12px; font-weight: 500;
-    font-family: 'IBM Plex Mono', monospace;
-  }
-  .btn-amber {
-    padding: 9px 22px; border-radius: var(--radius);
-    background: #C98F00; color: #fff;
-    border: 1.5px solid #C98F00;
-    font-size: 13px; font-weight: 500;
-  }
-  .btn-list {
-    padding: 11px 16px; border-radius: var(--radius);
-    background: var(--surface); color: var(--text);
-    border: 1.5px solid var(--border);
-    font-size: 13px; font-weight: 500;
-    text-align: left; width: 100%; display: block;
-  }
-  .btn-list:hover { border-color: var(--border-strong); background: var(--atg-teal-light); }
-  .btn-ml { margin-left: auto; }
-  .exc-list { display: flex; flex-direction: column; gap: 8px; }
-  .exc-nav { display: flex; gap: 8px; margin-top: 4px; }
+/* Override pill */
+.override-pill { display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; }
+.override-pill .ol { font-family: var(--mono); font-size: 10px; color: var(--ink-light); }
+.override-pill .ov { font-family: var(--mono); font-size: 12px; font-weight: 600; }
+.ov.green { color: var(--eld-text); }
+.ov.amber { color: var(--amber); }
 
-  /* Badges */
-  .badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 3px 10px; border-radius: 20px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px; font-weight: 500; letter-spacing: 0.02em; border: 1px solid;
-  }
-  .badge-exempt { background: var(--eld-bg); color: var(--eld-text); border-color: var(--eld-border); }
-  .badge-conditional { background: var(--conditional-bg); color: var(--conditional-text); border-color: var(--conditional-border); }
-  .badge-notexempt { background: var(--hard-bg); color: var(--hard-text); border-color: var(--hard-border); }
+/* Note + response */
+.r-note { background: var(--atg-teal-light); border-left: 2px solid var(--atg-teal); border-radius: 0 var(--radius) var(--radius) 0; padding: 9px 11px; margin-bottom: 8px; }
+.r-note .nl { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--atg-teal); margin-bottom: 3px; }
+.r-note p { font-size: 11px; color: var(--atg-teal-dark); line-height: 1.6; }
+.r-resp { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 11px; }
+.r-resp .rl { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-light); margin-bottom: 3px; }
+.r-resp p { font-size: 11px; color: var(--ink-mid); line-height: 1.7; font-style: italic; }
 
-  /* Result boxes */
-  .result-box { border-radius: var(--radius-lg); padding: 22px 26px; margin-bottom: 16px; border: 1px solid; }
-  .result-box.res-exempt { background: var(--eld-bg); border-color: var(--eld-border); }
-  .result-box.res-conditional { background: var(--conditional-bg); border-color: var(--conditional-border); }
-  .result-box.res-notexempt { background: var(--hard-bg); border-color: var(--hard-border); }
+/* Risk meter */
+.risk-bar-wrap { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: var(--surface-2); border-radius: var(--radius); border: 1px solid var(--border); }
+.risk-bar-lbl { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-light); white-space: nowrap; }
+.risk-bar { flex: 1; height: 3px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.risk-fill { height: 100%; border-radius: 3px; transition: all 0.4s ease; width: 0; }
+.risk-val { font-family: var(--mono); font-size: 10px; font-weight: 600; white-space: nowrap; }
 
-  .result-title {
-    font-size: 18px; font-weight: 600; color: var(--text);
-    margin: 10px 0 6px; line-height: 1.3;
-  }
-  .result-detail { font-size: 13px; line-height: 1.65; color: var(--text-2); }
-  .override-pill {
-    margin-top: 12px; padding: 7px 13px;
-    background: rgba(255,255,255,0.6); border-radius: var(--radius);
-    display: inline-flex; align-items: center; gap: 8px;
-    border: 1px solid rgba(0,0,0,0.08);
-  }
-  .override-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--text-3); }
-  .override-val { font-family: 'IBM Plex Mono', monospace; font-size: 13px; font-weight: 500; }
-  .override-val.col-exempt { color: var(--eld-text); }
-  .override-val.col-conditional { color: var(--conditional-text); }
-  .override-val.col-notexempt { color: var(--hard-text); }
+/* Reset */
+.reset-btn { padding: 9px; background: var(--surface-2); border: 1.5px solid var(--border); border-radius: var(--radius); font-family: var(--mono); font-size: 11px; color: var(--ink-light); cursor: pointer; transition: all 0.15s; text-align: center; width: 100%; flex-shrink: 0; margin: 0 16px 16px; width: calc(100% - 32px); }
+.reset-btn:hover { border-color: var(--atg-teal); color: var(--atg-teal); }
 
-  /* Note box */
-  .note-box {
-    border-radius: var(--radius); padding: 12px 16px;
-    background: var(--atg-teal-light);
-    border: 1px solid var(--atg-teal-mid);
-    border-left: 3px solid var(--atg-teal);
-    border-top-left-radius: 0; border-bottom-left-radius: 0;
-    margin-bottom: 16px;
-  }
-  .slabel {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; font-weight: 500;
-    text-transform: uppercase; letter-spacing: 0.06em;
-    color: var(--atg-teal); margin-bottom: 5px;
-  }
-  .note-text { font-size: 12px; color: var(--atg-teal-dark); line-height: 1.6; }
+/* Scenario rows */
+.scenario { border-bottom: 1px solid var(--border); cursor: pointer; }
+.scenario:last-child { border-bottom: none; }
+.sc-header { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; gap: 10px; }
+.sc-q { font-size: 13px; font-weight: 500; color: var(--ink); line-height: 1.4; }
+.sc-arrow { font-size: 10px; color: var(--ink-light); flex-shrink: 0; transition: transform 0.2s; }
+.sc-arrow.open { transform: rotate(180deg); }
+.sc-body { display: none; padding-bottom: 10px; }
+.sc-body p { font-size: 13px; color: var(--ink-mid); line-height: 1.7; font-style: italic; }
+.sc-note { margin-top: 8px; font-size: 11px; color: var(--amber); font-style: normal; background: var(--amber-light); border-left: 2px solid var(--amber); border-radius: 0 4px 4px 0; padding: 5px 9px; line-height: 1.6; }
 
-  /* Response box */
-  .response-box {
-    border-radius: var(--radius); padding: 12px 16px;
-    background: rgba(255,255,255,0.6);
-    border-left: 3px solid rgba(0,0,0,0.15);
-    border-top-left-radius: 0; border-bottom-left-radius: 0;
-    border-top: 1px solid rgba(0,0,0,0.07);
-    border-right: 1px solid rgba(0,0,0,0.07);
-    border-bottom: 1px solid rgba(0,0,0,0.07);
-    margin-bottom: 16px;
-  }
-  .response-text { font-size: 12px; color: var(--text); line-height: 1.7; font-style: italic; }
+/* Exception buttons */
+.exc-btn { padding: 9px 14px; background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 13px; font-family: var(--body); color: var(--ink-mid); cursor: pointer; text-align: left; transition: all 0.15s; }
+.exc-btn:hover { border-color: var(--atg-teal); color: var(--atg-teal); background: var(--atg-teal-light); }
 
-  /* Hard stop */
-  .hard-stop-box {
-    border-radius: var(--radius-lg); padding: 22px 26px;
-    background: var(--hard-bg); border: 1px solid var(--hard-border);
-    margin-bottom: 16px;
-  }
-  .hard-stop-box .result-title { color: var(--hard-text); }
-  .hard-stop-box .result-detail { color: var(--hard-text); opacity: 0.8; }
-
-  /* Exception / amber prompt */
-  .exception-box {
-    border-radius: var(--radius); padding: 14px 16px;
-    background: var(--escalate-bg);
-    border: 1px solid var(--escalate-border);
-    border-left: 3px solid var(--escalate-dot);
-    border-top-left-radius: 0; border-bottom-left-radius: 0;
-    margin-bottom: 16px;
-  }
-  .exception-label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 10px; font-weight: 500;
-    text-transform: uppercase; letter-spacing: 0.06em;
-    color: var(--escalate-dot); margin-bottom: 6px;
-  }
-  .exception-text { font-size: 12px; color: var(--escalate-text); line-height: 1.6; margin-bottom: 12px; }
-
-  .result-nav { display: flex; gap: 8px; margin-top: 4px; }
-
-  /* Footer */
-  .footer {
-    margin-top: 24px;
-    font-size: 11px; color: var(--text-3);
-    text-align: center; line-height: 1.7;
-    border-top: 1px solid var(--border);
-    padding-top: 16px;
-  }
-
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
-  .fade { animation: fadeIn 0.2s ease; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+.fade { animation: fadeUp 0.2s ease; }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-brand">ATG <span>·</span> Compliance</div>
-  <div class="header-version">ELD EXEMPTION TOOL &nbsp;·&nbsp; Updated <span id="mod-date"></span></div>
+  <div class="header-brand">
+    <div class="atg-logo">
+      <strong>Armstrong</strong>
+      <span>Transport Group</span>
+    </div>
+    <div class="header-div"></div>
+    <span class="header-title">ELD Exemption Guide <span style="font-family:var(--mono);font-size:10px;color:rgba(255,255,255,0.35);margin-left:4px;">V4</span></span>
+  </div>
+  <div class="header-meta">Updated <span id="mod-date"></span></div>
 </div>
 
-<div class="container">
+<div class="layout">
 
-  <div style="background:var(--atg-navy);border-radius:var(--radius);padding:14px 18px;margin-bottom:12px;">
-    <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:#8DD4A8;margin-bottom:6px;">A note as we roll this out</div>
-    <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7;">As with anything new, expect some pushback. Agents won't always like the answer. Apply it as much as you can, but do so gently — introduce it as part of your process. If you're unsure what to do, ask. The goal right now is for you to get comfortable using it. We want your feedback, and know that we're continuously improving this tool — so stay aware of changes as they come.</div>
-  </div>
+  <!-- ── LEFT: TRIAGE INPUTS ── -->
+  <div class="left">
 
-  <div style="background:var(--surface);border-left:3px solid rgba(0,0,0,0.15);border-top-left-radius:0;border-bottom-left-radius:0;border-top:1px solid rgba(0,0,0,0.07);border-right:1px solid rgba(0,0,0,0.07);border-bottom:1px solid rgba(0,0,0,0.07);border-radius:var(--radius);padding:12px 16px;margin-bottom:20px;">
-    <div class="slabel" style="margin-bottom:10px;">💬 Suggested Opening Responses</div>
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      <div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Option 1</div>
-        <div style="font-size:12px;color:var(--text);line-height:1.7;font-style:italic;">Just a heads up — we're tightening up our ELD process, so there are a few things we need to verify before we can activate. Can you confirm the exemption reason and share any supporting documentation you have?</div>
+    <!-- Reference Accordions -->
+    <div class="acc">
+      <div class="acc-header" onclick="toggleAcc('acc-responses')">
+        <span class="acc-label">💬 Opening Responses <span style="font-weight:400;opacity:0.5;">(optional)</span></span>
+        <span class="acc-arrow" id="arr-responses">▼</span>
       </div>
-      <div style="height:1px;background:var(--border);"></div>
-      <div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;">Option 2</div>
-        <div style="font-size:12px;color:var(--text);line-height:1.7;font-style:italic;">Just a heads up — we're tightening up our ELD policy. Having an active ELD connection helps us ensure the right carriers are where they're supposed to be, and is an important part of how we protect every load.</div>
-      </div>
-    </div>
-  </div>
-
-  <div style="margin-bottom:20px;">
-    <div class="slabel" style="margin-bottom:10px;">Primary Exemption Paths</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div style="background:var(--eld-bg);border:1px solid var(--eld-border);border-radius:var(--radius-lg);padding:16px 18px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:var(--eld-text);">Path 1 — Model Year / Equipment</div>
-      </div>
-      <div style="background:var(--atg-teal-light);border:1px solid var(--atg-teal-mid);border-radius:var(--radius-lg);padding:16px 18px;">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:var(--atg-teal-dark);">Path 2 — Load History</div>
+      <div class="acc-body" id="acc-responses">
+        <div class="opt-lbl" style="margin-top:10px;">Option 1</div>
+        <p>Just a heads up — we're tightening up our ELD process, so there are a few things we need to verify before we can activate.</p>
+        <div class="opt-lbl">Option 2</div>
+        <p>Just a heads up — we're tightening up our ELD policy. Having an active ELD connection helps us ensure the right carriers are where they're supposed to be, and is an important part of how we protect every load.</p>
+        <div class="opt-lbl">Option 3</div>
+        <p>For fastest reactivation: please have the carrier connect their ELD in Highway.<br><strong style="font-style:normal;color:var(--ink);">If claiming an equipment exemption</strong> — ask the carrier why they believe they qualify and send us the reason along with their cab card for review.<br><strong style="font-style:normal;color:var(--ink);">If requesting a policy exception</strong> (override on a restricted load type — e.g., dry van/reefer out of CA, HVHR): send the load number, equipment type, commodity, value, and lane along with the reason for the request.<br><span style="color:var(--ink-light);">Note: policy restrictions can nullify an equipment exemption.</span></p>
       </div>
     </div>
-  </div>
 
-  <div class="progress" id="progress"></div>
-
-  <div class="card">
-    <div id="crumb" class="crumb"></div>
-    <div id="content"></div>
-  </div>
-
-  <div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--atg-teal);border-top-left-radius:0;border-bottom-left-radius:0;border-radius:var(--radius);padding:14px 18px;margin-top:20px;">
-    <div class="slabel" style="margin-bottom:10px">Exempt Offices</div>
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
-        <span style="font-weight:500;color:var(--text)">TODDZILLIA LOGISTICS LLC</span>
-        <span style="color:var(--text-2)">Todd Shipman</span>
+    <div class="acc">
+      <div class="acc-header" onclick="toggleAcc('acc-ask')">
+        <span class="acc-label">❓ What to Ask</span>
+        <span class="acc-arrow" id="arr-ask">▼</span>
       </div>
-      <div style="height:1px;background:var(--border);"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
-        <span style="font-weight:500;color:var(--text)">SMR LOGISTICS INC</span>
-        <span style="color:var(--text-2)">Sharon Rennie</span>
+      <div class="acc-body" id="acc-ask">
+        <div class="acc-tip" style="margin-top:10px;">💡 Load # or MC alone can often give you equipment, commodity, value and lane without asking.</div>
+        <div class="opt-lbl">Start here</div>
+        <p style="font-style:normal;margin-bottom:6px;">Equipment type · Commodity · Cargo value · Lane</p>
+        <div class="opt-lbl">Then branch into</div>
+        <ul class="acc-list">
+          <li>New or existing carrier?</li>
+          <li>Loads in last 90 days?</li>
+          <li>CA origin?</li>
+          <li>Long haul over 1,000 miles?</li>
+          <li>Exemption reason claimed?</li>
+          <li>Cab card / title available?</li>
+        </ul>
       </div>
     </div>
+
+    <div class="acc">
+      <div class="acc-header" onclick="toggleAcc('acc-sop')">
+        <span class="acc-label">📝 Template Responses <span style="font-weight:400;opacity:0.5;">(optional)</span></span>
+        <span class="acc-arrow" id="arr-sop">▼</span>
+      </div>
+      <div class="acc-body" id="acc-sop">
+        <div class="opt-lbl" style="margin-top:10px;">Request for Information</div>
+        <p>To see if the carrier qualifies for a policy exemption, we'll need a few details. Please send us the load number. If unavailable, include the equipment type, commodity, estimated cargo value, and lane (origin and destination).</p>
+      </div>
+    </div>
+
+    <!-- ── TRIAGE BLOCKS ── -->
+
+    <div class="acc">
+      <div class="acc-header" onclick="toggleAcc('acc-scenarios')">
+        <span class="acc-label">📋 ELD Scenarios <span style="font-weight:400;opacity:0.5;">(optional)</span></span>
+        <span class="acc-arrow" id="arr-scenarios">▼</span>
+      </div>
+      <div class="acc-body" id="acc-scenarios">
+
+        <div style="background:var(--amber-light);border-left:2px solid var(--amber);border-radius:0 4px 4px 0;padding:8px 12px;margin:10px 0 12px;font-size:12px;color:#7A5200;line-height:1.6;">
+          These templates cover common ELD scenarios and are for communication support only. They do not dictate override eligibility. Always reference the ELD policy and apply the appropriate exemption path. Read each template carefully before using.
+        </div>
+
+        <!-- Scenario rows -->
+        <div class="scenario" onclick="toggleScenario('sc-1')">
+          <div class="sc-header">
+            <span class="sc-q">ELD not connected</span>
+            <span class="sc-arrow" id="sc-arr-1">▼</span>
+          </div>
+          <div class="sc-body" id="sc-1">
+            <p>Thanks for reaching out! The carrier needs to log into their Highway account and connect their ELD. If they are exempt, please have them provide the reason for the exemption along with a truck title, cab card, and photo of their driver's license.</p>
+          </div>
+        </div>
+
+        <div class="scenario" onclick="toggleScenario('sc-2')">
+          <div class="sc-header">
+            <span class="sc-q">"The carrier does not have ELD."</span>
+            <span class="sc-arrow" id="sc-arr-2">▼</span>
+          </div>
+          <div class="sc-body" id="sc-2">
+            <p>Hello, I am not showing the carrier's equipment qualifies for an exemption. Can you please ask the carrier the reason why they're exempt?</p>
+          </div>
+        </div>
+
+        <div class="scenario" onclick="toggleScenario('sc-3')">
+          <div class="sc-header">
+            <span class="sc-q">"The carrier only hauls intrastate."</span>
+            <span class="sc-arrow" id="sc-arr-3">▼</span>
+          </div>
+          <div class="sc-body" id="sc-3">
+            <p>Intrastate carriers are not necessarily exempt from the ELD mandate. I can check whether your load qualifies for a short-haul exemption. What is your load number or the lane?</p>
+            <div class="sc-note">Do not ask for this info again if it has already been provided.</div>
+          </div>
+        </div>
+
+        <div class="scenario" onclick="toggleScenario('sc-4')">
+          <div class="sc-header">
+            <span class="sc-q">"The carrier only uses box trucks."</span>
+            <span class="sc-arrow" id="sc-arr-4">▼</span>
+          </div>
+          <div class="sc-body" id="sc-4">
+            <p>Certain box truck carriers may qualify for exemptions due to the nature of their operations, but the use of a box truck alone does not automatically exempt a carrier from ELD requirements. In general, vehicles with a GVWR of 10,001 lbs or more are subject to ELD regulations, unless a specific exemption applies.</p>
+            <div class="sc-note">Important: Verification documents are still required after determining that an exemption reason is valid (cab card, truck title, photo of the truck displaying the MC/DOT, and driver's license).</div>
+          </div>
+        </div>
+
+        <div class="scenario" onclick="toggleScenario('sc-5')">
+          <div class="sc-header">
+            <span class="sc-q">Carrier claims pre-2000 exemption but has newer vehicles in fleet.</span>
+            <span class="sc-arrow" id="sc-arr-5">▼</span>
+          </div>
+          <div class="sc-body" id="sc-5">
+            <p>The carrier has other vehicles in their fleet that were manufactured after the year 2000. Therefore, the carrier is still required to connect their ELD account to Highway.</p>
+          </div>
+        </div>
+
+        <div class="scenario" onclick="toggleScenario('sc-6')">
+          <div class="sc-header">
+            <span class="sc-q">Carrier refuses to connect — privacy reasons or general refusal.</span>
+            <span class="sc-arrow" id="sc-arr-6">▼</span>
+          </div>
+          <div class="sc-body" id="sc-6">
+            <p>ELDs are now a standard part of the trucking industry, and more and more brokers are implementing these measures as an added layer of protection against cargo theft. While we understand that some carriers may face challenges with ELD and we do our best to work through those obstacles, a carrier simply refusing to connect without a valid reason is not something we can accommodate.</p>
+            <div class="sc-note">Before using this template, confirm whether this carrier is eligible for a Path 2 override. If they are, do not use this template.</div>
+          </div>
+        </div>
+
+        <div class="scenario" onclick="toggleScenario('sc-7')">
+          <div class="sc-header">
+            <span class="sc-q">The carrier uses Garmin.</span>
+            <span class="sc-arrow" id="sc-arr-7">▼</span>
+          </div>
+          <div class="sc-body" id="sc-7">
+            <p>We could consider an override. Please ask for cab card, truck title, photo of the truck displaying the MC, and a screenshot of the inspection report page in the Garmin app. This page contains information linking the carrier to Garmin.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Block 1: Equipment & Model Year -->
+    <div class="block">
+      <div class="block-title">Equipment & Model Year</div>
+      <div class="block-body">
+
+        <div class="q-row">
+          <div class="q-label">Model year 2001 to present?
+            <span class="q-sub">Check Equipment in Highway</span>
+          </div>
+          <div class="tog">
+            <button class="tog-btn" id="my-yes" onclick="set('modelYear', true,  'my-yes', 'my-no', 'yes')">YES</button>
+            <button class="tog-btn" id="my-no"  onclick="set('modelYear', false, 'my-yes', 'my-no', 'no')">NO</button>
+          </div>
+        </div>
+
+        <div class="q-row col">
+          <div class="q-label">Equipment type</div>
+          <div class="pills">
+            <div class="pill" onclick="setEquip(this,'sprinter')">Sprinter / Hot Shot</div>
+            <div class="pill high-risk" onclick="setEquip(this,'dryvan')">Dry Van</div>
+            <div class="pill high-risk" onclick="setEquip(this,'reefer')">Reefer</div>
+            <div class="pill" onclick="setEquip(this,'flatbed')">Flatbed</div>
+            <div class="pill" onclick="setEquip(this,'stepdeck')">Step Deck / RGN</div>
+            <div class="pill" onclick="setEquip(this,'drayage')">Drayage</div>
+            <div class="pill" onclick="setEquip(this,'beam')">Beam Trailer</div>
+            <div class="pill" onclick="setEquip(this,'other')">Other</div>
+          </div>
+        </div>
+
+        <div class="q-row hidden" id="row-flatbed">
+          <div class="q-label">High-risk flatbed cargo?
+            <span class="q-sub">Metals, ATVs/UTVs, high-value or easily offloaded</span>
+          </div>
+          <div class="tog">
+            <button class="tog-btn" id="fc-yes" onclick="set('flatbedCargo', true,  'fc-yes', 'fc-no', 'yes')">YES</button>
+            <button class="tog-btn" id="fc-no"  onclick="set('flatbedCargo', false, 'fc-yes', 'fc-no', 'no')">NO</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Block 2: Load Risk (dry van / reefer only) -->
+    <div class="block hidden" id="block-risk">
+      <div class="block-title">Load Risk</div>
+      <div class="block-body">
+
+        <div class="q-row">
+          <div class="q-label">California origin?</div>
+          <div class="tog">
+            <button class="tog-btn" id="ca-yes" onclick="setCA(true)">YES</button>
+            <button class="tog-btn" id="ca-no"  onclick="setCA(false)">NO</button>
+          </div>
+        </div>
+
+        <div class="q-row">
+          <div class="q-label">High value cargo above $100,000?</div>
+          <div class="tog">
+            <button class="tog-btn" id="hv-yes" onclick="setHV(true)">YES</button>
+            <button class="tog-btn" id="hv-no"  onclick="setHV(false)">NO / Unknown</button>
+          </div>
+        </div>
+
+        <div class="q-row hidden" id="row-lh">
+          <div class="q-label">Long haul over 1,000 miles?
+            <span class="q-sub">Relevant when CA origin is confirmed</span>
+          </div>
+          <div class="tog">
+            <button class="tog-btn" id="lh-yes" onclick="set('lh', true,  'lh-yes', 'lh-no', 'yes')">YES</button>
+            <button class="tog-btn" id="lh-no"  onclick="set('lh', false, 'lh-yes', 'lh-no', 'no')">NO</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Block 3: Carrier -->
+    <div class="block hidden" id="block-carrier">
+      <div class="block-title">Carrier Status</div>
+      <div class="block-body">
+
+        <div class="q-row">
+          <div class="q-label">New or existing carrier?
+            <span class="q-sub">Check load history in ATG</span>
+          </div>
+          <div class="tog">
+            <button class="tog-btn" id="c-existing" onclick="setCarrier('existing')">EXISTING</button>
+            <button class="tog-btn" id="c-new"      onclick="setCarrier('new')">NEW</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Block 4: Load History (existing carrier only) -->
+    <div class="block hidden" id="block-history">
+      <div class="block-title">Load History</div>
+      <div class="block-body">
+
+        <div class="q-row">
+          <div class="q-label">3+ completed loads in last 90 days?
+            <span class="q-sub">Completed loads only — check in ATG</span>
+          </div>
+          <div class="tog">
+            <button class="tog-btn" id="h-yes" onclick="set('history', true,  'h-yes', 'h-no', 'yes')">YES</button>
+            <button class="tog-btn" id="h-no"  onclick="set('history', false, 'h-yes', 'h-no', 'no')">NO</button>
+          </div>
+        </div>
+
+        <div class="q-row hidden" id="row-cargo">
+          <div class="q-label">Cargo value above $100,000?</div>
+          <div class="tog">
+            <button class="tog-btn" id="cv-yes" onclick="set('cargo', true,  'cv-yes', 'cv-no', 'yes')">YES</button>
+            <button class="tog-btn" id="cv-no"  onclick="set('cargo', false, 'cv-yes', 'cv-no', 'no')">NO / Unknown</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Exceptions block — shown after not-exempt result -->
+    <div class="block hidden" id="block-exceptions" style="margin-top:10px;">
+      <div class="block-title">Is the carrier claiming an exception?</div>
+      <div class="block-body">
+        <p style="font-size:12px;color:var(--ink-mid);margin-bottom:12px;">Select the exception the carrier is raising, if any. Only evaluate if the agent or carrier is specifically pushing back with a legitimate reason.</p>
+
+        <div class="q-row hidden" id="exc-row-shorthaul">
+          <div class="q-label">Short-haul exemption (under 150 air miles)?
+            <span class="q-sub">Is this a consistent pattern or just this load?</span>
+          </div>
+          <div class="tog">
+            <button class="tog-btn" id="sh-consistent" onclick="setException('shorthaul_consistent')">Consistent Pattern</button>
+            <button class="tog-btn" id="sh-situational" onclick="setException('shorthaul_situational')">This Load Only</button>
+          </div>
+        </div>
+
+        <div class="q-row hidden" id="exc-row-incompatible">
+          <div class="q-label">Incompatible ELD provider?
+            <span class="q-sub">e.g. Garmin, Super Dispatch — all docs required</span>
+          </div>
+          <div class="tog">
+            <button class="tog-btn" id="inc-yes" onclick="setException('incompatible_yes')">Yes — Docs Available</button>
+            <button class="tog-btn" id="inc-no"  onclick="setException('incompatible_no')">No / Missing Docs</button>
+          </div>
+        </div>
+
+        <div class="q-row hidden" id="exc-row-glider">
+          <div class="q-label">Glider kit with verified pre-2000 engine?
+            <span class="q-sub">Invoice, work order, or engine tag required</span>
+          </div>
+          <div class="tog">
+            <button class="tog-btn" id="gl-yes" onclick="setException('glider_yes')">Yes — Docs Verified</button>
+            <button class="tog-btn" id="gl-no"  onclick="setException('glider_no')">No / Missing Docs</button>
+          </div>
+        </div>
+
+        <div class="q-row hidden" id="exc-row-newcarrier">
+          <div class="q-label">Rare override — new carrier with specific documented reason?
+            <span class="q-sub">Not high value · passes standard rules · no ownership change 365 days · cab card provided</span>
+          </div>
+          <div class="tog">
+            <button class="tog-btn" id="nc-yes" onclick="setException('newcarrier_yes')">All Criteria Met</button>
+            <button class="tog-btn" id="nc-no"  onclick="setException('newcarrier_no')">Missing Criteria</button>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px;" id="exc-buttons">
+          <button class="exc-btn" onclick="showExcRow('exc-row-shorthaul')">Short-haul exemption (under 150 air miles)</button>
+          <button class="exc-btn" onclick="showExcRow('exc-row-incompatible')">Incompatible ELD provider (e.g. Garmin, Super Dispatch)</button>
+          <button class="exc-btn" onclick="showExcRow('exc-row-glider')">Glider kit with verified pre-2000 engine</button>
+          <button class="exc-btn" id="exc-btn-newcarrier" onclick="showExcRow('exc-row-newcarrier')" style="display:none;">Rare override — new carrier</button>
+          <button class="exc-btn" style="color:var(--ink-light);" onclick="hideExceptions()">No exception — maintain denial</button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="caveat"><strong>This tool is a guide only. Results may not account for every situation. A qualified team member must confirm all decisions before any override is granted or denied.</strong></div>
+
+    <button class="reset-btn" onclick="resetAll()" style="margin:10px 0 0;width:100%;">↺ Start Over</button>
+
+    <div style="background:var(--surface);border:1.5px solid var(--border);border-left:3px solid var(--atg-teal);border-radius:0 var(--radius) var(--radius) 0;padding:12px 16px;margin-top:8px;">
+      <div style="font-family:var(--mono);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:var(--atg-teal);margin-bottom:8px;">Exempt Offices</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:4px 0;border-bottom:1px solid var(--border);">
+        <span style="font-weight:500;color:var(--ink);">TODDZILLIA LOGISTICS LLC</span><span style="color:var(--ink-mid);">Todd Shipman</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:4px 0;">
+        <span style="font-weight:500;color:var(--ink);">SMR LOGISTICS INC</span><span style="color:var(--ink-mid);">Sharon Rennie</span>
+      </div>
+    </div>
+
   </div>
 
-  <div class="caveat" style="margin-top:20px;margin-bottom:0;"><strong>This tool is intended as a guide to help evaluate ELD exemption eligibility based on current policy. Results may not account for every situation, and may contain errors. All results must be reviewed and confirmed by a qualified team member. No override should be granted or denied without human review.</strong></div>
+  <!-- ── RIGHT: LIVE RESULT ── -->
+  <div class="right">
 
-  <div class="footer">The goal is to limit ELD exemption overrides to those that are legitimate under this policy. Granting an ELD exemption — even for a legitimate reason — negates ping-at-pickup protection for the full duration of the override.</div>
+    <!-- Live verdict -->
+    <div class="live-result" id="live-result">
+      <div style="font-family:var(--mono);font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-light);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border);">Live Assessment</div>
+      <div class="pending-state" id="pending">
+        <div class="pi">◎</div>
+        <p>Fill in the fields on the left to see a live assessment.</p>
+      </div>
+      <div id="verdict" style="display:none;" class="fade"></div>
+    </div>
 
+  </div>
 </div>
 
 <script>
-const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-const d = new Date(document.lastModified);
-const modDate = `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
-document.getElementById("mod-date").textContent = modDate;
+// Date
+const months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const dm=new Date(document.lastModified);
+document.getElementById("mod-date").textContent=`${months[dm.getMonth()]} ${dm.getDate()}, ${dm.getFullYear()}`;
 
-function showQ2(is2001plus) {
-  document.getElementById('q1-btns').style.display = 'none';
-  document.getElementById('q2-section').style.display = 'block';
-  const noTarget = is2001plus
-    ? "go('carrier_status','2001+ → Not Sprinter/Hot Shot')"
-    : "go('result_exempt_pre2000','Pre-2000 → Not Sprinter/Hot Shot')";
-  document.getElementById('q2-btns').innerHTML = `
-    <button class="btn-primary" onclick="${noTarget}">No</button>
-    <button class="btn-secondary" onclick="go('result_exempt_pre2000','Sprinter/Hot Shot → Yes')">Yes</button>
-    <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-  `;
+// State
+const s = { modelYear:null, equip:null, flatbedCargo:null, ca:null, hv:null, lh:null, carrier:null, history:null, cargo:null };
+const equipLabels = { dryvan:'Dry Van', reefer:'Reefer', flatbed:'Flatbed', sprinter:'Sprinter / Hot Shot', stepdeck:'Step Deck / RGN', drayage:'Drayage', beam:'Beam Trailer', other:'Other' };
+const NOTE_STD = "Inform the agent this override is valid for the stated duration. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.";
+
+function toggleScenario(id) {
+  const body = document.getElementById(id);
+  const num = id.replace('sc-','');
+  const arrow = document.getElementById('sc-arr-' + num);
+  const isOpen = body.style.display === 'block';
+  body.style.display = isOpen ? 'none' : 'block';
+  arrow.classList.toggle('open', !isOpen);
 }
 
-const progressSteps = ["Engine / Equip", "Carrier", "Load History", "Result"];
-const progressMap = {
-  model_year_new: 0, model_year: 0, model_year_sprinter: 0, flatbed_cargo: 0,
-  carrier_status: 1, new_carrier_load_type: 1, new_carrier_default: 1, new_carrier_exceptions: 1, new_carrier_rare_prompt: 1, new_carrier_check: 1,
-  load_history: 2, existing_carrier_load_type: 2, cargo_value: 2,
-  exceptions: 2, equipment_specialized: 2, short_haul_check: 2, incompatible_eld: 2, glider_kit: 2,
-};
-
-let history = [{ step: "model_year_new", label: "Engine / Equipment" }];
-
-function go(step, label) { history.push({ step, label }); render(); }
-function back() { if (history.length > 1) { history.pop(); render(); } }
-function reset() { history = [{ step: "model_year_new", label: "Engine / Equipment" }]; render(); }
-
-function renderProgress(step) {
-  const isResult = step.startsWith("result_");
-  const current = isResult ? 4 : (progressMap[step] ?? 0);
-  return progressSteps.map((label, i) => {
-    const active = i === current, done = i < current || isResult;
-    const color = (done || active) ? "var(--atg-teal)" : "var(--border)";
-    const textColor = (done || active) ? "var(--atg-teal)" : "var(--text-3)";
-    const opacity = active ? 1 : done ? 0.6 : 1;
-    return `<div class="progress-item">
-      <div class="progress-bar" style="background:${color};opacity:${opacity}"></div>
-      <span style="color:${textColor}">${label}</span>
-    </div>`;
-  }).join("");
+// Accordion toggle
+function toggleAcc(id) {
+  const body = document.getElementById(id);
+  const key = id.replace('acc-','');
+  const arrow = document.getElementById('arr-' + key);
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  arrow.classList.toggle('open', !isOpen);
 }
 
-function renderCrumb(trail) {
-  if (trail.length <= 1) return "";
-  return trail.map((s, i) =>
-    `<span class="crumb-item">${s}</span>${i < trail.length - 1 ? '<span class="crumb-sep"> › </span>' : ''}`
-  ).join("");
-}
-
-function badge(type) {
-  const map = {
-    exempt: ['badge-exempt', '✓ Exempt'],
-    conditional: ['badge-conditional', '⚠ Conditional'],
-    notexempt: ['badge-notexempt', '✗ Not Exempt']
-  };
-  const [cls, text] = map[type];
-  return `<span class="badge ${cls}">${text}</span>`;
-}
-
-function question({ text, tip, noLabel = "No", yesLabel = "Yes", onNo, onYes, isFirst }) {
-  const tipHtml = tip ? `<div class="tip"><span class="tip-icon">💡</span><span class="tip-text">${tip}</span></div>` : "";
-  const backBtn = !isFirst ? `<button class="btn-ghost" onclick="back()">‹ Back</button>` : "";
-  const resetBtn = !isFirst ? `<button class="btn-ghost btn-ml" onclick="reset()">↺ Start Over</button>` : "";
-  return `<div class="fade">
-    <p class="q-text">${text}</p>
-    ${tipHtml}
-    <div class="btn-row">
-      <button class="btn-primary" onclick="${onNo}">${noLabel}</button>
-      <button class="btn-secondary" onclick="${onYes}">${yesLabel}</button>
-      ${backBtn}
-      ${resetBtn}
-    </div>
-  </div>`;
-}
-
-function responseBox(text) {
-  return `<div class="response-box">
-    <div class="slabel">💬 Suggested Response</div>
-    <div class="response-text">${text}</div>
-  </div>`;
-}
-
-function result({ type, title, detail, override, extra, response }) {
-  const resCls = { exempt: "res-exempt", conditional: "res-conditional", notexempt: "res-notexempt" }[type];
-  const colCls = { exempt: "col-exempt", conditional: "col-conditional", notexempt: "col-notexempt" }[type];
-  const overrideHtml = override ? `<div class="override-pill"><span class="override-label">Override duration</span><span class="override-val ${colCls}">${override}</span></div>` : "";
-  const noteHtml = extra ? `<div class="note-box"><div class="slabel">Note</div><div class="note-text">${extra}</div></div>` : "";
-  const responseHtml = response ? responseBox(response) : "";
-  return `<div class="fade">
-    <div class="result-box ${resCls}">
-      ${badge(type)}
-      <div class="result-title">${title}</div>
-      <div class="result-detail">${detail}</div>
-      ${overrideHtml}
-    </div>
-    ${noteHtml}
-    ${responseHtml}
-    <div class="result-nav">
-      <button class="btn-ghost" onclick="back()">‹ Back</button>
-      <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-    </div>
-  </div>`;
-}
-
-function hardStop({ title, detail, response, exceptionLabel, exceptionText, exceptionBtn, exceptionTarget, exceptionLabel2 }) {
-  const respHtml = response ? responseBox(response) : "";
-  const excHtml = exceptionLabel ? `<div class="exception-box">
-    <div class="exception-label">${exceptionLabel}</div>
-    <div class="exception-text">${exceptionText}</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn-amber" onclick="${exceptionTarget}">${exceptionBtn}</button>
-      <button class="btn-ghost" onclick="back()">‹ Back</button>
-      <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-    </div>
-  </div>` : `<div class="result-nav"><button class="btn-ghost" onclick="back()">‹ Back</button><button class="btn-ghost" onclick="reset()">↺ Start Over</button></div>`;
-  return `<div class="fade">
-    <div class="hard-stop-box">
-      ${badge('notexempt')}
-      <div class="result-title">${title}</div>
-      <div class="result-detail">${detail}</div>
-    </div>
-    ${respHtml}
-    ${excHtml}
-  </div>`;
-}
-
-function exceptions() {
-  const options = [
-    ["go('equipment_specialized','Drayage or specialized equipment')", "Drayage or specialized equipment (step deck, RGN, beam trailer, flatbed)"],
-    ["go('short_haul_check','Short-haul exemption')", "Short-haul exemption (under 150 air miles)"],
-    ["go('incompatible_eld','Incompatible ELD provider')", "Incompatible ELD provider (e.g. Garmin, Super Dispatch)"],
-    ["go('glider_kit','Glider kit')", "Glider kit with verified pre-2000 engine"],
-    ["go('result_not_exempt_history','No exception')", "No exception — carrier cannot qualify"],
-  ];
-  return `<div class="fade">
-    <p class="q-text">Is the carrier claiming an exception?</p>
-    <p style="font-size:12px;color:var(--text-2);margin-bottom:18px">Select the exception the carrier is raising, if any.</p>
-    <div class="exc-list">
-      ${options.map(([fn, label]) => `<button class="btn-list" onclick="${fn}">${label}</button>`).join("")}
-      <div class="exc-nav">
-        <button class="btn-ghost" onclick="back()">‹ Back</button>
-        <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-      </div>
-    </div>
-  </div>`;
-}
-
-function renderStep(step) {
-  switch (step) {
-
-    case "model_year_new":
-      return `<div class="fade">
-        <p class="q-text">Is the equipment model year 2001 to present?</p>
-        <div class="tip"><span class="tip-icon">💡</span><span class="tip-text">Check Equipment in Highway. You can usually determine the model year from here.</span></div>
-        <div id="q1-btns" style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn-primary" onclick="showQ2(false)">No</button>
-          <button class="btn-secondary" onclick="showQ2(true)">Yes</button>
-        </div>
-        <div id="q2-section" style="display:none;margin-top:24px;border-top:1px solid var(--border);padding-top:20px;">
-          <p class="q-text">Is this a Sprinter van / hot shot (Class 1 or 2)?</p>
-          <div class="tip"><span class="tip-icon">💡</span><span class="tip-text">Class 1 and 2 vehicles are light-duty — if the truck is a full-size semi or heavy hauler, it's not a hot shot.</span></div>
-          <div id="q2-btns" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
-        </div>
-      </div>`;
-
-    case "carrier_status":
-      return question({ text: "Is this a new or existing carrier?", tip: "Check the carrier's load history in Highway. If they have any prior completed loads with ATG, they are an existing carrier.", noLabel: "New carrier", yesLabel: "Existing carrier", onNo: "go('new_carrier_load_type','New carrier')", onYes: "go('load_history','Existing carrier')" });
-
-    case "new_carrier_load_type":
-      return question({ text: "Is this a dry van or reefer load?", tip: "Dry van and reefer loads carry the highest cargo theft risk. New carriers on these load types are not eligible for ELD exemption.", noLabel: "No — other equipment", yesLabel: "Yes — dry van or reefer", onYes: "go('result_not_exempt_new_dryvan','Dry van or reefer → Yes')", onNo: "go('new_carrier_default','Dry van or reefer → No')" });
-
-    case "new_carrier_default":
-      return `<div class="fade">
-        <div class="hard-stop-box">
-          ${badge('notexempt')}
-          <div class="result-title">Not Exempt — New Carrier</div>
-          <div class="result-detail">New carriers are generally not exempt and cannot qualify via load history. Request carrier to connect their ELD via Highway.</div>
-        </div>
-        ${responseBox("Our records indicate this is a new carrier without prior load history with us. Per current policy, new carriers are required to have an active ELD connection to proceed. Please connect your ELD via Highway to continue. If you believe an exception applies, please provide documentation supporting that request and we will review accordingly.")}
-        <div class="exception-box">
-          <div class="exception-label">Is the carrier claiming an exception?</div>
-          <div class="exception-text">If the carrier believes an exception applies, evaluate below. Otherwise this is a hard stop.</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn-amber" onclick="go('new_carrier_exceptions','Claiming exception')">Evaluate Exception</button>
-            <button class="btn-ghost" onclick="back()">‹ Back</button>
-            <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-          </div>
-        </div>
-      </div>`;
-
-    case "new_carrier_exceptions":
-      return `<div class="fade">
-        <p class="q-text">Is the carrier claiming an exception?</p>
-        <p style="font-size:12px;color:var(--text-2);margin-bottom:18px">Select the exception the carrier is raising, if any.</p>
-        <div class="exc-list">
-          <button class="btn-list" onclick="go('equipment_specialized','Drayage or specialized equipment')">Drayage or specialized equipment (step deck, RGN, beam trailer, flatbed)</button>
-          <button class="btn-list" onclick="go('short_haul_check','Short-haul exemption')">Short-haul exemption (under 150 air miles)</button>
-          <button class="btn-list" onclick="go('incompatible_eld','Incompatible ELD provider')">Incompatible ELD provider (e.g. Garmin, Super Dispatch)</button>
-          <button class="btn-list" onclick="go('glider_kit','Glider kit')">Glider kit with verified pre-2000 engine</button>
-          <button class="btn-list" onclick="go('new_carrier_rare_prompt','No exception — carrier cannot qualify')">No exception — carrier cannot qualify</button>
-          <div class="exc-nav">
-            <button class="btn-ghost" onclick="back()">‹ Back</button>
-            <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-          </div>
-        </div>
-      </div>`;
-
-    case "new_carrier_rare_prompt":
-      return `<div class="fade">
-        <div class="exception-box">
-          <div class="exception-label">Is the agent or carrier citing a specific, valid reason for a rare exemption override?</div>
-          <div class="exception-text">A general request or pushback alone does not qualify. Only proceed if the carrier can articulate a legitimate, documented reason that falls outside standard policy. Otherwise, require ELD connection.</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn-amber" onclick="go('new_carrier_check','Requesting rare override')">Evaluate Override</button>
-            <button class="btn-ghost" onclick="go('result_not_exempt_new','Not exempt accepted')">No — require ELD</button>
-            <button class="btn-ghost" onclick="back()">‹ Back</button>
-            <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-          </div>
-        </div>
-      </div>`;
-
-    case "new_carrier_check":
-      return question({ text: "Does the carrier meet ALL of the following? Load is not high value · Passes all standard rules · No ownership change in past 365 days · Can provide cab card", tip: "Check ownership history in SAFER or Highway. Cab card must be provided directly — do not proceed without it.", noLabel: "No — one or more missing", yesLabel: "Yes — all criteria met", onNo: "go('result_not_exempt_new','Rare override criteria → Not met')", onYes: "go('result_new_carrier_rare','Rare override criteria → Met')" });
-
-    case "load_history":
-      return question({ text: "Does the carrier have 3 or more completed loads in the last 90 days?", tip: "Review load history in ATG. Count only completed loads within the last 90 days — pending or cancelled loads do not qualify.", noLabel: "No — fewer than 3", yesLabel: "Yes — 3+ loads", onNo: "go('existing_carrier_load_type','Load history → Thin/missing')", onYes: "go('cargo_value','Load history → Qualifies')" });
-
-    case "existing_carrier_load_type":
-      return question({ text: "Is this a dry van or reefer load?", tip: "Dry van and reefer loads carry the highest cargo theft risk and have less flexibility for exemption exceptions.", noLabel: "No — other equipment", yesLabel: "Yes — dry van or reefer", onYes: "go('result_not_exempt_thin_dryvan','Dry van or reefer → Yes')", onNo: "go('result_not_exempt_thin','Dry van or reefer → No')" });
-
-    case "cargo_value":
-      return question({ text: "Is cargo value above $100,000?", tip: "Cargo value may not always be known at this stage. If it becomes known later and exceeds $100K, the override should not be granted.", noLabel: "No / Unknown", yesLabel: "Yes — above $100K", onNo: "go('result_exempt_history','Cargo >$100K → No')", onYes: "go('result_not_exempt_cargo','Cargo >$100K → Yes')" });
-
-    case "exceptions":
-      return exceptions();
-
-    case "equipment_specialized":
-      return `<div class="fade">
-        <p class="q-text">What type of specialized equipment is this?</p>
-        <p style="font-size:12px;color:var(--text-2);margin-bottom:18px">Select the equipment type the carrier is operating.</p>
-        <div class="exc-list">
-          <button class="btn-list" onclick="go('result_exempt_drayage','Drayage')">Drayage</button>
-          <button class="btn-list" onclick="go('result_exempt_stepdeck','Step deck / RGN')">Step deck / RGN</button>
-          <button class="btn-list" onclick="go('result_exempt_beam','Beam trailer')">Beam trailer</button>
-          <button class="btn-list" onclick="go('flatbed_cargo','Flatbed')">Flatbed</button>
-          <button class="btn-list" onclick="go('result_not_exempt_history','None of the above')">None of the above</button>
-          <div class="exc-nav">
-            <button class="btn-ghost" onclick="back()">‹ Back</button>
-            <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-          </div>
-        </div>
-      </div>`;
-
-    case "flatbed_cargo":
-      return question({ text: "Is the cargo metals, ATVs/UTVs/off-road vehicles, or anything high-value or easily offloaded?", tip: "Ask the carrier or agent what is being hauled. When in doubt, treat the cargo as high-risk and require ELD connection.", noLabel: "No — standard cargo", yesLabel: "Yes — High Value / High Risk", onNo: "go('result_exempt_equipment','High-risk cargo → No')", onYes: "go('result_not_exempt_flatbed','High-risk cargo → Yes')" });
-
-    case "short_haul_check":
-      return question({ text: "Is this a consistent short-haul pattern (carrier routinely operates under 150 air miles)?", tip: "Review route history in Highway. A consistent pattern means the carrier regularly runs short-haul — not just this one load.", noLabel: "No — this load only", yesLabel: "Yes — established pattern", onNo: "go('result_conditional_shorthaul','Short-haul → Situational')", onYes: "go('result_exempt_shorthaul_consistent','Short-haul → Consistent')" });
-
-    case "incompatible_eld":
-      return question({ text: "Does the carrier pass all standard checks, no ownership change in 365 days, AND can provide DL, cab card, and title?", tip: "DL, cab card, and title are required. If concerns still remain, also request ELD audit log and a photo of the truck. Macropoint or Trucker Tools must also be set up and active. No loads over $100K allowed.", noLabel: "No — missing requirements", yesLabel: "Yes — all docs available", onNo: "go('result_not_exempt_history','Incompatible ELD → Docs missing')", onYes: "go('result_conditional_eld','Incompatible ELD → Docs met')" });
-
-    case "glider_kit":
-      return question({ text: "Can the carrier provide standard exemption documentation plus invoice, work order, or engine tag verifying pre-2000 engine year?", tip: "The engine year must be verified with a physical document — invoice, work order, or engine tag. Self-reported year alone is not sufficient.", noLabel: "No", yesLabel: "Yes — docs available", onNo: "go('result_not_exempt_history','Glider kit → No docs')", onYes: "go('result_exempt_glider','Glider kit → Docs verified')" });
-
-    // ── HARD STOPS ──
-    case "result_not_exempt_thin_dryvan":
-      return result({ type: "notexempt", title: "Not Exempt — Insufficient Load History (Dry Van / Reefer)", detail: "This carrier does not meet the minimum load history requirement and is on a dry van or reefer load. These load types have the highest cargo theft risk and require an active ELD connection.", response: "Based on our review, this carrier does not meet the load history requirement for an ELD exemption, and dry van and reefer loads require an active ELD connection. Please connect your ELD via Highway to proceed." });
-
-    case "result_not_exempt_thin":
-      return `<div class="fade">
-        <div class="hard-stop-box">
-          ${badge('notexempt')}
-          <div class="result-title">Not Exempt — Insufficient Load History</div>
-          <div class="result-detail">The carrier does not have 3 or more completed loads in the last 90 days and does not qualify under load history policy.</div>
-        </div>
-        ${responseBox("Our records do not reflect sufficient load history to qualify for an ELD exemption at this time. Per current policy, a minimum of 3 completed loads within the last 90 days is required. Please connect your ELD via Highway to proceed. If you believe an exception applies, please provide documentation supporting that request and we will review accordingly.")}
-        <div class="exception-box">
-          <div class="exception-label">Is the carrier claiming an exception?</div>
-          <div class="exception-text">If the agent or carrier is pushing back and believes an exception applies, you can evaluate that below. Otherwise this is a hard stop.</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn-amber" onclick="go('exceptions','Claiming exception')">Evaluate Exception</button>
-            <button class="btn-ghost" onclick="back()">‹ Back</button>
-            <button class="btn-ghost" onclick="reset()">↺ Start Over</button>
-          </div>
-        </div>
-      </div>`;
-
-    // ── RESULTS ──
-    case "result_exempt_pre2000":
-      return result({ type: "exempt", title: "Exempt by Model Year or Equipment Type", detail: "Pre-2000 engine confirmed, or equipment is a Sprinter van / hot shot (Class 1 or 2). No further evaluation needed.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on the engine model year or equipment type on file, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_exempt_drayage":
-      return result({ type: "exempt", title: "Exempt — Drayage", detail: "Drayage equipment qualifies for ELD exemption under current policy. No further evaluation needed.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on the equipment type on file, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_exempt_stepdeck":
-      return result({ type: "exempt", title: "Exempt — Step Deck / RGN", detail: "Step deck or RGN equipment qualifies for ELD exemption under current policy. No further evaluation needed.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on the equipment type on file, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_exempt_beam":
-      return result({ type: "exempt", title: "Exempt — Beam Trailer", detail: "Beam trailer equipment qualifies for ELD exemption under current policy. No further evaluation needed.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on the equipment type on file, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_exempt_equipment":
-      return result({ type: "exempt", title: "Exempt by Equipment Type", detail: "Sprinter van, hot shot (Class 1/2), or qualifying specialized equipment. No further evaluation needed.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on the equipment type on file, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_not_exempt_flatbed":
-      return result({ type: "notexempt", title: "Not Exempt — High-Risk Flatbed Cargo", detail: "Flatbed carriers hauling metals, ATVs/UTVs, or high-value/easily-offloaded cargo must connect a valid, active ELD regardless of any other exemption criteria.", response: "Per current policy, carriers hauling this cargo type are required to have an active ELD connection regardless of equipment or load history. Please connect your ELD via Highway to proceed." });
-
-    case "result_not_exempt_new_dryvan":
-      return result({ type: "notexempt", title: "Not Exempt — New Carrier (Dry Van / Reefer)", detail: "New carriers on dry van or reefer loads are not eligible for an ELD exemption. These load types carry the highest cargo theft risk and require an active ELD connection.", response: "Our records indicate this is a new carrier. Per current policy, new carriers on dry van or reefer loads are required to have an active ELD connection. Please connect your ELD via Highway to proceed." });
-
-    case "result_not_exempt_new":
-      return result({ type: "notexempt", title: "Not Exempt — New Carrier", detail: "New carriers generally cannot qualify for ELD exemption via load history. The rare override criteria were not fully met.", response: "Our records indicate this is a new carrier without prior load history with us. Per current policy, new carriers are required to have an active ELD connection to proceed. Please connect your ELD via Highway to continue. If you believe an exception applies, please provide documentation supporting that request and we will review accordingly." });
-
-    case "result_new_carrier_rare":
-      return result({ type: "conditional", title: "Rare Override — New Carrier", detail: "All rare override criteria are met. This is an exception and should be handled with additional scrutiny.", override: "24 hours", extra: "This is not a standard path. Ensure all criteria are documented before granting any override.", response: "A limited override has been applied based on the documentation provided. This override is valid for 24 hours only and is not a standard exemption. All criteria must be on file before this load proceeds. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_not_exempt_cargo":
-      return result({ type: "notexempt", title: "Not Exempt — Cargo Value Exceeds $100,000", detail: "Regardless of load history or equipment, no ELD exemption override can be granted when cargo value is above $100,000.", response: "Per current policy, ELD exemptions cannot be applied to loads with a cargo value above $100,000. An active ELD connection is required for this load. Please connect your ELD via Highway to proceed." });
-
-    case "result_exempt_history":
-      return result({ type: "exempt", title: "Exempt by Load History", detail: "Existing carrier with 3+ completed loads in the last 90 days. Qualifies under load history policy.", override: "90 days", extra: "Inform the agent this override is valid for 90 days. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on verified load history with us, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 90 days. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_not_exempt_history":
-      return result({ type: "notexempt", title: "Not Exempt — Insufficient Load History", detail: "The carrier does not qualify by model year, equipment type, or load history, and no valid exception applies. ELD connection is required.", extra: "Ask the carrier to connect their ELD via Highway. If they claim an exemption, they can submit documentation via Highway or directly to your team.", response: "Based on our review, this carrier does not meet the criteria for an ELD exemption at this time. An active ELD connection is required to proceed. Please connect your ELD via Highway. If you believe you qualify for an exemption, please submit supporting documentation for review." });
-
-    case "result_exempt_shorthaul_consistent":
-      return result({ type: "exempt", title: "Exempt — Consistent Short-Haul Operator", detail: "Carrier routinely operates under 150 air miles. Route history verified. Qualifies for short-haul exemption.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on verified route history, this carrier qualifies for a short-haul ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_conditional_shorthaul":
-      return result({ type: "conditional", title: "Conditional — Situational Short-Haul", detail: "This specific load is under 150 air miles, but the carrier has not established a consistent short-haul pattern.", override: "30 days", extra: "Inform the agent this is a 30-day conditional override only. The carrier should be re-evaluated at expiration.", response: "A conditional override has been applied for this load based on the route falling within 150 air miles. This override is valid for 30 days only and does not establish an ongoing exemption. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_conditional_eld":
-      return result({ type: "conditional", title: "Conditional — Incompatible ELD Provider", detail: "All required documentation provided. Macropoint/Trucker Tools required. No loads over $100K permitted during this override.", override: "30 days", extra: "Macropoint or Trucker Tools must be active. This override cannot apply to any load over $100K.", response: "A conditional override has been applied based on the documentation provided. This override is valid for 30 days. Macropoint or Trucker Tools must remain active for the duration of this override, and it cannot be applied to any load with a cargo value above $100,000. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    case "result_exempt_glider":
-      return result({ type: "exempt", title: "Exempt — Glider Kit (Pre-2000 Engine Verified)", detail: "Standard exemption documentation plus engine year verification (invoice, work order, or engine tag) confirmed.", override: "6 months", extra: "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.", response: "Based on the verified engine documentation provided, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated to maintain eligibility. Please note that overrides are subject to review and may be rescinded at any time." });
-
-    default:
-      return "<div>Unknown step</div>";
+// Ref tabs
+function toggleRef(id) {
+  const ids = ['rp-open','rp-ask','rp-sop'];
+  const tabs = ['rt-open','rt-ask','rt-sop'];
+  const isOpen = document.getElementById(id).classList.contains('open');
+  ids.forEach(i => document.getElementById(i).classList.remove('open'));
+  tabs.forEach(t => document.getElementById(t).classList.remove('active'));
+  if (!isOpen) {
+    document.getElementById(id).classList.add('open');
+    tabs[ids.indexOf(id)] && document.getElementById(tabs[ids.indexOf(id)]).classList.add('active');
   }
 }
 
-function render() {
-  const current = history[history.length - 1];
-  const step = current.step;
-  const trail = history.map(h => h.label);
-  document.getElementById("progress").innerHTML = renderProgress(step);
-  document.getElementById("crumb").innerHTML = trail.length > 1 ? renderCrumb(trail) : "";
-  document.getElementById("content").innerHTML = renderStep(step);
+// Generic toggle setter — clicking same value again deselects
+function set(key, val, yesId, noId, type) {
+  const currentBtn = document.getElementById(type === 'yes' ? yesId : noId);
+  const alreadyActive = currentBtn.classList.contains(type === 'yes' ? 'yes' : 'no');
+
+  if (alreadyActive) {
+    // Deselect
+    s[key] = null;
+    document.getElementById(yesId).className = 'tog-btn';
+    document.getElementById(noId).className  = 'tog-btn';
+  } else {
+    s[key] = val;
+    document.getElementById(yesId).className = 'tog-btn' + (val ? ' yes' : '');
+    document.getElementById(noId).className  = 'tog-btn' + (!val ? ' no'  : '');
+  }
+
+  // Special handling
+  if (key === 'history') {
+    document.getElementById('row-cargo').classList.toggle('hidden', s.history !== true || s.hv !== null);
+    if (s.history === true && s.hv !== null) s.cargo = s.hv ? true : null;
+    if (s.history === null) { s.cargo = null; document.getElementById('row-cargo').classList.add('hidden'); }
+  }
+  if (key === 'modelYear' && s.modelYear === null) {
+    document.getElementById('block-carrier').classList.add('hidden');
+    document.getElementById('block-history').classList.add('hidden');
+  }
+  evaluate();
 }
 
-render();
+// Equipment
+function setEquip(el, val) {
+  const wasActive = el.classList.contains('active');
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+
+  if (wasActive) {
+    s.equip = null;
+    s.flatbedCargo = null;
+    s.ca = null; s.hv = null; s.lh = null;
+    document.getElementById('row-flatbed').classList.add('hidden');
+    document.getElementById('block-risk').classList.add('hidden');
+    document.getElementById('block-carrier').classList.add('hidden');
+    document.getElementById('block-history').classList.add('hidden');
+    resetRiskToggles();
+    ['fc-yes','fc-no'].forEach(id => document.getElementById(id).className='tog-btn');
+  } else {
+    el.classList.add('active');
+    s.equip = val;
+    s.flatbedCargo = null;
+    ['fc-yes','fc-no'].forEach(id => document.getElementById(id).className='tog-btn');
+    document.getElementById('row-flatbed').classList.toggle('hidden', val !== 'flatbed');
+    const needsRisk = (val === 'dryvan' || val === 'reefer') && s.modelYear !== false;
+    document.getElementById('block-risk').classList.toggle('hidden', !needsRisk);
+    if (!needsRisk) { s.ca = null; s.hv = null; s.lh = null; resetRiskToggles(); }
+    const exempt = ['sprinter','drayage','stepdeck','beam'].includes(val);
+    document.getElementById('block-carrier').classList.toggle('hidden', exempt || val === 'flatbed' || s.modelYear === false);
+  }
+  evaluate();
+}
+
+function resetRiskToggles() {
+  ['ca-yes','ca-no','hv-yes','hv-no','lh-yes','lh-no'].forEach(id => document.getElementById(id).className = 'tog-btn');
+  document.getElementById('row-lh').classList.add('hidden');
+}
+
+// CA
+function setCA(val) {
+  const btnId = val ? 'ca-yes' : 'ca-no';
+  const alreadyActive = document.getElementById(btnId).classList.contains(val ? 'yes' : 'no');
+  if (alreadyActive) {
+    s.ca = null;
+    document.getElementById('ca-yes').className = 'tog-btn';
+    document.getElementById('ca-no').className  = 'tog-btn';
+    document.getElementById('row-lh').classList.add('hidden');
+    s.lh = null;
+    document.getElementById('lh-yes').className='tog-btn';
+    document.getElementById('lh-no').className='tog-btn';
+  } else {
+    s.ca = val;
+    document.getElementById('ca-yes').className = 'tog-btn' + (val ? ' yes' : '');
+    document.getElementById('ca-no').className  = 'tog-btn' + (!val ? ' no'  : '');
+    document.getElementById('row-lh').classList.toggle('hidden', !val);
+    if (!val) { s.lh = null; document.getElementById('lh-yes').className='tog-btn'; document.getElementById('lh-no').className='tog-btn'; }
+  }
+  evaluate();
+}
+
+// HV
+function setHV(val) {
+  const btnId = val ? 'hv-yes' : 'hv-no';
+  const alreadyActive = document.getElementById(btnId).classList.contains(val ? 'yes' : 'no');
+  if (alreadyActive) {
+    s.hv = null;
+    document.getElementById('hv-yes').className = 'tog-btn';
+    document.getElementById('hv-no').className  = 'tog-btn';
+  } else {
+    s.hv = val;
+    document.getElementById('hv-yes').className = 'tog-btn' + (val ? ' yes' : '');
+    document.getElementById('hv-no').className  = 'tog-btn' + (!val ? ' no'  : '');
+    if (s.history === true) { s.cargo = val ? true : null; document.getElementById('row-cargo').classList.add('hidden'); }
+    if (s.ca === true && val === true) { evaluate(); return; }
+    const exempt = ['sprinter','drayage','stepdeck','beam'].includes(s.equip);
+    if (!exempt && s.equip !== 'flatbed' && s.modelYear !== false) {
+      document.getElementById('block-carrier').classList.remove('hidden');
+    }
+  }
+  evaluate();
+}
+
+// Carrier
+function setCarrier(val) {
+  const btnId = val === 'existing' ? 'c-existing' : 'c-new';
+  const alreadyActive = document.getElementById(btnId).classList.contains('sel');
+  if (alreadyActive) {
+    s.carrier = null;
+    s.history = null; s.cargo = null;
+    document.getElementById('c-existing').className = 'tog-btn';
+    document.getElementById('c-new').className      = 'tog-btn';
+    document.getElementById('block-history').classList.add('hidden');
+    ['h-yes','h-no','cv-yes','cv-no'].forEach(id => document.getElementById(id).className='tog-btn');
+    document.getElementById('row-cargo').classList.add('hidden');
+  } else {
+    s.carrier = val;
+    s.history = null; s.cargo = null;
+    document.getElementById('c-existing').className = 'tog-btn' + (val === 'existing' ? ' sel' : '');
+    document.getElementById('c-new').className      = 'tog-btn' + (val === 'new' ? ' sel' : '');
+    document.getElementById('block-history').classList.toggle('hidden', val !== 'existing');
+    ['h-yes','h-no','cv-yes','cv-no'].forEach(id => document.getElementById(id).className='tog-btn');
+    document.getElementById('row-cargo').classList.add('hidden');
+  }
+  evaluate();
+}
+
+// Reset
+function resetAll() {
+  Object.keys(s).forEach(k => s[k]=null);
+  document.querySelectorAll('.tog-btn').forEach(b => b.className='tog-btn');
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  ['block-risk','block-carrier','block-history','row-flatbed','row-lh','row-cargo'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  hideExceptions();
+  document.getElementById('pending').style.display='flex';
+  document.getElementById('verdict').style.display='none';
+}
+
+// Denial tags
+function denialTags() {
+  const t=[];
+  if(s.equip) t.push(equipLabels[s.equip]);
+  if(s.ca===true) t.push('CA Origin');
+  if(s.hv===true) t.push('High Value >$100K');
+  if(s.lh===true) t.push('Long Haul 1,000+ mi');
+  if(s.carrier==='new') t.push('New Carrier');
+  if(s.history===false) t.push('Insufficient Load History');
+  if(s.cargo===true) t.push('Cargo >$100K');
+  if(s.flatbedCargo===true) t.push('High-Risk Flatbed Cargo');
+  return t;
+}
+
+// Dynamic response builder
+function buildResponse(type) {
+  const eq = equipLabels[s.equip] || 'this equipment';
+  const origin = s.ca===true ? ' originating in California' : '';
+  const hv = s.hv===true ? ' with high-value cargo above $100,000' : '';
+  const lh = s.lh===true ? ' on a long-haul lane over 1,000 miles' : '';
+  if(type==='exempt') {
+    if(s.modelYear===false) return `Based on the pre-2000 engine on file, this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated. Overrides are subject to review and may be rescinded at any time.`;
+    if(['sprinter','drayage','stepdeck','beam'].includes(s.equip)||(s.equip==='flatbed'&&s.flatbedCargo===false)) return `Based on the equipment type on file (${eq}), this carrier qualifies for an ELD exemption under current policy. An override has been applied and is valid for 6 months. Upon expiration, the carrier must be re-evaluated. Overrides are subject to review and may be rescinded at any time.`;
+    if(s.carrier==='existing'&&s.history===true) {
+      const risk=(s.ca||s.lh)?` ⚠ Elevated risk${origin}${lh} — apply additional scrutiny.`:'';
+      return `Based on verified load history, this ${eq} carrier qualifies for an ELD exemption. An override has been applied and is valid for 90 days. Upon expiration, the carrier must be re-evaluated.${risk} Overrides are subject to review and may be rescinded at any time.`;
+    }
+  }
+  if(s.ca===true&&s.hv===true) return `We are unable to process an ELD exemption for this load. This ${eq} load${origin}${hv} presents a critical risk profile. An active ELD connection is required. Please have the carrier connect their ELD via Highway before this load can proceed.`;
+  if(s.hv===true&&(s.equip==='dryvan'||s.equip==='reefer')) return `We are unable to process an ELD exemption for this ${eq} load${hv}. Per current policy, loads with cargo value above $100,000 require an active ELD connection. Please have the carrier connect their ELD via Highway.`;
+  if(s.equip==='flatbed'&&s.flatbedCargo===true) return `We are unable to process an ELD exemption for this flatbed load. The cargo type requires an active ELD connection per current policy. Please have the carrier connect their ELD via Highway.`;
+  if(s.carrier==='new'&&(s.equip==='dryvan'||s.equip==='reefer')) return `We are unable to process an ELD exemption for this load. This is a new carrier on a ${eq} load${origin}${hv}. Per current policy, new carriers on dry van and reefer loads require an active ELD connection. Please have the carrier connect their ELD via Highway.`;
+  if(s.carrier==='new') return `We are unable to process an ELD exemption for this load. This is a new carrier without prior load history with us. Per current policy, new carriers are required to have an active ELD connection. If they believe they qualify for an exception, please send us the reason along with their cab card.`;
+  if(s.carrier==='existing'&&s.history===false&&(s.equip==='dryvan'||s.equip==='reefer')) return `We are unable to process an ELD exemption for this ${eq} load${origin}. This carrier does not meet the minimum load history requirement, and dry van and reefer loads require an active ELD connection. Please have the carrier connect their ELD via Highway.`;
+  if(s.carrier==='existing'&&s.history===false) return `We are unable to process an ELD exemption for this load. This carrier does not meet the minimum load history requirement of 3 completed loads in the last 90 days. If they believe they qualify for an exception, please send the load number, equipment type, commodity, value, and lane along with the reason.`;
+  if(s.cargo===true) return `We are unable to process an ELD exemption for this load. The cargo value exceeds $100,000, which is a hard stop under current policy. An active ELD connection is required. Please have the carrier connect their ELD via Highway.`;
+  return `Per current policy, an active ELD connection is required for this load. Please have the carrier connect their ELD via Highway to proceed.`;
+}
+
+// Show result
+function showResult(type, title, detail, override, note, response) {
+  const badges = { exempt:'✓ Exempt', notexempt:'✗ Not Exempt', conditional:'⚠ Conditional' };
+  const tags = type==='notexempt' ? denialTags() : [];
+  const tagsHtml = tags.length ? `<div class="denial-wrap"><div class="denial-lbl">Denial Factors</div><div class="denial-tags">${tags.map(t=>`<span class="d-tag">${t}</span>`).join('')}</div></div>` : '';
+  const overrideHtml = override ? `<div class="override-pill"><span class="ol">Override</span><span class="ov ${type==='exempt'?'green':'amber'}">${override}</span></div>` : '';
+  const noteHtml = note ? `<div class="r-note"><div class="nl">Note</div><p>${note}</p></div>` : '';
+  const respHtml = response ? `<div class="r-resp"><div class="rl">💬 Suggested Response</div><p id="r-live-resp">${response}</p></div>` : `<div class="r-resp"><div class="rl">💬 Suggested Response</div><p id="r-live-resp" style="color:var(--ink-light);font-style:normal;">Building response...</p></div>`;
+  // Risk meter
+  const riskFactors = [s.ca===true, s.hv===true, s.lh===true, s.carrier==='new'||s.history===false].filter(Boolean);
+  const riskPct = Math.min(riskFactors.length / 3 * 100, 100);
+  const riskColor = riskPct===0?'var(--eld-dot)':riskPct<=33?'var(--eld-dot)':riskPct<=66?'var(--amber)':'var(--hard-dot)';
+  const riskLabel = riskPct===0?'Low':riskPct<=33?'Low':riskPct<=66?'Moderate':'High';
+  const riskHtml = riskFactors.length > 0 ? `<div class="risk-bar-wrap"><span class="risk-bar-lbl">Risk</span><div class="risk-bar"><div class="risk-fill" style="width:${riskPct}%;background:${riskColor};"></div></div><span class="risk-val" style="color:${riskColor};">${riskLabel}</span></div>` : '';
+
+  document.getElementById('pending').style.display='none';
+  const v=document.getElementById('verdict');
+  v.style.display='block';
+  v.className='fade';
+  v.innerHTML=`${riskHtml}<div style="margin-top:${riskHtml?'10px':'0'};"><span class="r-badge ${type}">${badges[type]}</span><div class="r-title">${title}</div><div class="r-detail">${detail}</div>${tagsHtml}${overrideHtml}${noteHtml}${respHtml}</div>`;
+}
+
+// Show exceptions block after not-exempt result
+function showExceptions(allowNewCarrier, allowFull) {
+  document.getElementById('block-exceptions').classList.remove('hidden');
+  document.getElementById('exc-btn-newcarrier').style.display = allowNewCarrier ? 'block' : 'none';
+  // Reset all exception rows
+  ['exc-row-shorthaul','exc-row-incompatible','exc-row-glider','exc-row-newcarrier'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  ['sh-consistent','sh-situational','inc-yes','inc-no','gl-yes','gl-no','nc-yes','nc-no'].forEach(id => document.getElementById(id).className='tog-btn');
+  document.getElementById('exc-buttons').style.display='flex';
+}
+
+function hideExceptions() {
+  document.getElementById('block-exceptions').classList.add('hidden');
+}
+
+function showExcRow(id) {
+  document.getElementById('exc-buttons').style.display='none';
+  ['exc-row-shorthaul','exc-row-incompatible','exc-row-glider','exc-row-newcarrier'].forEach(r => document.getElementById(r).classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+}
+
+function setException(type) {
+  const NOTE_30 = "Inform the agent this is a 30-day conditional override only. The carrier must be re-evaluated at expiration. Overrides are subject to review and may be rescinded at any time.";
+  const NOTE_6  = "Inform the agent this override is valid for 6 months. Upon expiration the carrier must be re-evaluated. This may change at the discretion of the Compliance Department.";
+
+  if(type==='shorthaul_consistent') {
+    document.getElementById('sh-consistent').className='tog-btn yes';
+    document.getElementById('sh-situational').className='tog-btn';
+    showResult('exempt','Exempt — Consistent Short-Haul Operator','Carrier routinely operates under 150 air miles. Route history verified. Qualifies for short-haul exemption.','6 months',NOTE_6,'Based on verified route history, this carrier qualifies for a short-haul ELD exemption. An override has been applied and is valid for 6 months. Upon expiration the carrier must be re-evaluated. Overrides are subject to review and may be rescinded at any time.');
+  } else if(type==='shorthaul_situational') {
+    document.getElementById('sh-situational').className='tog-btn sel';
+    document.getElementById('sh-consistent').className='tog-btn';
+    showResult('conditional','Conditional — Situational Short-Haul','This specific load is under 150 air miles, but the carrier has not established a consistent short-haul pattern.','30 days',NOTE_30,'A conditional override has been applied for this load based on the route falling within 150 air miles. This override is valid for 30 days only and does not establish an ongoing exemption.');
+  } else if(type==='incompatible_yes') {
+    document.getElementById('inc-yes').className='tog-btn yes';
+    document.getElementById('inc-no').className='tog-btn';
+    showResult('conditional','Conditional — Incompatible ELD Provider','All required documentation provided. Macropoint/Trucker Tools required. No loads over $100K permitted during this override.','30 days','Macropoint or Trucker Tools must be active. This override cannot apply to any load over $100K. '+NOTE_30,'A conditional override has been applied based on the documentation provided. This override is valid for 30 days. Macropoint or Trucker Tools must remain active and it cannot apply to loads over $100,000.');
+  } else if(type==='incompatible_no') {
+    document.getElementById('inc-no').className='tog-btn no';
+    document.getElementById('inc-yes').className='tog-btn';
+    showResult('notexempt','Not Exempt — Missing Documentation','Required documentation for incompatible ELD provider exception was not provided. ELD connection required.',null,null,'Based on our review, the required documentation for this exception was not provided. Please have the carrier connect their ELD via Highway to proceed.');
+  } else if(type==='glider_yes') {
+    document.getElementById('gl-yes').className='tog-btn yes';
+    document.getElementById('gl-no').className='tog-btn';
+    showResult('exempt','Exempt — Glider Kit (Pre-2000 Engine Verified)','Standard exemption documentation plus engine year verification confirmed.','6 months',NOTE_6,'Based on the verified engine documentation provided, this carrier qualifies for an ELD exemption. An override has been applied and is valid for 6 months. Overrides are subject to review and may be rescinded at any time.');
+  } else if(type==='glider_no') {
+    document.getElementById('gl-no').className='tog-btn no';
+    document.getElementById('gl-yes').className='tog-btn';
+    showResult('notexempt','Not Exempt — Glider Kit Documentation Missing','Engine year must be verified with a physical document — invoice, work order, or engine tag. Self-reported year alone is not sufficient.',null,null,'We are unable to process this exemption without verified engine documentation. Please provide an invoice, work order, or engine tag confirming the pre-2000 engine year.');
+  } else if(type==='newcarrier_yes') {
+    document.getElementById('nc-yes').className='tog-btn yes';
+    document.getElementById('nc-no').className='tog-btn';
+    showResult('conditional','Rare Override — New Carrier','All rare override criteria are met. This is an exception and should be handled with additional scrutiny.','24 hours','This is not a standard path. Ensure all criteria are documented before granting any override. Overrides are subject to review and may be rescinded at any time.','A limited override has been applied based on the documentation provided. This override is valid for 24 hours only and is not a standard exemption. All criteria must be on file before this load proceeds.');
+  } else if(type==='newcarrier_no') {
+    document.getElementById('nc-no').className='tog-btn no';
+    document.getElementById('nc-yes').className='tog-btn';
+    showResult('notexempt','Not Exempt — New Carrier','The rare override criteria were not fully met. ELD connection is required.',null,null,'Our records indicate this is a new carrier. The criteria for a rare override were not met. Please have the carrier connect their ELD via Highway to proceed.');
+  }
+}
+
+// Live suggested response — updates inside the result panel
+function buildLiveResponse() {
+  const parts = [];
+  const eq = equipLabels[s.equip];
+
+  if (!s.equip && s.modelYear === null) return;
+
+  parts.push("Hi — we're reviewing this");
+  if (s.carrier === 'new') parts.push("new carrier");
+  else parts.push("carrier");
+  if (eq) parts.push(`on a ${eq} load`);
+  if (s.ca === true) parts.push("originating in California");
+  if (s.hv === true) parts.push("with high-value cargo above $100,000");
+  if (s.lh === true) parts.push("on a long-haul lane over 1,000 miles");
+  if (s.history === false) parts.push("that does not meet our minimum load history requirement");
+  else if (s.history === true) parts.push("with verified load history");
+
+  let sentence = parts.join(", ").replace(", on a", " on a").replace(", that", " that").replace(", with verified", " with verified") + ".";
+
+  if (s.ca === true && s.hv === true) {
+    sentence += " This load presents a critical risk profile under our current policy. An active ELD connection is required — we are unable to proceed with an ELD exemption.";
+  } else if (s.hv === true && (s.equip === 'dryvan' || s.equip === 'reefer')) {
+    sentence += " Per current policy, loads with cargo value above $100,000 require an active ELD connection. We are unable to approve an ELD exemption for this load.";
+  } else if (s.carrier === 'new' && (s.equip === 'dryvan' || s.equip === 'reefer')) {
+    sentence += " Per current policy, new carriers on dry van and reefer loads are required to have an active ELD connection. We are unable to approve an ELD exemption for this load.";
+  } else if (s.equip === 'flatbed' && s.flatbedCargo === true) {
+    sentence += " Per current policy, this cargo type requires an active ELD connection. We are unable to approve an ELD exemption.";
+  } else if (s.history === false) {
+    sentence += " Per current policy, a minimum of 3 completed loads within the last 90 days is required for an ELD exemption.";
+  } else if (['sprinter','drayage','stepdeck','beam'].includes(s.equip) || s.modelYear === false || (s.equip === 'flatbed' && s.flatbedCargo === false)) {
+    sentence += " Based on the equipment type on file, this carrier qualifies for an ELD exemption under current policy.";
+  } else if (s.history === true) {
+    sentence += " Based on verified load history, this carrier qualifies for an ELD exemption under current policy.";
+  } else {
+    sentence += " We are reviewing the ELD exemption eligibility against our current policy.";
+  }
+
+  if (!['sprinter','drayage','stepdeck','beam'].includes(s.equip) && s.modelYear !== false && !(s.equip === 'flatbed' && s.flatbedCargo === false) && s.history !== true) {
+    sentence += " Please have the carrier connect their ELD via Highway to proceed.";
+  }
+
+  // Update the response inside the verdict if it exists
+  const respEl = document.getElementById('r-live-resp');
+  if (respEl) respEl.textContent = sentence;
+}
+
+// Main evaluate — fires on every state change
+function evaluate() {
+  buildLiveResponse();
+  // Pre-2000
+  if(s.modelYear===false) { showResult('exempt','Exempt by Model Year','Pre-2000 engine confirmed. No further evaluation needed.','6 months',null,buildResponse('exempt')); hideExceptions(); return; }
+  // Sprinter
+  if(s.equip==='sprinter') { showResult('exempt','Exempt by Equipment Type','Sprinter van or hot shot (Class 1 or 2).','6 months',null,buildResponse('exempt')); hideExceptions(); return; }
+  // Drayage
+  if(s.equip==='drayage') { showResult('exempt','Exempt — Drayage','Drayage equipment qualifies for ELD exemption.','6 months',null,buildResponse('exempt')); hideExceptions(); return; }
+  // Step Deck / RGN
+  if(s.equip==='stepdeck') { showResult('exempt','Exempt — Step Deck / RGN','Step deck or RGN qualifies for ELD exemption.','6 months',null,buildResponse('exempt')); hideExceptions(); return; }
+  // Beam
+  if(s.equip==='beam') { showResult('exempt','Exempt — Beam Trailer','Beam trailer qualifies for ELD exemption.','6 months',null,buildResponse('exempt')); hideExceptions(); return; }
+  // Flatbed high-risk
+  if(s.equip==='flatbed'&&s.flatbedCargo===true) { showResult('notexempt','Not Exempt — High-Risk Flatbed Cargo','Flatbed carriers hauling metals, ATVs/UTVs, or high-value/easily-offloaded cargo must connect a valid ELD.',null,null,buildResponse('notexempt')); hideExceptions(); return; }
+  // Flatbed standard
+  if(s.equip==='flatbed'&&s.flatbedCargo===false) { showResult('exempt','Exempt — Flatbed (Standard Cargo)','Flatbed with standard cargo qualifies for ELD exemption.','6 months',null,buildResponse('exempt')); hideExceptions(); return; }
+  // CA + HV critical
+  if(s.ca===true&&s.hv===true) { showResult('notexempt','Not Exempt — Critical Risk Load','California origin combined with high-value cargo represents the highest theft risk profile. ELD required.',null,null,buildResponse('notexempt')); hideExceptions(); return; }
+  // HV alone on dry van/reefer
+  if(s.hv===true&&(s.equip==='dryvan'||s.equip==='reefer')) { showResult('notexempt','Not Exempt — High Value Cargo','Dry van and reefer loads with cargo value above $100,000 require an active ELD connection.',null,null,buildResponse('notexempt')); hideExceptions(); return; }
+  // New carrier + dry van/reefer
+  if(s.carrier==='new'&&(s.equip==='dryvan'||s.equip==='reefer')) { showResult('notexempt','Not Exempt — New Carrier (Dry Van / Reefer)','New carriers on dry van or reefer loads are not eligible for ELD exemption.',null,null,buildResponse('notexempt')); showExceptions(false); return; }
+  // New carrier + other
+  if(s.carrier==='new'&&s.equip&&s.equip!=='dryvan'&&s.equip!=='reefer') { showResult('notexempt','Not Exempt — New Carrier','New carriers generally cannot qualify via load history. Request carrier to connect their ELD.',null,'A specific, valid reason is required before any override can be considered.',buildResponse('notexempt')); showExceptions(true); return; }
+  // Existing + history qualifies
+  if(s.carrier==='existing'&&s.history===true) {
+    if(s.cargo===true) { showResult('notexempt','Not Exempt — Cargo Value Exceeds $100,000','No ELD exemption override can be granted when cargo value is above $100,000.',null,null,buildResponse('notexempt')); showExceptions(false); return; }
+    const riskFlags=[];
+    if(s.ca===true) riskFlags.push('California origin');
+    if(s.lh===true) riskFlags.push('long haul over 1,000 miles');
+    const note=riskFlags.length?NOTE_STD+` ⚠ Elevated risk: ${riskFlags.join(', ')} — apply additional scrutiny.`:NOTE_STD;
+    showResult('exempt','Exempt by Load History','Existing carrier with 3+ completed loads in the last 90 days.','90 days',null,buildResponse('exempt'));
+    hideExceptions();
+    return;
+  }
+  // Existing + thin + dry van/reefer
+  if(s.carrier==='existing'&&s.history===false&&(s.equip==='dryvan'||s.equip==='reefer')) { showResult('notexempt','Not Exempt — Insufficient Load History (Dry Van / Reefer)','This carrier does not meet the load history requirement and is on a dry van or reefer load.',null,null,buildResponse('notexempt')); showExceptions(false); return; }
+  // Existing + thin + other
+  if(s.carrier==='existing'&&s.history===false) { showResult('notexempt','Not Exempt — Insufficient Load History','The carrier does not have 3+ completed loads in the last 90 days.',null,'Ask the carrier to connect their ELD via Highway. If they claim an exception, they can submit documentation for review.',buildResponse('notexempt')); showExceptions(false, true); return; }
+  // Not enough info yet
+  document.getElementById('pending').style.display='flex';
+  document.getElementById('verdict').style.display='none';
+}
 </script>
 </body>
 </html>
