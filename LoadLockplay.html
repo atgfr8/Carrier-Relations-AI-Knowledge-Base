@@ -585,9 +585,13 @@
 
     <div class="nav-section">
       <div class="nav-label">Tools</div>
-      <button class="nav-item active" onclick="showPage('playbook')">
+      <button class="nav-item active" onclick="showPage('playbook-v2')">
         <span class="nav-dot"></span>
-        Alert playbook
+        Alert playbook V2
+      </button>
+      <button class="nav-item" onclick="showPage('playbook')">
+        <span class="nav-dot"></span>
+        Alert playbook V1
       </button>
       <button class="nav-item" onclick="showPage('agent-playbook')">
         <span class="nav-dot"></span>
@@ -604,6 +608,10 @@
       <button class="nav-item" onclick="showPage('dashboard-sop')">
         <span class="nav-dot"></span>
         Dashboard SOP
+      </button>
+      <button class="nav-item" onclick="showPage('mockup')">
+        <span class="nav-dot"></span>
+        TMS mockup
       </button>
     </div>
 
@@ -714,9 +722,9 @@
     </div>
 
     <!-- Playbook Page -->
-    <div class="page active" id="page-playbook">
+    <div class="page" id="page-playbook">
       <div class="page-header">
-        <h1>Alert playbook</h1>
+        <h1>Alert playbook V1</h1>
         <p>Full detail reference for compliance and development teams.</p>
       </div>
 
@@ -738,6 +746,33 @@
 
       <div class="alert-list" id="alert-list"></div>
     </div>
+
+    <div class="page active" id="page-playbook-v2">
+      <div class="page-header">
+        <h1>Alert playbook V2</h1>
+        <p>Version 2 — compliance and development reference.</p>
+      </div>
+
+      <div style="display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:2px;background:#E07820;display:inline-block"></span>Agent</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:2px;background:#A090E8;display:inline-block"></span>Co-owned</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:12px;height:12px;border-radius:2px;background:#e07060;display:inline-block"></span>Compliance</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text2)"><span style="width:28px;height:12px;border-radius:2px;background:rgba(192,57,43,0.15);border:1px solid rgba(192,57,43,0.3);display:inline-block"></span>Performance Guarantee</div>
+
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" class="search-input" id="search-v2" placeholder="Search alerts..." oninput="renderAlertsV2()">
+        <button class="filter-btn active" onclick="setFilterV2('all',this)">All</button>
+        <button class="filter-btn" onclick="setFilterV2('agent',this)">Agent</button>
+        <button class="filter-btn" onclick="setFilterV2('coowned',this)">Co-owned</button>
+        <button class="filter-btn" onclick="setFilterV2('compliance',this)">Compliance</button>
+      </div>
+
+      <div class="alert-list" id="alert-list-v2"></div>
+    </div>
+
+    
 
     <!-- Agent Playbook Page -->
     <div class="page" id="page-agent-playbook">
@@ -792,6 +827,15 @@
       </div>
 
       <div id="dashboard-sop-content"></div>
+    </div>
+
+    <!-- TMS Mockup Page -->
+    <div class="page" id="page-mockup">
+      <div class="page-header">
+        <h1>TMS mockup</h1>
+        <p>Concept for how Load Lock alerts could surface in the ATG carrier details panel, following existing TMS visual conventions.</p>
+      </div>
+      <div id="mockup-content"></div>
     </div>
 
   </main>
@@ -1148,6 +1192,323 @@ const ALERTS = [
 
 const ALL = ALERTS;
 
+const ALERTS_V2 = [
+  {
+    title: "Overbooked carrier",
+    performanceGuarantee: true,
+    block: "block",
+    whoOverride: "Carrier Compliance",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "A Load Lock alert has been triggered for this load. The carrier has more loads scheduled in the next 24 hours than observed trucks. Please review the load count gap and length of haul before proceeding.",
+    overrideMsg: "I understand this carrier has more scheduled pickups than observed trucks in the next 24 hours and accept responsibility for proceeding with the risk that this load may not be performed.",
+    owner: "compliance",
+    means: "The carrier has # loads (seen with other Load Lock participants) with a scheduled pickup in the next 24 hours, and only has # trucks observed.",
+    specific: [
+      { text: "Note that the load count in the alert reflects all Load Lock participants in Highway — not just ATG loads.", sub: "This means the carrier may have pickups scheduled with multiple brokers, not just yours. The count is a network-wide view of their committed capacity." },
+      { text: "Check the length of haul of the current shipment and the difference between pickup and load count.", sub: "If the difference is material and the shipment has more than 200 miles, consider removing the carrier from the load. Otherwise, contact the carrier to understand their local/regional operations to determine risk." }
+    ],
+    active: true
+  ,
+    number: 9
+  },
+  {
+    title: "Physical location out of range from origin",
+    performanceGuarantee: true,
+    block: "block",
+    whoOverride: "Carrier Compliance",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "A Load Lock alert has been triggered for this load. The carrier's closest vehicle is outside the acceptable range for the pickup location. Please review carrier equipment and location before proceeding.",
+    overrideMsg: "I understand this carrier may be outside the acceptable range for this load's pickup location and accept responsibility for proceeding without confirmed vehicle assignment.",
+    owner: "compliance",
+    updated: true,
+    means: "The carrier's closest power unit is # miles from the origin for a load pickup in # hours, which exceeds the minimum travel distance threshold.",
+    specific: [
+      { text: "Open the carrier's heat map in Highway.", sub: "Check whether the carrier has activity in the area of the origin and destination. No presence in either region is a significant risk signal." },
+      { text: "Cross-reference in GenLogs.", sub: "Open the map in GenLogs and look for equipment activity near the origin and destination. Compare against the Highway heat map to confirm or challenge the alert." },
+      { text: "Contact the carrier and ask which VIN is picking up your load.", sub: "Search for the provided VIN in Highway's Equipment Search portal and determine the carrier association." }
+    ],
+    active: true
+  ,
+    number: 6
+  },
+  {
+    title: "Identity alert on active load",
+    performanceGuarantee: true,
+    block: "block",
+    subcategories: [
+      { name: "Stolen Assets", block: "block", who: "Carrier Compliance", recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager", overrideMsg: "N/A — Compliance will override once reviewed and if approved." },
+      { name: "Pending Investigation", block: "block", who: "Carrier Compliance", recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager", overrideMsg: "N/A — Compliance will override once reviewed and if approved." },
+      { name: "Change of Ownership", block: "block", who: "Carrier Compliance", recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager", overrideMsg: "N/A — Compliance will override once reviewed and if approved." },
+      { name: "Hostage Load", block: "block", who: "Carrier Compliance", recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager", overrideMsg: "N/A — Compliance will override once reviewed and if approved." },
+      { name: "Victim of Identity Theft", block: "override", who: "Office Level", recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager", notifMsg: "This carrier has an active VIDTA alert. Before proceeding, review the VIDTA report in Highway and confirm the contact information you are working with is not tied to any identity theft report. Proceeding without review means you assume full responsibility for any resulting loss or damages.", overrideMsg: "I understand and have reviewed the VIDTA report in Highway and accept responsibility for proceeding, confirming that the individual, email address, and phone number I am working with are not referenced in any related identity theft report." },
+      { name: "Double Brokering", block: "override", who: "Office Level", recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager", notifMsg: "This carrier has an active Double Brokering identity alert. Verify that the carrier you are working with is the authorized carrier on this load and has not re-brokered to another party. Do not proceed until you have confirmed the identity of the carrier accepting this load.", overrideMsg: "I understand this carrier has an active Double Brokering alert. I have verified the identity of the carrier accepting this load and accept responsibility for any cargo loss, theft, or damages resulting from proceeding." }
+    ],
+    whoOverride: "Carrier Compliance",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "A Load Lock alert has been triggered for this load. A new Identity Alert has been published for this carrier within the pickup or delivery window. Compliance is reviewing — do not proceed until cleared.",
+    overrideMsg: "N/A — Carrier Compliance only",
+    owner: "compliance",
+    means: "New Identity Alert for {Stolen Assets} published on {date within load pickup/delivery window}.",
+    specific: [
+      { text: "Review the description of the Identity Alert that was posted on the carrier profile.", sub: "Determine risk level and consider taking the carrier off the load." }
+    ],
+    active: true
+  ,
+    number: 13
+  },
+  {
+    title: "Found phone flagged for fraud",
+    performanceGuarantee: true,
+    block: "block",
+    whoOverride: "Carrier Compliance",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "A Load Lock alert has been triggered for this load. A phone number associated with this carrier has been reported for fraud. Please review the contact details and associated identity alerts before proceeding.",
+    overrideMsg: "I understand a phone number associated with this carrier has been flagged for fraud and accept responsibility for proceeding after reviewing the associated risk.",
+    owner: "compliance",
+    means: "The driver phone number (XXX) XXX-XXXX has been reported for fraud.",
+    specific: [
+      { text: "Perform a contact search with the fraudulent phone number and review the associated identity alert details.", sub: "Determine risk level and consider taking the carrier off the shipment." }
+    ],
+    active: true
+  ,
+    number: 11
+  },
+  {
+    title: "High risk area / no physical presence",
+    performanceGuarantee: true,
+    noiseNote: "Often a false positive from agent data entry: a zip code is entered at load creation, triggers the alert, and is later corrected, but the alert persists on the original entry. Before escalating, verify the current zip code on the load matches the flagged location.",
+    block: "override",
+    whoOverride: "Compliance or Agent",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To",
+    notifMsg: "A Load Lock alert has been triggered for this load. The pickup or delivery location falls within a high-risk area for cargo theft and this carrier has no observed history in that region. Please review before proceeding.",
+    overrideMsg: "I understand this load has a stop in a high-risk cargo theft area and that the carrier has no observed history operating in that region. I accept responsibility for proceeding with this carrier assignment.",
+    owner: "coowned",
+    means: "The load has a stop in {zip code} which is a high risk area for strategic cargo theft and this carrier has never been observed in that {state name}.",
+    specific: [
+      { text: "Review the Carrier Network Map in the Carrier Profile and consider removing the carrier from the load." }
+    ],
+    active: true
+  ,
+    number: 7
+  },
+  {
+    title: "Failed to arrive at pickup",
+    block: "override",
+    whoOverride: "Agent",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To",
+    notifMsg: "A Load Lock alert has been triggered for this load. The assigned carrier has not been detected at the pickup location 3+ hours after the scheduled window. Please contact the carrier and confirm status before escalating.",
+    overrideMsg: "I understand the assigned carrier has not been confirmed at the pickup location, have taken additional steps to verify the carrier is valid, and accept responsibility for proceeding.",
+    owner: "agent",
+    means: "Highway has not detected the assigned vehicle break the geofence of the pickup location 3+ hours after the pickup window.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile and ask again for the VIN picking up your load and their current location." }
+    ],
+    active: true
+  ,
+    number: 1
+  },
+  {
+    title: "Vehicle assignment required",
+    block: "override",
+    whoOverride: "Agent",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To",
+    notifMsg: "A Load Lock alert has been triggered for this load. Highway is unable to assign a vehicle because the carrier was booked after the pickup window passed. Please confirm the VIN and have the carrier assign the vehicle in the Highway Carrier Portal.",
+    overrideMsg: "I understand a vehicle has not been formally assigned in Highway for this load, have taken additional steps to confirm the carrier has a vehicle en route, and accept responsibility for proceeding.",
+    owner: "agent",
+    means: "Highway is unable to assign a vehicle to the load because the carrier has been assigned after the pickup appointment window has passed.",
+    specific: [
+      { text: "Call the carrier's dispatch number listed in their Highway profile." },
+      { text: "Ask which VIN is assigned to pick up this load and confirm its current location." },
+      { text: "Direct the carrier to log into the Highway Carrier Portal and assign that vehicle to the load." }
+    ],
+    active: true
+  ,
+    number: 2
+  },
+  {
+    title: "Received TMS vehicle and not found",
+    block: "override",
+    whoOverride: "Agent",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To",
+    notifMsg: "A Load Lock alert has been triggered for this load. The vehicle assigned in the TMS could not be matched to this carrier in Highway. Please confirm the VIN and ensure the carrier is connected via ELD.",
+    overrideMsg: "I understand the vehicle assigned to this load could not be verified in Highway, have taken additional steps to confirm the correct VIN with the carrier, and accept responsibility for proceeding.",
+    owner: "agent",
+    means: "A vehicle was assigned and Highway is not able to find a matching vehicle with that carrier.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile, confirm the VIN, and ensure they are connected with ELD." }
+    ],
+    active: true
+  ,
+    number: 3
+  },
+  {
+    title: "Vehicle not nearby",
+    block: "override",
+    whoOverride: "Agent",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To",
+    notifMsg: "A Load Lock alert has been triggered for this load. No vehicle has been detected within 200 miles of the pickup location. Please contact the carrier to confirm the VIN and current location.",
+    overrideMsg: "I understand no vehicle has been detected near the pickup location, have taken additional steps to confirm the carrier's truck is en route, and accept responsibility for proceeding.",
+    owner: "agent",
+    means: "Highway is unable to detect any vehicles in the 200 mile radius of the pickup location OR a vehicle that is manually assigned is more than 300 miles away from the pickup location.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile and ask again for the VIN picking up your load and their location.", sub: "Ask dispatch to connect the vehicle's ELD in Highway by logging into their carrier portal, or to provide the proper vehicle hauling the load." }
+    ],
+    active: true
+  ,
+    number: 4
+  },
+  {
+    title: "Dormant vehicle assigned",
+    block: "override",
+    whoOverride: "Agent",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To",
+    notifMsg: "A Load Lock alert has been triggered for this load. The assigned vehicle has not moved in the last 14 days according to ELD data. Please contact the carrier to confirm the vehicle is active and en route.",
+    overrideMsg: "I understand the assigned vehicle has shown no movement in the last 14 days, have taken additional steps to confirm the vehicle is active and assigned to this load, and accept responsibility for proceeding.",
+    owner: "agent",
+    means: "The broker's TMS has assigned a vehicle that is dormant on the carrier's ELD, meaning the truck has not moved in the last 14 days.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile and request the carrier to ensure their ELD is connected with that VIN.", sub: "Once a dormant vehicle starts moving again, Highway will receive an updated location." }
+    ],
+    active: true
+  ,
+    number: 5
+  },
+  {
+    title: "VOIP phone number",
+    block: "block",
+    whoOverride: "Carrier Compliance",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "A Load Lock alert has been triggered for this load. A VoIP phone number has been detected on the carrier contact. Please verify that the number belongs to the driver and not a third-party dispatcher before proceeding.",
+    overrideMsg: "I understand a VoIP phone number has been flagged on this carrier and accept responsibility for proceeding after verifying the contact belongs to the assigned driver.",
+    owner: "compliance",
+    means: "The driver phone number (XXX) XXX-XXXX is a VoIP number registered with {name of the phone carrier}.",
+    specific: [
+      { text: "Ensure that the provided phone number is the driver phone number (not a carrier dispatcher number) and consider taking the carrier off the load." }
+    ],
+    active: true
+  ,
+    number: 8
+  },
+  {
+    title: "ELD revoked during transit",
+    block: "block",
+    whoOverride: "Carrier Compliance",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "A Load Lock alert has been triggered for this load. The carrier's ELD connection was lost while the load is in transit. Please contact the carrier immediately and request reconnection.",
+    overrideMsg: "I understand this carrier's ELD connection has been lost mid-transit and accept responsibility for proceeding without real-time location visibility on this load.",
+    owner: "compliance",
+    means: "The carrier's ELD connection is lost mid-transit.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile and request the carrier to reconnect their ELD." }
+    ],
+    active: true
+  ,
+    number: 10
+  },
+  {
+    title: "Carrier assigned ELD-exempt vehicle",
+    block: "block",
+    whoOverride: "Carrier Compliance",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "A Load Lock alert has been triggered for this load. The carrier has assigned an ELD-exempt vehicle. Please request app-based tracking or confirm the delivery VIN if this is a local pickup driver.",
+    overrideMsg: "I understand the vehicle assigned to this load is ELD-exempt and accept responsibility for proceeding with limited or no real-time tracking visibility.",
+    owner: "compliance",
+    means: "A validated ELD Exempt vehicle is assigned to your load.",
+    specific: [
+      { text: "Call the dispatch number and request the carrier to set up app based tracking for the driver.", sub: "If it is a local pickup driver, ask for the VIN number that will be delivering the load after pickup completion." }
+    ],
+    active: true
+  ,
+    number: 12
+  },
+  {
+    title: "Know your driver failed",
+    number: 14,
+    owner: "tbd",
+    active: true,
+    block: "tbd",
+    whoOverride: "TBD",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "TBD",
+    overrideMsg: "TBD",
+    means: "TBD — details pending.",
+    specific: [
+      { text: "TBD — steps pending." }
+    ]
+  },
+  {
+    title: "Know your driver issue",
+    number: 15,
+    owner: "tbd",
+    active: true,
+    block: "tbd",
+    whoOverride: "TBD",
+    recipients: "Office Owner, Sales Manager, Cover By, Assigned To, Compliance Manager",
+    notifMsg: "TBD",
+    overrideMsg: "TBD",
+    means: "TBD — details pending.",
+    specific: [
+      { text: "TBD — steps pending." }
+    ]
+  },
+  {
+    title: "Email / domain spoofing",
+    means: "The email or domain #{email} appears to be spoofing the carrier's known contact information.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile to verify the email address.", sub: "Either take the carrier off the load or ask them to verify their contact through Highway's identity engine." }
+    ],
+    active: false
+  },
+  {
+    title: "Fraudulent email / domain",
+    means: "The email or domain #{email} has been reported for fraud.",
+    specific: [
+      { text: "Perform a contact search with the fraudulent email or domain and review the associated identity alert details.", sub: "Determine risk level and consider taking the carrier off the shipment." }
+    ],
+    active: false
+  },
+  {
+    title: "Dispatch service email / domain",
+    means: "The email or domain #{email} belongs to a third-party dispatcher service.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile to verify if they work with the dispatch service.", sub: "If they do, ask them to add the dispatcher service as an approved contact to their Highway profile. If they don\'t work with a dispatch service, that\'s a red flag." }
+    ],
+    active: false
+  },
+  {
+    title: "Facility commodity excluded",
+    means: "The carrier has a cargo exclusion for a specific commodity on their current cargo policy which conflicts with the facility commodity at the address for pickup.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile to verify if they are able to haul the specific commodity.", sub: "If they are not covered to haul that specific freight, consider taking the carrier off the load." }
+    ],
+    active: false
+  },
+  {
+    title: "Failing broker requirements",
+    means: "The carrier is failing X rules.",
+    specific: [
+      { text: "Review the rule that the carrier is failing and ensure you are still willing to allow the carrier to haul your freight." }
+    ],
+    active: false
+  },
+  {
+    title: "Potentially wrong vehicle assigned",
+    means: "The vehicle assigned to the load has not moved toward the delivery location. The vehicle has not moved at least 30 miles in more than 3 hours toward the delivery.",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile to get an updated location and ETA, as well as confirming the VIN who picked up your load." }
+    ],
+    active: false
+  },
+  {
+    title: "Unverified vehicle assigned",
+    means: "The vehicle is assigned to the load but is missing from the carrier's Certificate of Insurance (COI).",
+    specific: [
+      { text: "Call the dispatch number under the carrier profile, confirm the VIN that is on the load, and request an updated COI with the VIN added." }
+    ],
+    active: false
+  }
+];
+
 // Triage
 const triageAnswers = [null, null, null, null];
 let equipType = null;
@@ -1307,14 +1668,10 @@ function renderAlerts() {
     return;
   }
 
-  const activeItems = items.filter(a => a.active !== false);
-  const inactiveItems = items.filter(a => a.active === false);
-  const allOrdered = [...activeItems, ...inactiveItems];
-
   let html = '';
-  allOrdered.forEach((a, i) => {
-    if (i === activeItems.length && inactiveItems.length > 0) {
-      html += `<div style="display:flex;align-items:center;gap:10px;padding:12px 0 4px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Other alerts <span style="flex:1;height:1px;background:var(--border);display:inline-block;margin-left:4px"></span></div>`;
+  items.forEach((a, i) => {
+    if (i === 7) {
+      html += `<div style="display:flex;align-items:center;gap:10px;padding:12px 0 4px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Additional alerts <span style="flex:1;height:1px;background:var(--border);display:inline-block;margin-left:4px"></span></div>`;
     }
     const steps = (a.specific || a.steps || []).map((s, n) => renderStep(s, n + 1, false)).join('');
     html += `<div class="alert-card${a.updated ? ' updated' : ''}${a.active === false ? ' inactive' : ''}${a.owner ? ' owner-' + a.owner : ''}">
@@ -1391,10 +1748,12 @@ function showPage(id) {
   document.getElementById('page-' + id).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   event.currentTarget.classList.add('active');
-  document.getElementById('alert-nav').style.display = (id === 'playbook' || id === 'agent-playbook') ? 'block' : 'none';
+  document.getElementById('alert-nav').style.display = (id === 'playbook' || id === 'playbook-v2' || id === 'agent-playbook') ? 'block' : 'none';
   if (id === 'playbook') renderAlerts();
+  if (id === 'playbook-v2') renderAlertsV2();
   if (id === 'agent-playbook') { renderAgentAlerts(); renderUniversalBlockAgent(); }
   if (id === 'distinctions') renderDistinctions();
+  if (id === 'mockup') renderMockup();
   if (id === 'dashboard-sop') renderDashboardSOP();
 }
 
@@ -1429,6 +1788,243 @@ function jumpToAlert(title) {
 
 buildNav();
 
+// TMS Mockup
+function toggleRule(id) {
+  var body = document.getElementById(id + '-body');
+  var chev = document.getElementById(id + '-chev');
+  if (!body) return;
+  var open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  if (chev) chev.innerHTML = open ? '&#9658;' : '&#9660;';
+}
+
+function mkRule(id, bg, border, labelColor, title, body) {
+  return '<div style="background:' + bg + ';border:' + border + ';border-radius:var(--radius-sm);overflow:hidden">' +
+    '<div style="padding:10px 14px;display:flex;align-items:center;gap:8px;cursor:pointer" onclick="toggleRule(\'' + id + '\')">' +
+      '<div style="flex:1;font-size:12px;font-weight:600;color:' + labelColor + ';text-transform:uppercase;letter-spacing:.05em">' + title + '</div>' +
+      '<span id="' + id + '-chev" style="font-size:11px;color:var(--text3)">&#9660;</span>' +
+    '</div>' +
+    '<div id="' + id + '-body" style="padding:0 14px 12px;font-size:13px;color:var(--text);line-height:1.6;border-top:1px solid rgba(0,0,0,0.06)">' + body + '</div>' +
+  '</div>';
+}
+
+function renderMockup() {
+  var el = document.getElementById('mockup-content');
+  if (!el) return;
+
+  var scenarios = [
+    { id:'s1', label:'Out of Range + Overbooked', desc:'2 compliance alerts, 1 PG load' },
+    { id:'s2', label:'Failed to Arrive at Pickup', desc:'1 agent alert, no PG' },
+    { id:'s3', label:'Identity Alert — Active Load', desc:'Hard block, compliance only' },
+    { id:'s4', label:'Multiple mixed alerts', desc:'Agent + compliance, 1 PG' },
+    { id:'s5', label:'Out of Range, Overbooked, Failed to Arrive, Vehicle Not Nearby', desc:'2 compliance + 2 agent alerts' },
+    { id:'s6', label:'High Risk Area + Failed to Arrive', desc:'Co-owned escalates to compliance' },
+    { id:'s7', label:'High Risk Area only', desc:'Co-owned — agent or compliance' },
+  ];
+
+  var btns = scenarios.map(function(s, i) {
+    var d = document.createElement('div');
+    d.className = 'sc-btn';
+    d.setAttribute('data-id', s.id);
+    d.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;cursor:pointer;margin-bottom:8px;transition:border-color .15s';
+    d.innerHTML = '<div style="font-size:13px;font-weight:500;color:var(--text)">' + s.label + '</div><div style="font-size:12px;color:var(--text2);margin-top:2px">' + s.desc + '</div>';
+    d.addEventListener('click', function() { selectScenario(d); });
+    return d;
+  });
+
+  el.innerHTML =
+    '<div style="display:grid;grid-template-columns:200px 1fr;gap:32px;align-items:start;margin-bottom:28px">' +
+      '<div>' +
+        '<div style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:12px">Scenario</div>' +
+        '<div id="sc-list"></div>' +
+      '</div>' +
+      '<div>' +
+        '<div style="font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:12px">Carrier details panel</div>' +
+        '<div id="tms-panel" style="background:#fff;border:1px solid #d0d0d0;border-radius:4px;overflow:hidden;font-family:Arial,sans-serif;font-size:13px;color:#1a1a1a;width:100%"></div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">' +
+      '<div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">' +
+        '<div style="width:8px;height:8px;border-radius:50%;background:#E24B4A;flex-shrink:0"></div>' +
+        '<span style="font-size:14px;font-weight:600;color:var(--text)">Alert priority rules</span>' +
+      '</div>' +
+      '<div style="padding:16px 18px;display:flex;flex-direction:column;gap:14px">' +
+        mkRule('rule-compliance', 'rgba(226,75,74,0.08)', '1px solid rgba(226,75,74,0.2)', '#A32D2D', 'Compliance alerts supersede agent alerts',
+          'When any compliance-owned alert is active on a load, compliance must review and resolve it before the load can proceed. Agent-owned alerts on the same load do not require a separate agent override — the compliance review covers the load.' +
+          '<div style="margin-top:12px;background:rgba(255,255,255,0.5);border-radius:var(--radius-sm);padding:10px 12px;border:1px solid rgba(226,75,74,0.15)">' +
+            '<div style="font-size:11px;font-weight:600;color:#A32D2D;letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px">Example</div>' +
+            '<div style="font-size:12px;color:var(--text);margin-bottom:8px">A load has four active alerts:</div>' +
+            '<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">' +
+              '<div style="display:flex;align-items:center;gap:7px"><span style="font-size:10px;font-weight:700;padding:1px 8px;border-radius:20px;background:#E24B4A;color:#fff">Compliance</span><span style="font-size:12px;color:var(--text)">Out of Range</span></div>' +
+              '<div style="display:flex;align-items:center;gap:7px"><span style="font-size:10px;font-weight:700;padding:1px 8px;border-radius:20px;background:#E24B4A;color:#fff">Compliance</span><span style="font-size:12px;color:var(--text)">Overbooked Carrier</span></div>' +
+              '<div style="display:flex;align-items:center;gap:7px"><span style="font-size:10px;font-weight:700;padding:1px 8px;border-radius:20px;background:#EF9F27;color:#fff">Agent</span><span style="font-size:12px;color:var(--text)">Failed to Arrive at Pickup</span></div>' +
+              '<div style="display:flex;align-items:center;gap:7px"><span style="font-size:10px;font-weight:700;padding:1px 8px;border-radius:20px;background:#EF9F27;color:#fff">Agent</span><span style="font-size:12px;color:var(--text)">Vehicle Not Nearby</span></div>' +
+            '</div>' +
+            '<div style="font-size:12px;color:var(--text);line-height:1.6;padding:8px 10px;border-left:3px solid #E24B4A;background:rgba(226,75,74,0.06);border-radius:0 var(--radius-sm) var(--radius-sm) 0">Compliance review is required. The agent does not need to acknowledge or override the agent-owned alerts independently.</div>' +
+          '</div>') +
+        mkRule('rule-highrisk', 'rgba(123,94,167,0.08)', '1px solid rgba(123,94,167,0.25)', '#5B3D8A', 'High Risk Area with other alerts',
+          'High Risk Area / No Physical Presence is a co-owned alert. When it appears on a load by itself, it can be handled by the agent or compliance. However, if any other alert is present on the same load, compliance takes over — the load requires a full compliance review regardless of what the other alerts are or who owns them.') +
+        mkRule('rule-agent', 'var(--surface2)', '1px solid var(--border)', 'var(--text2)', 'Agent-only loads',
+          'If all active alerts are agent-owned with no compliance alerts and no High Risk Area alert accompanied by other alerts, the agent is responsible for reviewing and acknowledging each alert before proceeding.') +
+      '</div>' +
+    '</div>';
+
+  var list = document.getElementById('sc-list');
+  btns.forEach(function(b) { list.appendChild(b); });
+  selectScenario(btns[0]);
+}
+
+// V2 order reference: 9=Overbooked, 6=Out of Range, 13=Identity Alert, 11=Found Phone Flagged, 7=High Risk Area
+// Compliance + PG alerts always sort to top
+
+function sortAlerts(alerts) {
+  return alerts.slice().sort(function(a, b) {
+    var aScore = (a.pg ? 2 : 0) + (a.owner === 'compliance' ? 1 : 0);
+    var bScore = (b.pg ? 2 : 0) + (b.owner === 'compliance' ? 1 : 0);
+    return bScore - aScore;
+  });
+}
+
+var SCENARIOS = {
+  s1: { label:'Out of Range + Overbooked', alerts: sortAlerts([
+    { num:9, name:'Overbooked carrier', desc:'4 loads scheduled, 2 trucks observed across Load Lock', owner:'compliance', pg:true },
+    { num:6, name:'Out of range', desc:'Closest unit 980 mi from pickup, -4 hrs remaining, no CA history', owner:'compliance', pg:true }
+  ])},
+  s5: { label:'Out of Range, Overbooked, Failed to Arrive, Vehicle Not Nearby', alerts: sortAlerts([
+    { num:9, name:'Overbooked carrier', desc:'4 loads scheduled, 2 trucks observed across Load Lock', owner:'compliance', pg:true },
+    { num:6, name:'Out of range', desc:'Closest unit 980 mi from pickup, -4 hrs remaining, no CA history', owner:'compliance', pg:true },
+    { num:1, name:'Failed to arrive at pickup', desc:'No geofence break detected 3+ hrs after pickup window', owner:'agent', pg:false },
+    { num:4, name:'Vehicle not nearby', desc:'No vehicle detected within 200 mi of pickup location', owner:'agent', pg:false }
+  ])},
+  s6: { label:'High Risk Area + Failed to Arrive', alerts: sortAlerts([
+    { num:7, name:'High risk area / no physical presence', desc:'Pickup zip is a high-risk cargo theft area. Carrier has no history in state. Compliance takes over because another alert is present.', owner:'compliance', pg:false },
+    { num:1, name:'Failed to arrive at pickup', desc:'No geofence break detected 3+ hrs after pickup window.', owner:'agent', pg:false }
+  ])},
+  s7: { label:'High Risk Area only', alerts: [
+    { num:7, name:'High risk area / no physical presence', desc:'Pickup zip is a high-risk cargo theft area. Carrier has no history in state. No other alerts present — can be handled by agent or compliance.', owner:'coowned', pg:false }
+  ]},
+  s2: { label:'Failed to Arrive at Pickup', alerts: sortAlerts([
+    { num:1, name:'Failed to arrive at pickup', desc:'No geofence break detected 3+ hrs after pickup window', owner:'agent', pg:false }
+  ])},
+  s3: { label:'Identity Alert — Active Load', alerts: sortAlerts([
+    { num:13, name:'Identity alert — active load', desc:'Stolen Assets alert published during pickup window. Compliance review required.', owner:'compliance', pg:true }
+  ])},
+  s4: { label:'Multiple mixed alerts', alerts: sortAlerts([
+    { num:9, name:'Overbooked carrier', desc:'4 loads scheduled, 2 trucks observed across Load Lock', owner:'compliance', pg:true },
+    { num:6, name:'Out of range', desc:'Closest unit 620 mi from pickup, 3 hrs remaining', owner:'compliance', pg:true },
+    { num:13, name:'Identity alert — active load', desc:'Stolen Assets alert, active during pickup window. Compliance review required.', owner:'compliance', pg:true },
+    { num:11, name:'Found phone flagged for fraud', desc:'Driver phone number has been reported for fraud', owner:'compliance', pg:false },
+    { num:7, name:'High risk area / no physical presence', desc:'Pickup zip is a high-risk cargo theft area, no carrier history in state. Escalated to compliance — another alert is present.', owner:'compliance', pg:false },
+    { num:1, name:'Failed to arrive at pickup', desc:'No geofence break detected 3+ hrs after pickup window', owner:'agent', pg:false }
+  ])}
+};
+
+function selectScenario(el) {
+  document.querySelectorAll('.sc-btn').forEach(function(d) {
+    d.style.borderColor = 'var(--border)';
+  });
+  el.style.borderColor = '#0069A6';
+
+  var id = el.getAttribute('data-id');
+  var s = SCENARIOS[id];
+  var compCount = s.alerts.filter(function(a) { return a.owner === 'compliance'; }).length;
+  var agentCount = s.alerts.filter(function(a) { return a.owner === 'agent'; }).length;
+  var hasBlock = s.alerts.some(function(a) { return a.block; });
+  var borderColor = (hasBlock || compCount > 0 || hasHighRiskWithOther) ? '#E24B4A' : '#EF9F27';
+  var countParts = [];
+  if (compCount) countParts.push(compCount + ' Compliance');
+  if (agentCount) countParts.push(agentCount + ' Agent');
+  var countText = countParts.join('  |  ');
+  var hasCompliance = s.alerts.some(function(a) { return a.owner === 'compliance'; });
+  var hasHighRiskWithOther = s.alerts.some(function(a) { return a.owner === 'coowned'; }) && s.alerts.length > 1;
+  var headerMsg = hasBlock ? 'One or more alerts are hard blocks. Review by Compliance is required before proceeding.' : (hasCompliance || hasHighRiskWithOther) ? 'This carrier has active compliance alerts. Review by Compliance is required before proceeding.' : 'Active alerts require review before this carrier can proceed.';
+
+  var panel = document.getElementById('tms-panel');
+  panel.innerHTML = '';
+
+  // Header
+  var hdr = document.createElement('div');
+  hdr.style.cssText = 'padding:10px 12px;border-bottom:1px solid #d0d0d0;display:flex;justify-content:space-between;align-items:center';
+  hdr.innerHTML = '<span style="font-size:13px;font-weight:600;color:#444">Carrier Details</span><div style="display:flex;gap:12px"><span style="font-size:11px;font-weight:700;color:#1a6ec7;letter-spacing:.04em;cursor:pointer">FALLOUT</span><span style="font-size:11px;font-weight:700;color:#1a6ec7;letter-spacing:.04em;cursor:pointer">ADD TO PLAYLIST</span><span style="font-size:11px;font-weight:700;color:#1a6ec7;letter-spacing:.04em;cursor:pointer">BLACKLIST</span></div>';
+  panel.appendChild(hdr);
+
+  var body = document.createElement('div');
+  body.style.cssText = 'padding:10px 12px;display:flex;flex-direction:column;gap:8px';
+  panel.appendChild(body);
+
+  // Load Lock Alerts block (collapsible)
+  var llBlock = document.createElement('div');
+  llBlock.style.cssText = 'border:1.5px solid ' + borderColor + ';border-radius:4px;overflow:hidden;background:rgba(226,75,74,0.10)';
+
+  var llHead = document.createElement('div');
+  llHead.style.cssText = 'padding:9px 12px;display:flex;align-items:flex-start;gap:8px;cursor:pointer;user-select:none';
+  llHead.innerHTML =
+    '<span style="color:' + borderColor + ';font-size:14px;flex-shrink:0">&#9632;</span>' +
+    '<div style="flex:1"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px">Load Lock Alerts</div><div style="font-size:12px;color:#666">' + headerMsg + '</div></div>' +
+    '<span id="ll-chev" style="font-size:11px;color:#999;margin-top:2px">&#9660;</span>' +
+    '<span style="font-size:14px;color:#999;cursor:pointer;margin-left:6px">&#8599;</span>';
+  llBlock.appendChild(llHead);
+
+  var llBody = document.createElement('div');
+  llBody.id = 'll-body';
+
+  s.alerts.forEach(function(a) {
+    var dotColor = a.owner === 'compliance' ? '#E24B4A' : a.owner === 'coowned' ? '#A090E8' : '#EF9F27';
+    var rowBg = (a.pg || a.block) ? 'rgba(226,75,74,0.04)' : 'transparent';
+
+    var row = document.createElement('div');
+    row.style.cssText = 'padding:9px 12px;border-top:1px solid #e8e8e8;display:flex;align-items:flex-start;gap:8px;background:' + rowBg;
+    row.addEventListener('mouseover', function() { row.style.background = '#f5f5f5'; });
+    row.addEventListener('mouseout', function() { row.style.background = rowBg; });
+
+    var badges = '';
+    if (a.pg) badges += '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:#0891B2;color:#fff;margin-right:3px">PG</span>';
+    if (a.owner === 'compliance') badges += '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:#E24B4A;color:#fff">Compliance</span>';
+    else if (a.owner === 'coowned') badges += '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:#7B5EA7;color:#fff">Co-owned</span>';
+    else badges += '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:#EF9F27;color:#fff">Agent</span>';
+    if (a.block) badges += '<span style="font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px;background:#1a1a1a;color:#fff;margin-left:3px">Block</span>';
+
+    var numBadge = a.num ? '<span style="font-size:10px;font-weight:700;color:#999;margin-right:4px;font-family:monospace">' + a.num + '.</span>' : '';
+
+    row.innerHTML =
+      '<div style="width:7px;height:7px;border-radius:50%;background:' + dotColor + ';flex-shrink:0;margin-top:5px"></div>' +
+      '<div style="flex:1"><div style="font-size:12px;font-weight:600;color:#1a1a1a;margin-bottom:1px">' + numBadge + a.name + '</div><div style="font-size:11px;color:#666;line-height:1.4">' + a.desc + '</div></div>' +
+      '<div style="display:flex;gap:4px;flex-shrink:0;margin-top:1px;flex-wrap:wrap;justify-content:flex-end;max-width:110px">' + badges + '</div>';
+    llBody.appendChild(row);
+  });
+
+  var llFoot = document.createElement('div');
+  llFoot.style.cssText = 'padding:7px 12px;border-top:1px solid #e8e8e8;background:#fafafa;display:flex;justify-content:space-between;align-items:center';
+  llFoot.innerHTML = '<span style="font-size:12px;color:#555;font-weight:500">' + countText + '</span><span style="font-size:11px;color:#1a6ec7;font-weight:500;cursor:pointer">View in Highway &#8599;</span>';
+  llBody.appendChild(llFoot);
+  llBlock.appendChild(llBody);
+
+  llHead.addEventListener('click', function() {
+    var open = llBody.style.display !== 'none';
+    llBody.style.display = open ? 'none' : 'block';
+    document.getElementById('ll-chev').innerHTML = open ? '&#9658;' : '&#9660;';
+  });
+
+  // Carrier not active
+  var notActive = document.createElement('div');
+  notActive.style.cssText = 'border:1.5px solid #E24B4A;border-radius:4px;padding:9px 12px;display:flex;align-items:center;gap:8px';
+  notActive.innerHTML = '<span style="color:#E24B4A;font-size:14px">&#9650;</span><span style="font-size:12px;font-weight:500;color:#E24B4A">Carrier isn&#39;t active.</span>';
+  body.appendChild(notActive);
+
+  body.appendChild(llBlock);
+
+  // Highway Items
+  var hwBlock = document.createElement('div');
+  hwBlock.style.cssText = 'border:1.5px solid #EF9F27;border-radius:4px;overflow:hidden';
+  hwBlock.innerHTML =
+    '<div style="padding:9px 12px;display:flex;align-items:flex-start;gap:8px">' +
+      '<span style="color:#EF9F27;font-size:14px;flex-shrink:0">&#9650;</span>' +
+      '<div style="flex:1"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px">Highway Items to Review</div><div style="font-size:12px;color:#666">Agents should review the detailed information in Highway.</div></div>' +
+      '<span style="font-size:14px;color:#999;cursor:pointer">&#8599;</span>' +
+    '</div>' +
+    '<div style="padding:7px 12px;border-top:1px solid #e8e8e8;background:#fafafa"><span style="font-size:12px;color:#555;font-weight:500">2 Highway Insights &nbsp;&middot;&nbsp; 2 Assessment Failures</span></div>';
+  body.appendChild(hwBlock);
+}
 // Dashboard SOP
 const DASHBOARD_SOP = {
   walkthrough: [
@@ -1617,6 +2213,119 @@ function renderDistinctions() {
   `).join('');
 }
 
+// Alert Playbook V2
+let currentFilterV2 = 'all';
+let openIndexV2 = null;
+
+function setFilterV2(f, btn) {
+  currentFilterV2 = f;
+  openIndexV2 = null;
+  document.querySelectorAll('#page-playbook-v2 .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderAlertsV2();
+}
+
+function getFilteredV2() {
+  const q = document.getElementById('search-v2') ? document.getElementById('search-v2').value.toLowerCase() : '';
+  let src = currentFilterV2 === 'all' ? ALERTS_V2 : ALERTS_V2.filter(a => a.owner === currentFilterV2);
+  return q ? src.filter(a =>
+    a.title.toLowerCase().includes(q) ||
+    a.means.toLowerCase().includes(q) ||
+    (a.specific || a.steps || []).some(s => s.text.toLowerCase().includes(q) || (s.sub && s.sub.toLowerCase().includes(q)))
+  ) : src;
+}
+
+function toggleV2(i) { openIndexV2 = openIndexV2 === i ? null : i; renderAlertsV2(); }
+
+function renderAlertsV2() {
+  const items = getFilteredV2();
+  const el = document.getElementById('alert-list-v2');
+  if (!el) return;
+  if (!items.length) { el.innerHTML = '<div class="empty-state">No alerts match your search.</div>'; return; }
+
+  let html = '';
+  items.forEach((a, i) => {
+    if (i === 7) {
+      html += `<div style="display:flex;align-items:center;gap:10px;padding:12px 0 4px;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">Additional alerts <span style="flex:1;height:1px;background:var(--border);display:inline-block;margin-left:4px"></span></div>`;
+    }
+    const isSecondary = i >= 7;
+    const ownerColor = a.owner === 'agent' ? '#E07820' : a.owner === 'compliance' ? '#e07060' : a.owner === 'coowned' ? '#A090E8' : 'var(--text3)';
+    const steps = (a.specific || a.steps || []).map((s, n) => renderStep(s, n + 1, false)).join('');
+    const pgShade = a.performanceGuarantee ? 'background:rgba(192,57,43,0.07);border-bottom:1px solid rgba(192,57,43,0.15);' : '';
+
+    const subcatHtml = a.subcategories ? `
+      <div class="subcat-section">
+        <div class="subcat-label">Sub-categories</div>
+        <table class="subcat-table">
+          <thead>
+            <tr>
+              <th style="width:14%">Sub-category</th>
+              <th style="width:11%">Block or Override?</th>
+              <th style="width:13%">Who Can Override?</th>
+              <th style="width:20%">Notification Recipients</th>
+              <th style="width:21%">Notification Message</th>
+              <th>Override Message</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${a.subcategories.map(s => `
+              <tr class="${s.block === 'block' ? 'block-row' : 'override-row'}">
+                <td class="subcat-name">${s.name}</td>
+                <td>${s.block === 'block' ? '<span class="pill-block">Block</span>' : '<span class="pill-override">Override</span>'}</td>
+                <td>${s.block === 'block' ? '<span class="owner-pill compliance" style="font-size:10px;padding:2px 8px;white-space:nowrap">Carrier Compliance</span>' : '<span class="owner-pill" style="background:#7B5EA7;color:#fff;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:700">Office Level</span>'}</td>
+                <td style="color:var(--text2);font-size:11px">${s.recipients || 'TBD'}</td>
+                <td style="color:var(--text2);font-size:11px;font-style:${s.notifMsg ? 'normal' : 'italic'}">${s.notifMsg || 'N/A'}</td>
+                <td style="color:var(--text2);font-size:11px;font-style:${s.overrideMsg.startsWith('N/A') ? 'italic' : 'normal'}">${s.overrideMsg}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>` : '';
+
+    const decisionHtml = a.block && !a.subcategories ? `
+      <div class="decision-grid">
+        <div class="decision-field">
+          <div class="decision-label">Block or Override?</div>
+          <div class="decision-value">${a.block === 'block' ? '<span class="pill-block">Block</span>' : a.block === 'override' ? '<span class="pill-override">Override</span>' : '<span class="owner-pill tbd">TBD</span>'}</div>
+        </div>
+        <div class="decision-field">
+          <div class="decision-label">Who Can Override?</div>
+          ${a.owner === 'compliance' ? '<span class="owner-pill compliance" style="display:inline-block">Carrier Compliance</span>' : a.owner === 'coowned' ? '<span class="owner-pill compliance" style="display:inline-block;margin-right:4px">Compliance</span><span class="owner-pill agent" style="display:inline-block">Agent</span>' : a.block !== 'block' ? '<span class="owner-pill agent" style="display:inline-block">Agent</span>' : '<div class="decision-value tbd">TBD</div>'}
+        </div>
+        <div class="decision-field full">
+          <div class="decision-label">Notification Recipients</div>
+          <div class="decision-value ${a.recipients === 'TBD' ? 'tbd' : ''}">${a.recipients}</div>
+        </div>
+        <div class="decision-field full">
+          <div class="decision-label">Notification Message</div>
+          <div class="decision-value ${a.notifMsg === 'TBD' ? 'tbd' : ''}">${a.notifMsg}</div>
+        </div>
+        <div class="decision-field full">
+          <div class="decision-label">Override Message</div>
+          <div class="decision-value ${a.overrideMsg === 'TBD' ? 'tbd' : ''}">${a.overrideMsg}</div>
+        </div>
+      </div>` : '';
+
+    html += `<div class="alert-card${isSecondary ? ' inactive' : ''}${a.owner ? ' owner-' + a.owner : ''}">
+      <div class="alert-header" onclick="toggleV2(${i})" style="${pgShade}">
+        ${a.number ? `<span class="alert-number" style="color:${ownerColor}">${a.number}.</span>` : ''}
+        <span class="alert-name">${a.title}</span>
+        ${a.owner === 'agent' ? '<span class="owner-pill agent">Agent</span>' : a.owner === 'compliance' ? '<span class="owner-pill compliance">Compliance</span>' : a.owner === 'coowned' ? '<span class="owner-pill coowned">Co-owned</span>' : a.owner === 'tbd' ? '<span class="owner-pill tbd">TBD</span>' : ''}
+        <span class="chevron ${openIndexV2 === i ? 'open' : ''}">&#9660;</span>
+      </div>
+      <div class="alert-body ${openIndexV2 === i ? 'open' : ''}">
+        <div class="section-label">What it means</div>
+        <div class="means-box">${a.means}</div>
+        ${a.noiseNote ? `<div class="noise-note"><div class="noise-note-label">⚠ Why this may be noise</div>${a.noiseNote}</div>` : ''}
+        <div class="section-label">Alert-specific steps</div>
+        <ul class="steps-list">${steps}</ul>
+        ${subcatHtml}
+        ${decisionHtml}
+      </div>
+    </div>`;
+  });
+  el.innerHTML = html;
+}
+
 // Agent playbook
 let agentFilter = 'all';
 let agentOpenIndex = null;
@@ -1794,6 +2503,7 @@ renderUniversalBlockTriage();
 renderUniversalBlockAgent();
 renderAgentAlerts();
 renderAlerts();
+renderAlertsV2();
 </script>
 </body>
 </html>
