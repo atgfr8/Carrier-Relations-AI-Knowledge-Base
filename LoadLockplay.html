@@ -1937,7 +1937,7 @@ function selectScenario(el) {
   var countText = countParts.join('  |  ');
   var hasCompliance = s.alerts.some(function(a) { return a.owner === 'compliance'; });
   var hasHighRiskWithOther = s.alerts.some(function(a) { return a.owner === 'coowned'; }) && s.alerts.length > 1;
-  var headerMsg = hasBlock ? 'One or more alerts are hard blocks. Review by Compliance is required before proceeding.' : (hasCompliance || hasHighRiskWithOther) ? 'This carrier has active compliance alerts. Review by Compliance is required before proceeding.' : 'Active alerts require review before this carrier can proceed.';
+  var headerMsg = hasBlock ? 'One or more alerts are hard blocks. Review by Compliance is required before proceeding.' : (hasCompliance || hasHighRiskWithOther) ? 'One or more active Load Lock alerts have been flagged on this carrier. This load cannot proceed until Compliance has reviewed the alerts. Carrier removal may be necessary based on the outcome of the review.' : 'Active Load Lock alerts require review before this carrier can proceed.';
 
   var panel = document.getElementById('tms-panel');
   panel.innerHTML = '';
