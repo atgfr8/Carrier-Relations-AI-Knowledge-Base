@@ -450,8 +450,36 @@
                 <button class="flag-add-btn" onclick="addFlagType('fgList','fgOpts')">+ Add report category</button>
               </div>
             </div>
-            <div class="field"><label>WatchDog Reports</label><div class="flag-wrap"><div class="radio-row"><label class="radio-option"><input type="radio" name="watchdog" value="None"><span>None</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="watchdog" value="Yes"><span>Yes</span></label></div><div class="flag-date"><span>Date:</span><input type="date" id="watchdogDate"></div></div></div>
-            <div class="field"><label>VIDTA Reports</label><div class="flag-wrap"><div class="radio-row"><label class="radio-option"><input type="radio" name="vidta" value="None"><span>None</span></label><div class="radio-sep"></div><label class="radio-option"><input type="radio" name="vidta" value="Yes"><span>Yes</span></label></div><div class="flag-date"><span>Date:</span><input type="date" id="vidtaDate"></div></div></div>
+            <div class="field">
+              <label>WatchDog Reports</label>
+              <div class="flag-wrap">
+                <div class="radio-row">
+                  <label class="radio-option"><input type="radio" name="watchdog" value="None" onchange="toggleFlagCat('watchdogCat','watchdog')"><span>None</span></label>
+                  <div class="radio-sep"></div>
+                  <label class="radio-option"><input type="radio" name="watchdog" value="Yes" onchange="toggleFlagCat('watchdogCat','watchdog')"><span>Yes</span></label>
+                </div>
+              </div>
+              <div class="flag-category" id="watchdogCat">
+                <span class="flag-category-label">Report Category</span>
+                <div class="flag-type-list" id="watchdogList"></div>
+                <button class="flag-add-btn" onclick="addFlagType('watchdogList','watchdogOpts')">+ Add report category</button>
+              </div>
+            </div>
+            <div class="field">
+              <label>VIDTA Reports</label>
+              <div class="flag-wrap">
+                <div class="radio-row">
+                  <label class="radio-option"><input type="radio" name="vidta" value="None" onchange="toggleFlagCat('vidtaCat','vidta')"><span>None</span></label>
+                  <div class="radio-sep"></div>
+                  <label class="radio-option"><input type="radio" name="vidta" value="Yes" onchange="toggleFlagCat('vidtaCat','vidta')"><span>Yes</span></label>
+                </div>
+              </div>
+              <div class="flag-category" id="vidtaCat">
+                <span class="flag-category-label">Report Category</span>
+                <div class="flag-type-list" id="vidtaList"></div>
+                <button class="flag-add-btn" onclick="addFlagType('vidtaList','vidtaOpts')">+ Add report category</button>
+              </div>
+            </div>
             <div class="field">
               <label>Load Lock Alerts</label>
               <div class="flag-wrap">
@@ -971,6 +999,10 @@ function confirmClear(){
     document.getElementById('fgCat')?.classList.remove('visible');
     document.getElementById('loadLockCat')?.classList.remove('visible');
     const llList=document.getElementById('loadLockList');if(llList)llList.innerHTML='';
+    document.getElementById('watchdogCat')?.classList.remove('visible');
+    const wdList=document.getElementById('watchdogList');if(wdList)wdList.innerHTML='';
+    document.getElementById('vidtaCat')?.classList.remove('visible');
+    const vtList=document.getElementById('vidtaList');if(vtList)vtList.innerHTML='';
   }
   if(cur===8){notes=[];renderNotes();}
   const o=document.getElementById('confirmOverlay');if(o)o.classList.remove('show');
@@ -1177,7 +1209,9 @@ function val(id){return(document.getElementById(id)||{}).value||''}
 const FLAG_OPTS={
   idAlertOpts:['Double Brokering','Identity Theft','Hostage Load','Stolen Assets','Trailer Misuse','Back Solicitation','Unresolved Insurance Claims','Change in Ownership','Pending Investigation','Bankruptcy Filing','Other'],
   fgOpts:['Unauthorized Re-Brokering of Shipment','Held Load Hostage','Theft or Unjustified Loss of Freight','Unresolved Claim Issues','Fraudulent Activity','Unethical or Deceptive Business Practices','No Show and No Call','Cancelled After Accepting Load','Back-Solicited Shipper','In-Transit Agreement Modification','Repeated Pickup or Delivery Service Failures','Persistent Cancelling'],
-  loadLockOpts:['Out of Range','Overbooked Carrier','Recent Identity Alert','Failed to Arrive at Pickup','Vehicle Not Nearby','Provided Vehicle Not Found']
+  loadLockOpts:['Out of Range','Overbooked Carrier','Recent Identity Alert','Failed to Arrive at Pickup','Vehicle Not Nearby','Provided Vehicle Not Found'],
+  watchdogOpts:['Double Brokering','Identity Theft','Hostage Load','Stolen Assets','Trailer Misuse','Back Solicitation','Unresolved Insurance Claims','Change in Ownership','Pending Investigation','Bankruptcy Filing','Other'],
+  vidtaOpts:['Suspected Fraud','Identity Alert','Carrier Impersonation','Suspicious Activity','Other']
 };
 
 function makeFlagSelect(listId, optsKey){
@@ -1592,10 +1626,18 @@ function generatePDF(){
     dRow([['FreightGuard Reports',fgBase,3]]);
     if(fgBase==='Yes')fgTypes.forEach((r,i)=>{const dts=[r.dateReported?'Reported: '+r.dateReported:'',r.dateActual?'On Report: '+r.dateActual:''].filter(Boolean).join(' | ');dRow([[i===0?'Report Category':'',r.type+(dts?' — '+dts:''),3]]);});
   }
-  [['WatchDog Reports','watchdog','watchdogDate'],['VIDTA Reports','vidta','vidtaDate']].forEach(([lbl,rn,di])=>{
-    const rv=getRadio(rn),dv2=val(di);
-    if(rv)dRow([[lbl,rv+(dv2?' — Date: '+dv2:''),3]]);
-  });
+  const wdBase=getRadio('watchdog');
+  if(wdBase){
+    const wdTypes=getFlagTypes('watchdogList');
+    dRow([['WatchDog Reports',wdBase,3]]);
+    if(wdBase==='Yes')wdTypes.forEach((r,i)=>{const dts=[r.dateReported?'Reported: '+r.dateReported:'',r.dateActual?'On Report: '+r.dateActual:''].filter(Boolean).join(' | ');dRow([[i===0?'Report Category':'',r.type+(dts?' — '+dts:''),3]]);});
+  }
+  const vtBase=getRadio('vidta');
+  if(vtBase){
+    const vtTypes=getFlagTypes('vidtaList');
+    dRow([['VIDTA Reports',vtBase,3]]);
+    if(vtBase==='Yes')vtTypes.forEach((r,i)=>{const dts=[r.dateReported?'Reported: '+r.dateReported:'',r.dateActual?'On Report: '+r.dateActual:''].filter(Boolean).join(' | ');dRow([[i===0?'Report Category':'',r.type+(dts?' — '+dts:''),3]]);});
+  }
   const llBase=getRadio('loadLock');
   if(llBase){
     const llTypes=getFlagTypes('loadLockList');
@@ -1872,7 +1914,7 @@ function generateExternalPDF(){
   dRow([['Declared Value',declaredDisplay],['Additional Insurance Purchased?',addInsVal,1],['High-Value / High-Risk',hvChecked?'Yes':'No',1]]);
   dRow([['Commodity',val('commodity')],['Equipment Type',val('equipType')]]);
   dRow([['Pallets / Pieces / Weight',val('palletsWeight')],['Shipper',val('shipper')]]);
-  dRow([['Customer Name',val('customerName')],['Agent or Rep Name',val('agentName')],['Agent / Office',val('agentOffice')]]);
+  dRow([['Customer Name',val('customerName')]]);
   dRow([['Driver Name (ATG)',val('driverName')],['Driver Phone (ATG)',val('driverPhone')]]);
   if(val('driverName2')||val('driverPhone2'))dRow([['2nd Driver Name',val('driverName2')],['2nd Driver Phone',val('driverPhone2')]]);
   if(val('truckNumber')||val('trailerNumber'))dRow([['Truck Number (ATG)',val('truckNumber')],['Trailer Number (ATG)',val('trailerNumber')]]);
@@ -1890,60 +1932,21 @@ function generateExternalPDF(){
   dRow([['Theft Classification',getRadio('theftClass')],['Estimated Incident Location',val('incidentLoc'),2]]);
   dRow([['Load Posted to Loadboard?',getRadio('loadboard')]]);div();
 
-  sH(3,'Flags & Concerns');
-  const idTypes=getFlagTypes('idAlertList');
-  const idAlertBase=getRadio('idAlert')||'';
-  if(idAlertBase){
-    dRow([['Identity Alerts',idAlertBase,3]]);
-    if(idAlertBase==='Yes')idTypes.forEach((r,i)=>{const dts=[r.dateReported?'Reported: '+r.dateReported:'',r.dateActual?'On Report: '+r.dateActual:''].filter(Boolean).join(' | ');dRow([[i===0?'Alert Type':'',r.type+(dts?' — '+dts:''),3]]);});
-  }
-  const fgTypes=getFlagTypes('fgList');
-  const fgBase=getRadio('freightGuard')||'';
-  if(fgBase){
-    dRow([['FreightGuard Reports',fgBase,3]]);
-    if(fgBase==='Yes')fgTypes.forEach((r,i)=>{const dts=[r.dateReported?'Reported: '+r.dateReported:'',r.dateActual?'On Report: '+r.dateActual:''].filter(Boolean).join(' | ');dRow([[i===0?'Report Category':'',r.type+(dts?' — '+dts:''),3]]);});
-  }
-  [['WatchDog Reports','watchdog','watchdogDate'],['VIDTA Reports','vidta','vidtaDate']].forEach(([lbl,rn,di])=>{
-    const rv=getRadio(rn),dv2=val(di);if(rv)dRow([[lbl,rv+(dv2?' — Date: '+dv2:''),3]]);
-  });
-  const llBase=getRadio('loadLock');
-  if(llBase){
-    const llTypes=getFlagTypes('loadLockList');const llDate=val('loadLockDate');
-    dRow([['Load Lock Alerts',llBase+(llDate?' — Date: '+llDate:''),3]]);
-    if(llBase==='Yes')llTypes.forEach((r,i)=>{const dts=[r.dateReported?'Reported: '+r.dateReported:'',r.dateActual?'On Report: '+r.dateActual:''].filter(Boolean).join(' | ');dRow([[i===0?'Alert Type':'',r.type+(dts?' — '+dts:''),3]]);});
-  }
-  div();
-
-  sH(4,'Reporting');
+  sH(3,'Reporting');
   const cnNum=val('cargoNetNum');const cnVal=getRadio('cargonet')+(cnNum?' — Report #: '+cnNum:'');
   dRow([['Reported to CargoNet?',cnVal],['Highway Report Filed?',getRadio('highway')]]);
   dRow([['WatchDog Report Filed?',getRadio('wdFiled')],['Carrier411 Report Filed?',getRadio('carrier411')]]);div();
 
-  sH(5,'Law Enforcement Involvement');
+  sH(4,'Law Enforcement Involvement');
   dRow([['Reported to Law Enforcement?',getRadio('lawEnf')],['Police Report Number',val('policeRptNo')]]);
   dRow([['Department Name',val('deptName'),3]]);
   dRow([['Officer Name',val('officerName')],['Officer Contact',val('officerContact')]]);div();
 
-  sH(6,'Insurance & Factoring');
+  sH(5,'Insurance & Factoring');
   dRow([['Insurance Broker',val('insBroker')],['Underwriter',val('underwriter')]]);
   dRow([['Previous Broker',val('prevBroker')],['Previous Underwriter',val('prevUnderwriter')]]);
   const fnot=getRadio('factNotified')+(val('factNotifiedDate')?' — Date: '+val('factNotifiedDate'):'');
   dRow([['Change Date',val('changeDate')],['Factoring Company',val('factoring')],['Factoring Co. Notified?',fnot]]);div();
-
-
-
-  if(frontEmails.length>0){
-    sH(7,'Front Emails');
-    [...frontEmails].reverse().forEach((e,i)=>{
-      need(24);
-      if(i>0){y+=2;doc.setDrawColor(...TEAL_MID);doc.setLineWidth(0.3);doc.line(M,y,PW-M,y);y+=6;}
-      doc.setFontSize(7);doc.setFont('helvetica','normal');doc.setTextColor(...MUTED);
-      doc.text(e.ts.toUpperCase()+(e.edited?' · EDITED':''),M,y+4);y+=8;
-      doc.setFontSize(10.5);doc.setFont('helvetica','normal');doc.setTextColor(...DARK);
-      const lines=doc.splitTextToSize(e.text,CW);
-      lines.forEach(line=>{need(7);doc.text(line,M,y);y+=5.5});
-    });
-  }
 
   // External notes (source === 'External')
   const extNotes=notes.filter(n=>(n.source||'Internal')==='External');
@@ -1990,7 +1993,7 @@ const ALL_FIELDS = [
   'agentOffice','driverName','driverPhone','driverName2','driverPhone2','truckNumber','trailerNumber',
   'carrierName','mcNumber','dotNumber','loadsCount','lastLoad','onboardDate','numTrucks',
   'dispPhone','dispEmail',
-  'watchdogDate','vidtaDate','loadLockDate',
+  'loadLockDate',
   'policeRptNo','deptName','officerName','officerContact',
   'insBroker','underwriter','prevBroker','prevUnderwriter','changeDate',
   'factoring','factNotifiedDate',
@@ -2006,7 +2009,7 @@ const ALL_RADIOS = [
 const INFO_STATUS_FIELDS=['ic_ratecon','ic_emails_pdf','ic_email_list','ic_called','ic_texts_nonverified','ic_bol_signed','ic_invoice','ic_police','ic_dl','ic_truck_photo','ic_tractor_photos','ic_plates','ic_vin','ic_surveillance','ic_checkin','ic_carrier_details','ic_loading_desc','ic_trucks_verified','ic_verify_how'];
 
 function collectFormData(){
-  const data={fields:{},radios:{},checkboxes:{},notes:notes,frontEmails:frontEmails,ts:new Date().toISOString(),idAlertTypes:getFlagTypes('idAlertList'),fgTypes:getFlagTypes('fgList'),loadLockTypes:getFlagTypes('loadLockList'),emailAddresses:getEmailAddresses(),photos:photos};
+  const data={fields:{},radios:{},checkboxes:{},notes:notes,frontEmails:frontEmails,ts:new Date().toISOString(),idAlertTypes:getFlagTypes('idAlertList'),fgTypes:getFlagTypes('fgList'),loadLockTypes:getFlagTypes('loadLockList'),watchdogTypes:getFlagTypes('watchdogList'),vidtaTypes:getFlagTypes('vidtaList'),emailAddresses:getEmailAddresses(),photos:photos};
   ALL_FIELDS.forEach(id=>{const el=document.getElementById(id);if(el)data.fields[id]=el.value||'';});
   ALL_RADIOS.forEach(name=>{const el=document.querySelector(`input[name="${name}"]:checked`);data.radios[name]=el?el.value:'';});
   INFO_STATUS_FIELDS.forEach(id=>{data.checkboxes[id]=icState[id]||'';});
@@ -2030,11 +2033,17 @@ function restoreFormData(data){
   if(data.idAlertTypes&&data.idAlertTypes.length){setFlagTypes('idAlertList','idAlertOpts',data.idAlertTypes);document.getElementById('idAlertCat')?.classList.add('visible');}
   if(data.fgTypes&&data.fgTypes.length){setFlagTypes('fgList','fgOpts',data.fgTypes);document.getElementById('fgCat')?.classList.add('visible');}
   if(data.loadLockTypes&&data.loadLockTypes.length){setFlagTypes('loadLockList','loadLockOpts',data.loadLockTypes);document.getElementById('loadLockCat')?.classList.add('visible');}
+  if(data.watchdogTypes&&data.watchdogTypes.length){setFlagTypes('watchdogList','watchdogOpts',data.watchdogTypes);document.getElementById('watchdogCat')?.classList.add('visible');}
+  if(data.vidtaTypes&&data.vidtaTypes.length){setFlagTypes('vidtaList','vidtaOpts',data.vidtaTypes);document.getElementById('vidtaCat')?.classList.add('visible');}
   if(data.loadLockTypes&&data.loadLockTypes.length){setFlagTypes('loadLockList','loadLockOpts',data.loadLockTypes);document.getElementById('loadLockCat')?.classList.add('visible');}
+  if(data.watchdogTypes&&data.watchdogTypes.length){setFlagTypes('watchdogList','watchdogOpts',data.watchdogTypes);document.getElementById('watchdogCat')?.classList.add('visible');}
+  if(data.vidtaTypes&&data.vidtaTypes.length){setFlagTypes('vidtaList','vidtaOpts',data.vidtaTypes);document.getElementById('vidtaCat')?.classList.add('visible');}
   // Restore dropdown visibility based on radio state
   toggleFlagCat('idAlertCat','idAlert');
   toggleFlagCat('fgCat','freightGuard');
   toggleFlagCat('loadLockCat','loadLock');
+  toggleFlagCat('watchdogCat','watchdog');
+  toggleFlagCat('vidtaCat','vidta');
   updateStatusBadge();
   toggleCargoNetNum();
   updateSidebarBol();
