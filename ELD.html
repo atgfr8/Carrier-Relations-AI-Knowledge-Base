@@ -553,6 +553,9 @@ body { font-family: var(--body); background: var(--bg); color: var(--ink); font-
       <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:4px 0;">
         <span style="font-weight:500;color:var(--ink);">SMR LOGISTICS INC</span><span style="color:var(--ink-mid);">Sharon Rennie</span>
       </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;padding:4px 0;">
+        <span style="font-weight:500;color:var(--ink);">WK TRANSPORTATION</span><span style="color:var(--ink-mid);">Kathleen Warren</span>
+      </div>
     </div>
 
   </div>
@@ -931,7 +934,7 @@ function evaluate() {
   // Pre-2000
   if(s.modelYear===false) { showResult('exempt','Exempt by Model Year','Pre-2000 engine confirmed. No further evaluation needed.','6 months',null,buildResponse('exempt')); hideExceptions(); return; }
   // Sprinter
-  if(s.equip==='sprinter') { showResult('exempt','Exempt by Equipment Type','Sprinter van or hot shot (Class 1 or 2).','6 months',null,buildResponse('exempt')); hideExceptions(); return; }
+  if(s.equip==='sprinter') { showResult('exempt','Exempt by Equipment Type','Sprinter van or hot shot (Class 1, 2 or 3).','6 months',null,buildResponse('exempt')); hideExceptions(); return; }
   // Drayage
   if(s.equip==='drayage') { showResult('exempt','Exempt — Drayage','Drayage equipment qualifies for ELD exemption.','6 months',null,buildResponse('exempt')); hideExceptions(); return; }
   // Step Deck / RGN
