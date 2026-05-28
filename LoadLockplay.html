@@ -1147,11 +1147,11 @@
       <div id="workflow-t3" style="display:none">
         <div style="font-size:13px;color:var(--text2);margin-bottom:24px;line-height:1.6">Alerts are grouped by when they can fire. This determines which workflow applies and whether the assignment can be blocked.</div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
 
           <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
             <div style="padding:10px 14px;background:#E6F1FB;border-bottom:1px solid #C4DCF5">
-              <div style="font-size:12px;font-weight:600;color:#1a6ec7;text-transform:uppercase;letter-spacing:.06em">At assignment only</div>
+              <div style="font-size:12px;font-weight:600;color:#1a6ec7;text-transform:uppercase;letter-spacing:.06em">At assignment</div>
               <div style="font-size:11px;color:#4a7eb5;margin-top:2px">Trigger 1 applies — assignment blocked</div>
             </div>
             <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px">
@@ -1159,33 +1159,24 @@
               <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">VoIP Phone Number</div>
               <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">Overbooked Carrier</div>
               <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">Carrier Assigned ELD Exempt</div>
+              <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">Vehicle Not Nearby</div>
+              <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">Vehicle Assignment Required</div>
+              <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">Provided Vehicle Not Found</div>
+              <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">Dormant Vehicle Assigned</div>
+              <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">Fraudulent Phone Number</div>
+              <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">High Risk Area</div>
             </div>
           </div>
 
           <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
             <div style="padding:10px 14px;background:#FAEEDA;border-bottom:1px solid #F5D7A0">
-              <div style="font-size:12px;font-weight:600;color:#854F0B;text-transform:uppercase;letter-spacing:.06em">Post-assignment only</div>
+              <div style="font-size:12px;font-weight:600;color:#854F0B;text-transform:uppercase;letter-spacing:.06em">Post-assignment</div>
               <div style="font-size:11px;color:#9A6220;margin-top:2px">Trigger 2 applies — non-blocking</div>
             </div>
             <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px">
               <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">Revoked ELD</div>
               <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">Recent Identity Alert</div>
               <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">Failed to Arrive at Pickup</div>
-              <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">Vehicle Not Nearby</div>
-              <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">Vehicle Assignment Required</div>
-              <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">Provided Vehicle Not Found</div>
-              <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">Dormant Vehicle Assigned</div>
-            </div>
-          </div>
-
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden">
-            <div style="padding:10px 14px;background:#EDE8F5;border-bottom:1px solid #D0C5EC">
-              <div style="font-size:12px;font-weight:600;color:#5B3D8A;text-transform:uppercase;letter-spacing:.06em">Could be either</div>
-              <div style="font-size:11px;color:#7B5EA7;margin-top:2px">Depends on when data is entered</div>
-            </div>
-            <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px">
-              <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">Fraudulent Phone Number</div>
-              <div style="font-size:13px;color:var(--text);padding:6px 10px;background:var(--surface2);border-radius:var(--radius-sm)">High Risk Area</div>
             </div>
           </div>
 
