@@ -278,7 +278,16 @@ function profileText(o){
   const top = ranked[0] ? ranked[0][0] : 'mixed';
   let run='';
   if(spec>=70) run = `Heavy haul and specialized freight, <span class="hl">almost exclusively</span> — flatbed, RGN, step deck and hot shot make up the bulk of the book, with little van or reefer.`;
-  else if(eld>=85) run = `Standard over-the-road freight — <span class="hl">predominantly van and reefer</span>. This office runs the kind of long-haul truckload that is ELD-required almost without exception.`;
+  else if(eld>=85){
+    const dv=pct('Dry Van'), rf=pct('Reefer');
+    let mix;
+    if(rf<10) mix='predominantly dry van';
+    else if(dv<10) mix='predominantly reefer';
+    else if(dv>=25 && rf>=25) mix='a van and reefer mix';
+    else if(dv>=rf) mix='mostly dry van, with some reefer';
+    else mix='mostly reefer, with some dry van';
+    run = `Standard over-the-road freight — <span class="hl">${mix}</span>. This office runs the kind of long-haul truckload that is ELD-required almost without exception.`;
+  }
   else if(pct('Reefer')>=40) run = `Temperature-controlled freight is the core of the book — <span class="hl">reefer-heavy</span>, with a supporting mix of dry van and other equipment.`;
   else if(pct('Power Only')>=30) run = `A <span class="hl">power-only</span> book — the office supplies tractors against drop trailers, so the underlying commodity and ELD applicability vary load to load.`;
   else run = `A <span class="hl">mixed book</span> — roughly ${eld}% van and reefer against ${spec}% flatbed, hot shot and specialized. No single equipment type dominates.`;
@@ -288,8 +297,12 @@ function profileText(o){
 function eldBlock(o){
   const eld=o.eld_share, spec=o.spec_share;
   const po=(o.equip['Power Only']||0)/o.total;
-  if(eld>=85) return {tag:'ELD EXPECTED', color:'#1f4e78',
-    text:`Almost entirely van and reefer — standard OTR freight where short-haul, drive-away and agricultural exemptions don't apply. Treat ELD as required for essentially every load.`};
+  if(eld>=85){
+    const dv=Math.round((o.equip['Dry Van']||0)/o.total*100), rf=Math.round((o.equip['Reefer']||0)/o.total*100);
+    const noun = rf<10 ? 'dry van' : (dv<10 ? 'reefer' : 'van and reefer');
+    return {tag:'ELD EXPECTED', color:'#1f4e78',
+    text:`Almost entirely ${noun} — standard OTR freight where short-haul, drive-away and agricultural exemptions don't apply. Treat ELD as required for essentially every load.`};
+  }
   if(po>=0.30) return {tag:'DEPENDS ON TRAILER', color:'#b08968',
     text:`Heavy power-only share — the carrier supplies the tractor, so whether ELD applies depends on what trailer is hooked and how it runs. Verify per load.`};
   if(spec>=70) return {tag:'LARGELY EXEMPT', color:'#3f7a52',
