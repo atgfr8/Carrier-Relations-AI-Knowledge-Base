@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Covered Load — Carrier Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --atg-teal: #0069A6;
+  --atg-teal-dark: #004F7C;
+  --atg-teal-light: #E6F2F9;
+  --atg-navy: #1A2E44;
+  --atg-orange: #E08A3C;
+  --atg-orange-dark: #A4530F;
+  --bg: #D6E3ED;
+  --surface: #FFFFFF;
+  --surface-2: #EBF0F5;
+  --border: #C8D8E4;
+  --border-dark: #8AAFC5;
+  --ink: #1A2E44;
+  --ink-mid: #4A6478;
+  --ink-light: #8AAFC5;
+  --accent: #D64340;
+  --accent-light: #FDF0EF;
+  --amber: #C98F00;
+  --amber-light: #FDF5E8;
+  --green: #1A9458;
+  --green-light: #EDFAF4;
+  --mono: 'IBM Plex Mono', monospace;
+  --body: 'IBM Plex Sans', sans-serif;
+  --radius: 6px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.page { max-width: 1080px; margin: 0 auto; padding: 0 0 80px; }
+
+/* Header */
+.header {
+  background: var(--atg-navy);
+  border-bottom: 3px solid var(--atg-teal);
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.header-brand { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.atg-logo-text { line-height: 1.2; }
+.atg-logo-text strong {
+  font-size: 17px; font-weight: 700; letter-spacing: 2px; color: #fff;
+  text-transform: uppercase; display: block;
+}
+.atg-logo-text span {
+  font-size: 8.5px; font-weight: 400; letter-spacing: 4px;
+  color: rgba(255,255,255,0.6); text-transform: uppercase; display: block;
+}
+.header-divider { width: 1px; height: 26px; background: rgba(255,255,255,0.18); }
+.header-tool-name {
+  font-size: 16px; font-weight: 700; letter-spacing: 0.02em; color: #fff; white-space: nowrap;
+}
+.header-stamp {
+  font-family: var(--mono); font-size: 10px; font-weight: 500;
+  color: rgba(255,255,255,0.5); letter-spacing: 0.04em; white-space: nowrap;
+}
+.header-reset {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  color: rgba(255,255,255,0.75); background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.4); border-radius: var(--radius);
+  padding: 6px 14px; cursor: pointer; letter-spacing: 0.03em; transition: all 0.15s; white-space: nowrap;
+}
+.header-reset:hover { color: #fff; border-color: rgba(255,255,255,0.7); }
+.footer-reset {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  color: var(--ink-mid); background: transparent;
+  border: 1.5px solid var(--border-dark); border-radius: var(--radius);
+  padding: 9px 20px; cursor: pointer; letter-spacing: 0.04em; transition: all 0.15s;
+}
+.footer-reset:hover { border-color: var(--atg-teal); color: var(--atg-teal-dark); }
+.nav-left { display: flex; gap: 10px; align-items: center; }
+.btn-reset { background: transparent; border: 1.5px solid var(--border-dark); color: var(--ink-mid); }
+.btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+
+.app-shell { display: flex; gap: 0; align-items: flex-start; }
+.sidebar {
+  width: 210px; flex-shrink: 0; padding: 0 16px 0 24px; position: sticky; top: 24px;
+}
+.page-inner { flex: 1; min-width: 0; max-width: 780px; padding: 0 24px; }
+.side-group { margin-bottom: 22px; }
+.side-label {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-light); margin: 0 0 8px 2px;
+}
+.side-btn {
+  display: block; width: 100%; text-align: left; margin-bottom: 7px;
+  font-family: var(--body); font-size: 13px; font-weight: 500;
+  padding: 10px 13px; border-radius: var(--radius); cursor: pointer;
+  border: 1.5px solid var(--border); background: var(--surface); color: var(--ink-mid);
+  transition: all 0.13s;
+}
+.side-btn:hover { border-color: var(--border-dark); }
+.side-btn.active { border-color: var(--atg-teal); background: var(--atg-teal-light); color: var(--atg-teal-dark); box-shadow: inset 0 0 0 1px var(--atg-teal); }
+.side-btn small { display: block; font-family: var(--mono); font-size: 9.5px; color: var(--ink-light); letter-spacing: 0.03em; margin-top: 2px; }
+.side-btn.check-w { border-left: 3px solid var(--atg-teal); }
+.side-btn.check-g { border-left: 3px solid var(--atg-orange); }
+.side-btn.check-w.active { background: var(--atg-teal-light); border-color: var(--atg-teal); color: var(--atg-teal-dark); }
+.side-btn.check-g.active { background: #FCEEDF; border-color: var(--atg-orange); color: var(--atg-orange-dark); box-shadow: inset 0 0 0 1px var(--atg-orange); }
+
+.hub { animation: slide 0.25s ease; }
+.hub-title { font-size: 20px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.hub-sub { font-size: 13px; color: var(--ink-mid); margin-bottom: 18px; }
+.hub-cards { display: flex; flex-direction: column; gap: 12px; }
+.hub-card {
+  text-align: left; cursor: pointer; border-radius: var(--radius); padding: 18px 20px;
+  border: 1.5px solid var(--border); background: var(--surface); transition: all 0.13s; width: 100%;
+}
+.hub-card:hover { border-color: var(--border-dark); transform: translateX(2px); }
+.hub-card.w { border-left: 5px solid var(--atg-teal); }
+.hub-card.g { border-left: 5px solid var(--atg-orange); }
+.hub-card .hc-tag { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 5px; }
+.hub-card.w .hc-tag { color: var(--atg-teal-dark); }
+.hub-card.g .hc-tag { color: var(--atg-orange-dark); }
+.hub-card .hc-name { font-size: 17px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.hub-card .hc-desc { font-size: 12.5px; color: var(--ink-mid); line-height: 1.5; }
+
+@media (max-width: 680px) {
+  .app-shell { flex-direction: column; }
+  .sidebar { width: auto; position: static; padding: 0 24px; margin-bottom: 16px; }
+  .side-group { display: inline-block; margin-right: 20px; vertical-align: top; }
+}
+
+/* Progress track */
+.progress {
+  display: flex; align-items: center; gap: 0; margin-bottom: 20px;
+  font-family: var(--mono);
+}
+.progress-seg { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+.progress-bar-track { height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; }
+.progress-bar-fill { height: 100%; background: var(--atg-teal); width: 0%; transition: width 0.3s ease; }
+.progress-label {
+  font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-light);
+}
+.progress-count {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em;
+  color: var(--ink-mid); text-align: right; margin-bottom: 10px;
+}
+
+.trail { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.trail-chip {
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.01em;
+  padding: 5px 11px; border-radius: 99px; border: 1.5px solid var(--border);
+  background: var(--surface); color: var(--ink-mid); cursor: pointer;
+  transition: all 0.13s; display: inline-flex; gap: 7px; align-items: center;
+}
+.trail-chip:hover { border-color: var(--atg-teal); background: var(--atg-teal-light); }
+.trail-chip .tc-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.trail-chip.warranty .tc-dot { background: var(--atg-teal); }
+.trail-chip.guardrail .tc-dot { background: var(--atg-orange); }
+.trail-chip .tc-label { color: var(--ink-light); text-transform: uppercase; letter-spacing: 0.05em; font-size: 9px; }
+.trail-chip b { color: var(--ink); font-weight: 600; }
+.trail-caret { color: var(--ink-light); font-size: 10px; align-self: center; }
+
+/* Step card */
+.step {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  animation: slide 0.25s ease;
+}
+@keyframes slide { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
+.step-phase-bar {
+  padding: 11px 22px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em;
+  text-transform: uppercase; font-weight: 600; color: #fff;
+  display: flex; align-items: center; gap: 9px;
+}
+.step-phase-bar.warranty  { background: var(--atg-teal); }
+.step-phase-bar.guardrail { background: var(--atg-orange); }
+.step-phase-bar .pb-hv {
+  margin-left: auto; background: var(--accent); color: #fff;
+  border: 2px solid #fff;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em; padding: 3px 9px; border-radius: 4px; white-space: nowrap;
+}
+.step-phase-bar .pb-hv.crit { background: var(--accent); color: #fff; }
+.rc-head-right { display: flex; gap: 8px; align-items: center; }
+.rc-hv {
+  font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+  padding: 3px 9px; border-radius: 4px; white-space: nowrap; background: var(--accent); color: #fff;
+}
+.rc-hv.crit { background: var(--accent); color: #fff; }
+.step-phase-bar .pb-tag {
+  background: rgba(255,255,255,0.22); border-radius: 4px;
+  padding: 2px 7px; font-size: 10px; letter-spacing: 0.06em;
+}
+.rc.warranty  { border-left: 4px solid var(--atg-teal); }
+.rc.guardrail { border-left: 4px solid var(--atg-orange); }
+.rc.warranty  .rc-name { color: var(--atg-teal-dark); }
+.rc.guardrail .rc-name { color: var(--atg-orange-dark); }
+.step-eyebrow {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--atg-teal); padding: 18px 22px 0; font-weight: 500;
+}
+.step-eyebrow.guardrail { color: var(--atg-navy); }
+.step-q {
+  font-size: 20px; font-weight: 600; line-height: 1.3; padding: 16px 22px 4px; color: var(--ink);
+}
+.step-help {
+  font-size: 12.5px; color: var(--ink-mid); padding: 0 22px 18px; line-height: 1.5;
+}
+.step-help code {
+  font-family: var(--mono); font-size: 11px; background: var(--surface-2);
+  padding: 1px 5px; border-radius: 3px; color: var(--atg-teal-dark);
+}
+.step-body { padding: 0 22px 22px; }
+
+/* Choice buttons */
+.choices { display: flex; flex-direction: column; gap: 9px; }
+.choice {
+  display: flex; align-items: center; gap: 13px;
+  border: 1.5px solid var(--border-dark);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  cursor: pointer;
+  background: var(--surface);
+  transition: all 0.13s;
+  text-align: left;
+  font-size: 14.5px;
+  color: var(--ink);
+  width: 100%;
+  font-family: var(--body);
+}
+.choice:hover { border-color: var(--atg-teal); background: var(--atg-teal-light); }
+.choice.selected { border-color: var(--atg-teal); background: var(--atg-teal-light); box-shadow: inset 0 0 0 1px var(--atg-teal); }
+.choice-key {
+  font-family: var(--mono); font-size: 12px; font-weight: 500;
+  width: 26px; height: 26px; flex-shrink: 0;
+  border: 1.5px solid var(--border-dark); border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-mid); transition: all 0.13s;
+}
+.choice:hover .choice-key, .choice.selected .choice-key {
+  border-color: var(--atg-teal); color: var(--atg-teal-dark); background: #fff;
+}
+.choice-text { flex: 1; }
+.choice-text small { display: block; font-size: 11.5px; color: var(--ink-light); font-family: var(--mono); margin-top: 2px; letter-spacing: 0.01em; }
+
+/* Checklist (multi-condition steps) */
+.checklist { display: flex; flex-direction: column; gap: 8px; margin-bottom: 4px; }
+.check-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  border: 1.5px solid var(--border); border-radius: var(--radius);
+  padding: 12px 14px; cursor: pointer; transition: all 0.13s; background: var(--surface);
+}
+.check-item:hover { border-color: var(--border-dark); }
+.check-item.on { border-color: var(--green); background: var(--green-light); }
+.check-box {
+  width: 20px; height: 20px; flex-shrink: 0; border: 1.5px solid var(--border-dark);
+  border-radius: 5px; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: #fff; margin-top: 1px; transition: all 0.13s;
+}
+.check-item.on .check-box { background: var(--green); border-color: var(--green); }
+.check-label { flex: 1; font-size: 13.5px; line-height: 1.4; }
+
+.note-ok {
+  border: 1.5px solid #8ED4B0; border-left: 4px solid var(--green);
+  background: var(--green-light); border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.note-ok .note-title { font-family: var(--mono); font-size: 15px; color: #0E5C38; font-weight: 500; margin-bottom: 6px; display:flex; align-items:center; gap:8px; }
+.note-ok .note-text { font-size: 13px; color: var(--ink-mid); line-height: 1.6; }
+.note-ok .note-next { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; color: var(--atg-teal-dark); margin-top: 10px; }
+.note-bad {
+  border: 1.5px solid #E8A09C; border-left: 4px solid var(--accent);
+  background: var(--accent-light); border-radius: var(--radius); padding: 16px 18px;
+}
+.note-bad .note-title { font-family: var(--mono); font-size: 15px; color: #8B2220; font-weight: 500; margin-bottom: 6px; display:flex; align-items:center; gap:8px; }
+.note-bad .note-text { font-size: 13px; color: var(--ink-mid); line-height: 1.6; }
+.note-bad .note-text strong { color: #8B2220; }
+.note-bad .note-next { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; color: var(--accent); margin-top: 10px; }
+
+/* Value input */
+.value-row { display: flex; align-items: center; gap: 8px; }
+.value-prefix { font-family: var(--mono); font-size: 18px; color: var(--ink-mid); }
+.value-input {
+  border: 1.5px solid var(--border-dark); border-radius: var(--radius);
+  background: var(--surface); padding: 12px 14px;
+  font-family: var(--mono); font-size: 18px; color: var(--ink);
+  width: 100%; outline: none; transition: border-color 0.15s;
+}
+.value-input:focus { border-color: var(--atg-teal); }
+
+/* Nav */
+.nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 18px; }
+.btn {
+  font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 0.05em;
+  text-transform: uppercase; padding: 12px 22px; border-radius: var(--radius);
+  cursor: pointer; transition: all 0.15s; border: 1.5px solid transparent;
+}
+.btn-back { background: transparent; border-color: var(--border-dark); color: var(--ink-mid); }
+.btn-back:hover { border-color: var(--ink-mid); color: var(--ink); }
+.btn-next { background: var(--atg-teal); color: #fff; border: none; }
+.btn-next:hover { background: var(--atg-teal-dark); }
+.btn-next:disabled { background: var(--border); color: var(--ink-light); cursor: not-allowed; }
+.btn-ghost { visibility: hidden; }
+
+/* Verdict */
+.verdict-wrap { display: flex; flex-direction: column; gap: 14px; animation: slide 0.25s ease; }
+.verdict-head {
+  border-radius: var(--radius); padding: 20px 22px; border: 1.5px solid; border-left-width: 4px;
+}
+.verdict-head.pass { background: var(--green-light); border-color: #8ED4B0; border-left-color: var(--green); }
+.verdict-head.fail { background: var(--accent-light); border-color: #E8A09C; border-left-color: var(--accent); }
+.verdict-head.warn { background: var(--amber-light); border-color: #E8C87A; border-left-color: var(--amber); }
+.verdict-eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; margin-bottom: 5px; }
+.verdict-head.pass .verdict-eyebrow { color: var(--green); }
+.verdict-head.fail .verdict-eyebrow { color: var(--accent); }
+.verdict-head.warn .verdict-eyebrow { color: var(--amber); }
+.verdict-title { font-family: var(--mono); font-size: 24px; font-weight: 500; line-height: 1.05; letter-spacing: -0.01em; margin-bottom: 8px; }
+.verdict-head.pass .verdict-title { color: #0E5C38; }
+.verdict-head.fail .verdict-title { color: #8B2220; }
+.verdict-head.warn .verdict-title { color: #7A5200; }
+.verdict-sub { font-size: 13.5px; color: var(--ink-mid); line-height: 1.55; }
+
+/* Result control cards */
+.rc { border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.rc-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 13px 18px; background: var(--surface-2); border-bottom: 1.5px solid var(--border);
+}
+.rc-name { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink); font-weight: 500; }
+.rc-badge {
+  font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.05em;
+  text-transform: uppercase; padding: 4px 11px; border-radius: 99px; white-space: nowrap;
+}
+.rc-badge.ok { background: var(--green-light); color: #0E5C38; border: 1px solid #8ED4B0; }
+.rc-badge.bad { background: var(--accent-light); color: #8B2220; border: 1px solid #E8A09C; }
+.rc-badge.na { background: var(--surface-2); color: var(--ink-light); border: 1px solid var(--border); }
+.rc-badge.warn { background: var(--amber-light); color: #7A5200; border: 1px solid #E8C87A; }
+.rc-body { padding: 14px 18px; }
+.rc-flags { display: flex; flex-direction: column; gap: 8px; }
+.flag { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 1.45; }
+.flag-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.flag.ok .flag-dot { background: var(--green); }
+.flag.bad .flag-dot { background: var(--accent); }
+.flag.warn .flag-dot { background: var(--amber); }
+.flag.na .flag-dot { background: var(--ink-light); }
+.flag.ok span { color: var(--ink-mid); }
+.flag.bad span { color: #8B2220; font-weight: 600; }
+.flag.warn span { color: var(--ink-mid); }
+.flag.na span { color: var(--ink-light); }
+
+.ratecon-note {
+  font-size: 12px; color: #7A5200; background: var(--amber-light);
+  border-left: 3px solid var(--amber); padding: 11px 15px; line-height: 1.55;
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+.ratecon-note strong { display:block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 3px; }
+
+.restart {
+  width: 100%; padding: 13px; margin-top: 4px;
+  background: var(--atg-navy); color: #fff; border: none;
+  font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase;
+  cursor: pointer; border-radius: var(--radius); transition: all 0.2s;
+}
+.restart:hover { background: #24405e; }
+
+.caveat {
+  margin-top: 18px; padding: 12px 16px;
+  border: 1.5px solid #E8C87A; border-left: 4px solid var(--amber);
+  border-radius: 0 var(--radius) var(--radius) 0; background: var(--amber-light);
+  font-size: 12px; font-weight: 500; color: #7A5200; line-height: 1.65;
+  display: flex; gap: 10px; align-items: flex-start;
+}
+.caveat-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.caveat strong { display: block; font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase; font-family: var(--mono); margin-bottom: 3px; }
+
+@media (max-width: 560px) {
+  .header { flex-direction: column; gap: 12px; align-items: flex-start; }
+  .step-q { font-size: 18px; }
+}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-brand">
+    <div class="atg-logo-text"><strong>Armstrong</strong><span>Transport Group</span></div>
+    <div class="header-divider"></div>
+    <span class="header-tool-name">Covered Load<span style="color:#0069A6"> · </span>Carrier Check</span>
+  </div>
+  <span class="header-stamp">Generated 08-12-2026 · 11:33 AM EDT</span>
+</div>
+
+<div class="page">
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="page-inner">
+
+  <div class="progress" id="progress"></div>
+  <div class="progress-count" id="progress-count"></div>
+
+  <div id="stage"></div>
+
+  <div class="caveat">
+    <div class="caveat-icon">⚠️</div>
+    <div>
+      <strong>Guide only — human review required</strong>
+      This walks the current policy logic to point you to the right checks. It can be wrong or miss edge cases. No carrier is approved or denied without a qualified team member confirming. Warranty scope is an interim assumption (SI-gated) pending Loadsure confirmation.
+    </div>
+  </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+// ---------- State ----------
+const S = {
+  equip: null,        // 'ftl' | 'other'
+  commodity: null,    // 'warranty' | 'non'
+  si: null,           // 'yes' | 'no'
+  value: null,        // 'under' | 'over' ($100K-$1M) | 'over1m' (>$1M)
+  ca: null,           // 'yes' | 'no'
+  gapCommodity: null, // 'yes' | 'no'  (high-theft category, asked only in the no-SI/under-$100K gap)
+  highwayAll: null,   // 'yes' | 'no'
+  fivePoint: null,    // 'yes' | 'no'
+  history: null       // 'yes' | 'no'
+};
+
+// ---------- Derived ----------
+function warrantyApplies() { return S.si === 'yes' && S.equip === 'ftl' && S.commodity === 'warranty'; }
+function overLimit()       { return S.value === 'over1m'; }
+function guardrailApplies() { return S.value === 'over' || S.value === 'over1m'; }
+function isHighTheft()      { return S.commodity === 'warranty' || S.gapCommodity === 'yes'; }
+
+// ---------- Step definitions (only shown if .when passes) ----------
+const STEPS = [
+  // ----- Check 1 · Warranty (does it apply, then resolve it) -----
+  {
+    id: 'si', phase: 'Check 1 · Warranty',
+    q: 'Has, or will, Shippers Interest (SI) be added to this load?',
+    help: 'The carrier-vetting warranty is a condition of SI coverage. No SI, no warranty check (interim assumption) — so this comes first.',
+    type: 'choice',
+    options: [
+      { key: 'A', label: 'Yes — SI is or will be on this load', val: 'yes' },
+      { key: 'B', label: 'No SI on this load', sub: 'Warranty will not apply', val: 'no' }
+    ],
+    set: v => S.si = v, get: () => S.si
+  },
+  {
+    id: 'gapCommodity', phase: 'Check 2 · Guardrail',
+    q: 'Is this a high-theft commodity?',
+    help: 'No SI means the warranty is out. Select the category if it fits one of the high-theft types, or \u201Cnone of these.\u201D',
+    type: 'choice',
+    options: [
+      { key: 'A', label: 'Foodstuff', sub: 'Perishable & non-perishable — incl. beer / alcohol', val: 'yes' },
+      { key: 'B', label: 'Electronics', val: 'yes' },
+      { key: 'C', label: 'Metals', val: 'yes' },
+      { key: 'D', label: 'Personal care', val: 'yes' },
+      { key: 'E', label: 'Clothing', val: 'yes' },
+      { key: 'F', label: 'Pet products', val: 'yes' },
+      { key: 'G', label: 'None of these', sub: 'Not a high-theft category', val: 'no' }
+    ],
+    when: () => S.si !== 'yes',
+    set: v => S.gapCommodity = v, get: () => S.gapCommodity
+  },
+  {
+    id: 'equip', phase: 'Check 1 · Warranty',
+    q: 'What equipment is this load moving on?',
+    help: 'The warranty applies to Full Truck Load and Dedicated Truck only.',
+    type: 'choice',
+    options: [
+      { key: 'A', label: 'FTL or Dedicated Truck', val: 'ftl' },
+      { key: 'B', label: 'LTL, Partial, or other', sub: 'Warranty will not apply', val: 'other' }
+    ],
+    when: () => S.si === 'yes',
+    set: v => S.equip = v, get: () => S.equip
+  },
+  {
+    id: 'commodity', phase: 'Check 1 · Warranty',
+    q: 'Is this a warranty commodity?',
+    help: 'The warranty covers the six categories below. Select the one that fits, or \u201Cnone of these.\u201D',
+    type: 'choice',
+    options: [
+      { key: 'A', label: 'Foodstuff', sub: 'Perishable & non-perishable — incl. beer / alcohol', val: 'warranty' },
+      { key: 'B', label: 'Electronics', val: 'warranty' },
+      { key: 'C', label: 'Metals', val: 'warranty' },
+      { key: 'D', label: 'Personal care', val: 'warranty' },
+      { key: 'E', label: 'Clothing', val: 'warranty' },
+      { key: 'F', label: 'Pet products', val: 'warranty' },
+      { key: 'G', label: 'None of these', sub: 'Warranty will not apply', val: 'non' }
+    ],
+    when: () => S.si === 'yes',
+    set: v => S.commodity = v, get: () => S.commodity
+  },
+  {
+    id: 'highway', phase: 'Check 1 · Warranty',
+    q: 'Are all four Highway Connect conditions true?',
+    help: 'If all four hold, the five-point check is waived. Missing one just means you run the five-point — it is not a breach.',
+    type: 'checklist',
+    items: [
+      'Carrier is onboarded through Highway Connect',
+      'Tendered & accepted via Highway\u2019s Secure Rate Con Delivery, with 2FA',
+      'Tendered to a Highway-verified user',
+      'Carrier is detected at pickup'
+    ],
+    when: () => warrantyApplies(),
+    set: v => S.highwayAll = v, get: () => S.highwayAll
+  },
+  {
+    id: 'fivepoint', phase: 'Check 1 · Warranty',
+    q: 'Five-point carrier check — are all five true?',
+    help: 'Required when the Highway conditions are not all met. All five must hold at tender.',
+    type: 'checklist',
+    items: [
+      '5+ completed loads with Armstrong in the last 6 months',
+      'At least 6 months of tenure with Armstrong',
+      'No unresolved claims with the carrier',
+      'At least 2 years of operating authority',
+      'Tracked on MacroPoint (or an approved equivalent)'
+    ],
+    when: () => warrantyApplies() && S.highwayAll === 'no',
+    set: v => S.fivePoint = v, get: () => S.fivePoint
+  },
+  {
+    id: 'warrantyOk', phase: 'Check 1 · Warranty',
+    type: 'note',
+    when: () => warrantyApplies() && (S.highwayAll === 'yes' || (S.highwayAll === 'no' && S.fivePoint === 'yes')),
+    set: () => {}, get: () => 'seen'
+  },
+  {
+    id: 'warrantyBreach', phase: 'Check 1 · Warranty',
+    type: 'note',
+    when: () => warrantyApplies() && S.highwayAll === 'no' && S.fivePoint === 'no',
+    set: () => {}, get: () => 'seen'
+  },
+  // ----- Check 2 · Guardrail (does it apply, then resolve it) -----
+  {
+    id: 'value', phase: 'Check 2 · Guardrail',
+    q: 'What is this load valued at?',
+    help: 'The guardrail engages over $100,000. Over $1,000,000 needs underwriter approval.',
+    type: 'choice',
+    options: [
+      { key: 'A', label: 'Under $100,000', val: 'under' },
+      { key: 'B', label: '$100,000 \u2013 $1,000,000', val: 'over' },
+      { key: 'C', label: 'Over $1,000,000', sub: 'Underwriter approval required', val: 'over1m' }
+    ],
+    set: v => S.value = v, get: () => S.value
+  },
+  {
+    id: 'ca', phase: 'Check 2 · Guardrail',
+    q: 'Does the load originate in California?',
+    help: 'California origin adds enhanced scrutiny — a heads-up either way, not a disqualifier.',
+    type: 'choice',
+    options: [
+      { key: 'A', label: 'Yes — California origin', val: 'yes' },
+      { key: 'B', label: 'No', val: 'no' }
+    ],
+    when: () => S.value === 'over' || (S.si !== 'yes' && S.value === 'under'),
+    set: v => S.ca = v, get: () => S.ca
+  },
+  {
+    id: 'history', phase: 'Check 2 · Guardrail',
+    q: 'Guardrail — has the carrier completed 5+ loads with Armstrong in the past 6 months?',
+    help: 'The guardrail\u2019s load-history check. Same figure as the five-point — confirm it once.',
+    type: 'choice',
+    options: [
+      { key: 'A', label: 'Yes — 5+ loads in 6 months', val: 'yes' },
+      { key: 'B', label: 'No', val: 'no' }
+    ],
+    when: () => guardrailApplies() && !overLimit(),
+    set: v => S.history = v, get: () => S.history
+  }
+];
+
+let pos = 0; // index into the *active* step list
+let mode = 'v1';        // 'v1' = full wizard | 'v2' = by check
+let activeCheck = null; // 'warranty' | 'guardrail' (v2 only)
+function activeSteps() {
+  let steps = STEPS.filter(s => !s.when || s.when());
+  if (mode === 'v2' && activeCheck) {
+    const key = activeCheck === 'warranty' ? 'Warranty' : 'Guardrail';
+    steps = steps.filter(s => s.phase.indexOf(key) > -1);
+  }
+  return steps;
+}
+
+// ---------- Trail ----------
+function chipFor(step) {
+  const v = step.get();
+  const map = {
+    si:        { label: 'SI',        val: v === 'yes' ? 'Added' : 'None' },
+    equip:     { label: 'Equip',     val: v === 'ftl' ? 'FTL/Ded' : 'LTL/Other' },
+    commodity: { label: 'Commodity', val: v === 'warranty' ? 'Covered' : 'Non-warranty' },
+    highway:   { label: 'Highway',   val: v === 'yes' ? 'All 4 met' : 'Not all met' },
+    fivepoint: { label: '5-point',   val: v === 'yes' ? 'All 5 met' : 'Failed' },
+    value:     { label: 'Value',     val: v === 'under' ? '< $100K' : (v === 'over1m' ? '> $1M' : '$100K\u2013$1M') },
+    ca:        { label: 'CA origin', val: v === 'yes' ? 'Yes' : 'No' },
+    history:   { label: 'History',   val: v === 'yes' ? '5+ / 6mo' : 'Short' },
+    gapCommodity: { label: 'Commodity', val: v === 'yes' ? 'High-theft' : 'Other' }
+  };
+  return map[step.id] || null;
+}
+function trailHtml(uptoPos) {
+  const steps = activeSteps();
+  const limit = Math.min(uptoPos === undefined ? steps.length : uptoPos, steps.length);
+  const chips = [];
+  for (let i = 0; i < limit; i++) {
+    const st = steps[i];
+    if (st.type === 'note') continue;
+    if (!stepAnswered(st)) continue;
+    const info = chipFor(st);
+    if (!info) continue;
+    const guard = st.phase.indexOf('Guardrail') > -1 ? 'guardrail' : 'warranty';
+    if (chips.length) chips.push('<span class="trail-caret">\u203a</span>');
+    chips.push(`<button class="trail-chip ${guard}" onclick="jumpTo(${i})"><span class="tc-dot"></span><span class="tc-label">${info.label}</span> <b>${info.val}</b></button>`);
+  }
+  return chips.length ? `<div class="trail">${chips.join('')}</div>` : '';
+}
+function jumpTo(i) { pos = i; render(); }
+function hvChip(cls) {
+  if (S.value !== 'over' && S.value !== 'over1m') return '';
+  const crit = S.value === 'over1m';
+  return `<span class="${cls}${crit ? ' crit' : ''}">HIGH VALUE${crit ? ' · $1M+' : ''}</span>`;
+}
+
+// ---------- Render ----------
+function render() {
+  const steps = activeSteps();
+  if (pos >= steps.length) { renderResult(); return; }
+  const step = steps[pos];
+  renderProgress(steps, pos);
+
+  const stage = document.getElementById('stage');
+  let inner = '';
+  const isGuard = step.phase.indexOf('Guardrail') > -1;
+  const phaseClass = isGuard ? 'guardrail' : 'warranty';
+  const tag = isGuard ? 'CHECK 2' : 'CHECK 1';
+  const name = isGuard ? 'HVHR GUARDRAIL' : 'WARRANTY';
+  inner += `<div class="step-phase-bar ${phaseClass}"><span class="pb-tag">${tag}</span> ${name}${isGuard ? hvChip('pb-hv') : ''}</div>`;
+  if (step.type !== 'note') {
+    inner += `<div class="step-q">${step.q}</div>`;
+    inner += `<div class="step-help">${step.help}</div>`;
+  } else {
+    inner += `<div style="height:16px"></div>`;
+  }
+  inner += `<div class="step-body">`;
+
+  if (step.type === 'choice') {
+    inner += `<div class="choices">`;
+    step.options.forEach(o => {
+      const sel = step.get() === o.val ? ' selected' : '';
+      const sub = o.sub ? `<small>${o.sub}</small>` : '';
+      inner += `<button class="choice${sel}" onclick="pick('${step.id}','${o.val}')">
+        <span class="choice-key">${o.key}</span>
+        <span class="choice-text">${o.label}${sub}</span></button>`;
+    });
+    inner += `</div>`;
+  } else if (step.type === 'value') {
+    const disp = (typeof S.value === 'number') ? S.value.toLocaleString('en-US') : '';
+    inner += `<div class="value-row"><span class="value-prefix">$</span>
+      <input class="value-input" id="valInput" inputmode="numeric" placeholder="0" value="${disp}" oninput="onValue(this)"></div>`;
+  } else if (step.type === 'note') {
+    if (step.id === 'warrantyBreach') {
+      inner += `<div class="note-bad">
+        <div class="note-title">\u26a0 Warranty breach — five-point not met</div>
+        <div class="note-text">Not all five points are met, so the warranty is breached. On a covered load, this raises the deductible to a minimum of $25,000 on damage and $100,000 on theft, pilferage, and non-delivery. Escalate to your supervisor before booking.</div>
+        <div class="note-next">Next: Check 2 \u00b7 the HVHR guardrail (still applies)</div>
+      </div>`;
+    } else {
+      const viaHighway = S.highwayAll === 'yes';
+      const title = viaHighway ? 'Warranty satisfied — Highway Connect' : 'Warranty satisfied — five-point check';
+      const text = viaHighway
+        ? 'All four Highway Connect conditions are met, so the five-point check is waived. Load history is <strong>not</strong> checked here — that is the guardrail\u2019s job in Check 2.'
+        : 'All five points are met. The warranty conditions are satisfied.';
+      inner += `<div class="note-ok">
+        <div class="note-title">\u2713 ${title}</div>
+        <div class="note-text">${text}</div>
+        <div class="note-next">Next: Check 2 \u00b7 the HVHR guardrail</div>
+      </div>`;
+    }
+  } else if (step.type === 'checklist') {
+    const onState = step.get() === 'yes';
+    inner += `<div class="checklist">`;
+    step.items.forEach((it, i) => {
+      inner += `<div class="check-item${onState ? ' on' : ''}" data-i="${i}">
+        <span class="check-box">${onState ? '✓' : ''}</span>
+        <span class="check-label">${it}</span></div>`;
+    });
+    inner += `</div>`;
+  }
+
+  // nav
+  const canNext = stepAnswered(step);
+  let leftBtns = '';
+  if (pos > 0) leftBtns += `<button class="btn btn-back" onclick="back()">← Back</button>`;
+  leftBtns += `<button class="btn btn-reset" onclick="restart()">↺ Start over</button>`;
+  inner += `<div class="nav"><div class="nav-left">${leftBtns}</div>`;
+  if (step.type === 'checklist') {
+    inner += `<div style="display:flex;gap:10px;">
+      <button class="btn btn-back" onclick="setChecklist('${step.id}','no')">Not all met</button>
+      <button class="btn btn-next" onclick="setChecklist('${step.id}','yes')">All met →</button>
+    </div>`;
+  } else {
+    const nextLabel = step.type === 'note' ? 'Continue →' : 'Next →';
+    inner += `<button class="btn btn-next" id="nextBtn" ${canNext ? '' : 'disabled'} onclick="next()">${nextLabel}</button>`;
+  }
+  inner += `</div>`;
+  inner += `</div>`;
+
+  stage.innerHTML = trailHtml(pos) + `<div class="step">${inner}</div>`;
+  if (step.type === 'value') { const el = document.getElementById('valInput'); if (el) el.focus(); }
+}
+
+function renderProgress(steps, i) {
+  // group by phase for the track
+  const phases = [];
+  steps.forEach(s => { if (!phases.length || phases[phases.length-1].name !== s.phase) phases.push({ name: s.phase, from: steps.indexOf(s) }); });
+  const prog = document.getElementById('progress');
+  prog.innerHTML = phases.map((p, idx) => {
+    const next = phases[idx+1] ? phases[idx+1].from : steps.length;
+    const total = next - p.from;
+    const done = Math.min(Math.max(i - p.from, 0), total);
+    const pct = total ? (done / total) * 100 : 0;
+    const active = i >= p.from && i < next;
+    const isGuard = p.name.indexOf('Guardrail') > -1;
+    const accent = isGuard ? 'var(--atg-orange)' : 'var(--atg-teal)';
+    const accentDark = isGuard ? 'var(--atg-orange-dark)' : 'var(--atg-teal-dark)';
+    return `<div class="progress-seg" style="margin-right:${idx<phases.length-1?'8px':'0'}">
+      <div class="progress-label" style="color:${active?accentDark:'var(--ink-light)'}">${p.name}</div>
+      <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${pct}%;background:${accent}"></div></div>
+    </div>`;
+  }).join('');
+  document.getElementById('progress-count').textContent = `Step ${i+1} of ${steps.length}`;
+}
+
+function stepAnswered(step) {
+  if (step.type === 'note') return true;
+  const v = step.get();
+  return v !== null && v !== undefined;
+}
+
+// ---------- Interactions ----------
+function pick(id, val) {
+  const step = STEPS.find(s => s.id === id);
+  step.set(val);
+  // clear downstream answers that may no longer apply
+  clearDownstream(id);
+  render();
+  setTimeout(next, 140);
+}
+function setChecklist(id, val) {
+  const step = STEPS.find(s => s.id === id);
+  step.set(val);
+  clearDownstream(id);
+  next();
+}
+function onValue(el) {
+  const raw = el.value.replace(/[^0-9]/g, '');
+  S.value = raw ? parseInt(raw, 10) : null;
+  el.value = raw ? parseInt(raw, 10).toLocaleString('en-US') : '';
+  clearDownstream('value');
+  const btn = document.getElementById('nextBtn');
+  if (btn) btn.disabled = !(typeof S.value === 'number');
+}
+function clearDownstream(id) {
+  // Warranty inputs (SI, equipment, commodity) reset the warranty branch.
+  const warrantyInputs = ['si','equip','commodity'];
+  if (warrantyInputs.includes(id)) { S.highwayAll = null; S.fivePoint = null; }
+  // Guardrail inputs (value, over-$1M, CA) reset the guardrail branch.
+  const guardrailInputs = ['value','valueHigh','ca'];
+  if (guardrailInputs.includes(id)) { S.history = null; }
+  // No SI → warranty can't apply; drop equipment/commodity so they're re-asked if SI flips back.
+  if (id === 'si' && S.si === 'no') { S.equip = null; S.commodity = null; }
+  // Under $100K → the over-$1M follow-up no longer applies.
+  if (id === 'value') { S.valueHigh = null; S.ca = null; }
+  // Highway answer changes → the five-point answer may no longer apply.
+  if (id === 'highway') { S.fivePoint = null; }
+}
+function next() {
+  const steps = activeSteps();
+  const step = steps[pos];
+  if (step && !stepAnswered(step)) return;
+  pos++;
+  render();
+}
+function back() {
+  if (pos > 0) { pos--; render(); return; }
+  if (mode === 'v2' && activeCheck) { goHub(); return; }
+  render();
+}
+function restart() {
+  Object.keys(S).forEach(k => S[k] = null);
+  pos = 0;
+  if (mode === 'v2') { if (activeCheck) render(); else renderHub(); }
+  else render();
+}
+
+// ---------- Result ----------
+function computeWarranty() {
+  const w = { badge: 'na', label: 'Not applicable', flags: [] };
+  if (!warrantyApplies()) {
+    const why = [];
+    if (S.si !== 'yes') why.push('no SI purchased');
+    if (S.si === 'yes' && S.equip !== 'ftl') why.push('not FTL/Dedicated');
+    if (S.si === 'yes' && S.commodity !== 'warranty') why.push('not a warranty commodity');
+    w.flags.push({ t: 'na', x: `Warranty not triggered — ${why.join(', ')}.` });
+  } else if (S.highwayAll === 'yes') {
+    w.badge = 'ok'; w.label = 'Satisfied · Highway';
+    w.flags.push({ t: 'ok', x: 'All four Highway Connect conditions met — five-point check waived.' });
+    w.flags.push({ t: 'na', x: 'Load history not checked here — that is the guardrail’s job.' });
+  } else if (S.highwayAll === 'no' && S.fivePoint === 'yes') {
+    w.badge = 'ok'; w.label = 'Satisfied · 5-point';
+    w.flags.push({ t: 'ok', x: 'Highway conditions incomplete, but all five points met.' });
+  } else if (S.highwayAll === 'no' && S.fivePoint === 'no') {
+    w.badge = 'bad'; w.label = 'Breach — escalate';
+    w.flags.push({ t: 'bad', x: 'Five-point check not met. Warranty breach: deductible rises to $25K (damage) / $100K (theft). Escalate to supervisor.' });
+  }
+  return w;
+}
+
+function computeGuardrail() {
+  const g = { badge: 'na', label: 'Not applicable', flags: [] };
+  if (overLimit()) {
+    g.badge = 'bad'; g.label = 'Underwriter — stop';
+    g.flags.push({ t: 'bad', x: 'Value over $1,000,000. Do not book — send to Claims for underwriter approval.' });
+  } else if (!guardrailApplies()) {
+    const risk = [];
+    if (isHighTheft() && !warrantyApplies()) risk.push('a high-theft commodity');
+    if (S.ca === 'yes') risk.push('California origin');
+    if (risk.length) {
+      g.badge = 'warn'; g.label = 'Advisory';
+      g.flags.push({ t: 'warn', x: 'Under $100K, so the guardrail doesn\u2019t formally apply — but it\u2019s ' + risk.join(' and ') + '. Consider adding SI or extra vetting before booking.' });
+    } else {
+      g.flags.push({ t: 'na', x: 'No guardrail trigger — load is under $100K.' });
+    }
+  } else {
+    g.badge = 'ok'; g.label = 'Applies';
+    if (S.value === 'over') g.flags.push({ t: 'ok', x: 'Value over $100K — guardrail engaged.' });
+    if (isHighTheft()) g.flags.push({ t: 'warn', x: 'High-theft commodity — verify carefully.' });
+    if (S.ca === 'yes') g.flags.push({ t: 'warn', x: 'California origin — apply enhanced scrutiny.' });
+    if (S.history === 'yes') {
+      g.flags.push({ t: 'ok', x: '5+ loads in 6 months confirmed.' });
+    } else if (S.history === 'no') {
+      g.badge = 'bad'; g.label = 'History not met — escalate';
+      g.flags.push({ t: 'bad', x: 'Load-history requirement not met (5 loads / 6 months). Escalate.' });
+    }
+    g.flags.push({ t: 'warn', x: 'Run the HVHR tool for the rest — GPS ping, CA origin, equipment.' });
+  }
+  return g;
+}
+
+function renderResult() {
+  document.getElementById('progress').innerHTML = '';
+  document.getElementById('progress-count').textContent = 'Result';
+  if (mode === 'v2') { renderCheckResult(); return; }
+
+  const w = computeWarranty();
+  const g = computeGuardrail();
+
+  // Overall headline
+  let type = 'pass', eyebrow = 'Assessment result', title = 'Clear to proceed', sub = 'No blocking conditions. Document your vetting in the TMS.';
+  const anyBad = (w.badge === 'bad') || (g.badge === 'bad');
+  const anyWarn = g.flags.some(f => f.t === 'warn') || (w.badge === 'na' && g.badge === 'na');
+  if (anyBad) {
+    type = 'fail'; title = 'Do not book — escalate'; sub = 'One or more requirements are not met. Escalate before tendering.';
+  } else if (w.badge === 'na' && g.label === 'Advisory') {
+    type = 'warn'; title = 'Proceed with caution'; sub = 'No formal check applies, but a risk factor is present under $100K with no SI — give it a closer look.';
+  } else if (w.badge === 'na' && g.badge === 'na') {
+    type = 'warn'; title = 'No special checks apply'; sub = 'Neither the warranty nor the guardrail is triggered. Standard vetting applies.';
+  } else if (anyWarn) {
+    type = 'warn'; title = 'Proceed with caution'; sub = 'Requirements met, but review the flagged items before booking.';
+  }
+
+  const stage = document.getElementById('stage');
+  stage.innerHTML = trailHtml() + `
+    <div class="verdict-wrap">
+      <div class="verdict-head ${type}">
+        <div class="verdict-eyebrow">// ${eyebrow}</div>
+        <div class="verdict-title">${title}</div>
+        <div class="verdict-sub">${sub}</div>
+      </div>
+
+      <div class="rc warranty">
+        <div class="rc-head"><span class="rc-name">Check 1 · Warranty</span>
+          <span class="rc-badge ${w.badge}">${w.label}</span></div>
+        <div class="rc-body"><div class="rc-flags">${w.flags.map(fl => flagHtml(fl)).join('')}</div></div>
+      </div>
+
+      <div class="rc guardrail">
+        <div class="rc-head"><span class="rc-name">Check 2 · HVHR Guardrail</span>
+          <span class="rc-head-right">${hvChip('rc-hv')}<span class="rc-badge ${g.badge}">${g.label}</span></span></div>
+        <div class="rc-body"><div class="rc-flags">${g.flags.map(fl => flagHtml(fl)).join('')}</div></div>
+      </div>
+
+      <div class="nav"><button class="btn btn-back" onclick="back()">← Back</button></div>
+      <button class="restart" onclick="restart()">↺ Check another load</button>
+    </div>`;
+}
+function flagHtml(fl) {
+  return `<div class="flag ${fl.t}"><div class="flag-dot"></div><span>${fl.x}</span></div>`;
+}
+
+// ---------- V2: single-check result ----------
+function renderCheckResult() {
+  const isW = activeCheck === 'warranty';
+  const r = isW ? computeWarranty() : computeGuardrail();
+  let type = 'pass', title = 'Clear', sub = '';
+  if (r.badge === 'bad') { type = 'fail'; title = isW ? 'Warranty breach — escalate' : 'Do not book — escalate'; sub = 'A requirement is not met. Escalate before tendering.'; }
+  else if (r.badge === 'warn') { type = 'warn'; title = 'Proceed with caution'; sub = 'Review the flagged items before booking.'; }
+  else if (r.badge === 'na') { type = 'warn'; title = isW ? 'Warranty not triggered' : 'Guardrail not triggered'; sub = 'This control does not apply to the load as entered.'; }
+  else { type = 'pass'; title = isW ? 'Warranty satisfied' : 'Guardrail cleared'; sub = 'No blocking conditions on this check.'; }
+
+  const cls = isW ? 'warranty' : 'guardrail';
+  const name = isW ? 'Check 1 · Warranty' : 'Check 2 · HVHR Guardrail';
+  const stage = document.getElementById('stage');
+  stage.innerHTML = trailHtml() + `
+    <div class="verdict-wrap">
+      <div class="verdict-head ${type}">
+        <div class="verdict-eyebrow">// ${name}</div>
+        <div class="verdict-title">${title}</div>
+        <div class="verdict-sub">${sub}</div>
+      </div>
+      <div class="rc ${cls}">
+        <div class="rc-head"><span class="rc-name">${name}</span>
+          <span class="rc-head-right">${!isW ? hvChip('rc-hv') : ''}<span class="rc-badge ${r.badge}">${r.label}</span></span></div>
+        <div class="rc-body"><div class="rc-flags">${r.flags.map(fl => flagHtml(fl)).join('')}</div></div>
+      </div>
+      <div class="nav"><div class="nav-left">
+        <button class="btn btn-back" onclick="back()">← Back</button>
+        <button class="btn btn-reset" onclick="restart()">↺ Start over</button>
+      </div></div>
+      <button class="restart" onclick="goHub()">↺ Run another check</button>
+    </div>`;
+}
+
+// ---------- V2: hub ----------
+function renderHub() {
+  document.getElementById('progress').innerHTML = '';
+  document.getElementById('progress-count').textContent = '';
+  const stage = document.getElementById('stage');
+  stage.innerHTML = `
+    <div class="hub">
+      <div class="hub-title">Pick a check to run</div>
+      <div class="hub-sub">Assess either control on its own. They are independent — a load can pass one and not the other.</div>
+      <div class="hub-cards">
+        <button class="hub-card w" onclick="startCheck('warranty')">
+          <div class="hc-tag">Check 1</div>
+          <div class="hc-name">Warranty</div>
+          <div class="hc-desc">Is the Loadsure carrier-vetting warranty met? SI, equipment, commodity, Highway Connect / five-point.</div>
+        </button>
+        <button class="hub-card g" onclick="startCheck('guardrail')">
+          <div class="hc-tag">Check 2</div>
+          <div class="hc-name">HVHR Guardrail</div>
+          <div class="hc-desc">Does the internal theft guardrail apply? Load value, California origin, load history.</div>
+        </button>
+      </div>
+    </div>`;
+}
+
+// ---------- Sidebar + mode/check switching ----------
+function renderSidebar() {
+  const sb = document.getElementById('sidebar');
+  const v2checks = (mode === 'v2') ? `
+    <div class="side-group">
+      <div class="side-label">Run a check</div>
+      <button class="side-btn check-w ${activeCheck==='warranty'?'active':''}" onclick="startCheck('warranty')">Check 1 · Warranty</button>
+      <button class="side-btn check-g ${activeCheck==='guardrail'?'active':''}" onclick="startCheck('guardrail')">Check 2 · Guardrail</button>
+    </div>` : '';
+  sb.innerHTML = `
+    <div class="side-group">
+      <div class="side-label">Version</div>
+      <button class="side-btn ${mode==='v1'?'active':''}" onclick="setMode('v1')">Version 1<small>Full wizard</small></button>
+      <button class="side-btn ${mode==='v2'?'active':''}" onclick="setMode('v2')">Version 2<small>By check</small></button>
+    </div>
+    ${v2checks}`;
+}
+function setMode(m) {
+  if (mode === m) return;
+  mode = m; activeCheck = null; pos = 0;
+  Object.keys(S).forEach(k => S[k] = null);
+  renderSidebar();
+  if (mode === 'v2') renderHub(); else render();
+}
+function startCheck(c) {
+  activeCheck = c; pos = 0;
+  Object.keys(S).forEach(k => S[k] = null);
+  renderSidebar(); render();
+}
+function goHub() {
+  activeCheck = null; pos = 0;
+  Object.keys(S).forEach(k => S[k] = null);
+  renderSidebar(); renderHub();
+}
+
+renderSidebar();
+render();
+</script>
+</body>
+</html>
